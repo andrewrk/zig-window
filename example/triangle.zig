@@ -65,11 +65,11 @@ pub fn main() !void {
     );
 
     const font_info = X.LoadQueryFont(display, c"9x15") ?? return error.OutOfMemory;
-    defer assert(X.UnloadFont(display, font_info.fid) == 0);
+    defer _ = X.UnloadFont(display, font_info.fid);
 
     var values: X.GCValues = undefined;
     const gc = X.CreateGC(display, win, 0, &values);
-    defer assert(X.FreeGC(display, gc) == 0);
+    defer _ = X.FreeGC(display, gc);
 
     _ = X.SetFont(display, gc, font_info.fid);
     _ = X.SetForeground(display, gc, X.BlackPixel(display, screen_num));
@@ -106,9 +106,6 @@ pub fn main() !void {
             X.ConfigureNotify => {
                 width = u32(report.xconfigure.width);
                 height = u32(report.xconfigure.height);
-            },
-            X.ButtonPress, X.KeyPress => {
-                return;
             },
             else => {},
         }
