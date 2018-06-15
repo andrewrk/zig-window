@@ -5,10 +5,10 @@ const cstr = std.cstr;
 const assert = std.debug.assert;
 
 pub fn main() !void {
-    const size_hints = X.AllocSizeHints() ?? return error.OutOfMemory;
-    const wm_hints = X.AllocWMHints() ?? return error.OutOfMemory;
-    const class_hints = X.AllocClassHint() ?? return error.OutOfMemory;
-    const display = X.OpenDisplay(null) ?? return error.OutOfMemory;
+    const size_hints = X.AllocSizeHints() orelse return error.OutOfMemory;
+    const wm_hints = X.AllocWMHints() orelse return error.OutOfMemory;
+    const class_hints = X.AllocClassHint() orelse return error.OutOfMemory;
+    const display = X.OpenDisplay(null) orelse return error.OutOfMemory;
     defer assert(X.CloseDisplay(display) == 0);
 
     const screen_num = X.DefaultScreen(display);
@@ -64,7 +64,7 @@ pub fn main() !void {
         X.ExposureMask | X.KeyPressMask | X.ButtonPressMask | X.StructureNotifyMask,
     );
 
-    const font_info = X.LoadQueryFont(display, c"9x15") ?? return error.OutOfMemory;
+    const font_info = X.LoadQueryFont(display, c"9x15") orelse return error.OutOfMemory;
     defer _ = X.UnloadFont(display, font_info.fid);
 
     var values: X.GCValues = undefined;
