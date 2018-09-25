@@ -29,6 +29,8 @@ pub const TextWidth = XTextWidth;
 pub const DrawString = XDrawString;
 pub const FreeGC = XFreeGC;
 pub const UnloadFont = XUnloadFont;
+pub const Free = XFree;
+pub const DefaultRootWindow = XDefaultRootWindow;
 
 pub const PPosition = 1 << 2;
 pub const PSize = 1 << 3;
@@ -85,6 +87,8 @@ pub const FocusChangeMask = 1 << 21;
 pub const PropertyChangeMask = 1 << 22;
 pub const ColormapChangeMask = 1 << 23;
 pub const OwnerGrabButtonMask = 1 << 24;
+
+pub const None = 0;
 
 pub const XID = c_ulong;
 pub const Mask = c_ulong;
@@ -1113,7 +1117,7 @@ pub extern "X11" fn XAddExtension(arg0: ?*Display) ?[*]XExtCodes;
 pub extern "X11" fn XFindOnExtensionList(arg0: ?[*](?[*]XExtData), arg1: c_int) ?[*]XExtData;
 pub extern "X11" fn XEHeadOfExtensionList(arg0: XEDataObject) ?[*](?[*]XExtData);
 pub extern "X11" fn XRootWindow(arg0: ?*Display, arg1: c_int) Window;
-pub extern "X11" fn XDefaultRootWindow(arg0: ?*Display) Window;
+pub extern "X11" fn XDefaultRootWindow(arg0: *Display) Window;
 pub extern "X11" fn XRootWindowOfScreen(arg0: ?[*]Screen) Window;
 pub extern "X11" fn XDefaultVisual(arg0: ?*Display, arg1: c_int) ?[*]Visual;
 pub extern "X11" fn XDefaultVisualOfScreen(arg0: ?[*]Screen) ?[*]Visual;
@@ -1235,7 +1239,7 @@ pub extern "X11" fn XFillRectangle(arg0: ?*Display, arg1: Drawable, arg2: GC, ar
 pub extern "X11" fn XFillRectangles(arg0: ?*Display, arg1: Drawable, arg2: GC, arg3: ?[*]XRectangle, arg4: c_int) c_int;
 pub extern "X11" fn XFlush(arg0: ?*Display) c_int;
 pub extern "X11" fn XForceScreenSaver(arg0: ?*Display, arg1: c_int) c_int;
-pub extern "X11" fn XFree(arg0: ?*c_void) c_int;
+pub extern "X11" fn XFree(arg0: *c_void) c_int;
 pub extern "X11" fn XFreeColormap(arg0: ?*Display, arg1: Colormap) c_int;
 pub extern "X11" fn XFreeColors(arg0: ?*Display, arg1: Colormap, arg2: ?[*]c_ulong, arg3: c_int, arg4: c_ulong) c_int;
 pub extern "X11" fn XFreeCursor(arg0: ?*Display, arg1: Cursor) c_int;
