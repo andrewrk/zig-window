@@ -5,9 +5,6 @@ const cstr = std.cstr;
 const assert = std.debug.assert;
 
 pub fn main() !void {
-    const size_hints = X.AllocSizeHints() orelse return error.OutOfMemory;
-    const wm_hints = X.AllocWMHints() orelse return error.OutOfMemory;
-    const class_hints = X.AllocClassHint() orelse return error.OutOfMemory;
     const display = X.OpenDisplay(null) orelse return error.OutOfMemory;
     defer assert(X.CloseDisplay(display) == 0);
 
@@ -43,6 +40,10 @@ pub fn main() !void {
     var iconName: X.TextProperty = undefined;
     if (X.StringListToTextProperty(&icon_name, 1, &iconName) == 0)
         return error.OutOfMemory;
+
+    const size_hints = X.AllocSizeHints() orelse return error.OutOfMemory;
+    const wm_hints = X.AllocWMHints() orelse return error.OutOfMemory;
+    const class_hints = X.AllocClassHint() orelse return error.OutOfMemory;
 
     size_hints.flags = X.PPosition | X.PSize | X.PMinSize;
     size_hints.min_width = 200;
