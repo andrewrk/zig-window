@@ -1,6 +1,6 @@
 const std = @import("std");
 const math = std.math;
-const X = @import("../src/x11.zig");
+const X = @import("x11");
 const cstr = std.cstr;
 const assert = std.debug.assert;
 

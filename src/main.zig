@@ -2,18 +2,21 @@ const std = @import("std");
 const builtin = @import("builtin");
 const mem = std.mem;
 const os = std.os;
-const event = std.event;
-const posix = os.posix;
+const fs = std.fs;
+const net = std.net;
 const assert = std.debug.assert;
+const Allocator = std.mem.Allocator;
+const File = std.fs.File;
 
-use @import("xproto.zig");
+usingnamespace @import("xproto.zig");
 
 pub const Display = struct {
     name: []u8,
 };
 
 pub const Connection = struct {
-    fd: i32,
+    allocator: *Allocator,
+    file: File,
     setup: []u8,
     status: Status,
 
@@ -32,16 +35,13 @@ pub const Auth = struct {
     data: []u8,
 };
 
-pub async fn openDefaultDisplay(loop: *event.Loop) !Connection {
-    suspend {
-        resume @handle();
-    }
+pub fn openDefaultDisplay(allocator: *Allocator) !Connection {
     const default_name = getDefaultDisplayName() orelse return error.UnknownDefaultDisplay;
-    return await (async openDisplay(loop, default_name) catch unreachable);
+    return openDisplay(allocator, default_name);
 }
 
 pub fn getDefaultDisplayName() ?[]const u8 {
-    return std.os.getEnvPosix("DISPLAY");
+    return os.getenv("DISPLAY");
 }
 
 pub const OpenDisplayError = error{
@@ -66,17 +66,14 @@ pub const OpenDisplayError = error{
     InvalidStatus,
 };
 
-pub async fn openDisplay(loop: *event.Loop, name: []const u8) OpenDisplayError!Connection {
-    suspend {
-        resume @handle();
-    }
+pub fn openDisplay(allocator: *Allocator, name: []const u8) OpenDisplayError!Connection {
     const parsed = parseDisplay(name) catch |err| switch (err) {
         error.Overflow => return error.InvalidDisplayFormat,
         error.MissingColon => return error.InvalidDisplayFormat,
         error.MissingDisplayIndex => return error.InvalidDisplayFormat,
         error.InvalidCharacter => return error.InvalidDisplayFormat,
     };
-    return try await (async connectToDisplay(loop, parsed, null) catch unreachable);
+    return connectToDisplay(allocator, parsed, null);
 }
 
 pub const ParsedDisplay = struct {
@@ -99,40 +96,30 @@ pub fn parseDisplay(name: []const u8) !ParsedDisplay {
     } else name;
 
     const colon = mem.lastIndexOfScalar(u8, after_prot, ':') orelse return error.MissingColon;
-    var it = mem.split(after_prot[colon + 1 ..], ".");
+    var it = mem.separate(after_prot[colon + 1 ..], ".");
     result.display = try std.fmt.parseInt(u32, it.next() orelse return error.MissingDisplayIndex, 10);
     result.screen = if (it.next()) |s| try std.fmt.parseInt(u32, s, 10) else 0;
     result.host = after_prot[0..colon];
     return result;
 }
 
-pub async fn open(loop: *event.Loop, host: []const u8, protocol: []const u8, display: u32) !i32 {
-    suspend {
-        resume @handle();
-    }
+pub fn open(host: []const u8, protocol: []const u8, display: u32) !File {
     if (protocol.len != 0 and !mem.eql(u8, protocol, "unix")) {
         return error.UnsupportedProtocol;
     }
 
-    var path_buf: [os.MAX_PATH_BYTES]u8 = undefined;
+    var path_buf: [fs.MAX_PATH_BYTES]u8 = undefined;
     const socket_path = std.fmt.bufPrint(path_buf[0..], "/tmp/.X11-unix/X{}", display) catch unreachable;
 
-    return await (async event.net.connectUnixSocket(loop, socket_path) catch unreachable);
+    return net.connectUnixSocket(socket_path);
 }
 
-pub async fn connectToDisplay(loop: *event.Loop, parsed: ParsedDisplay, optional_auth: ?Auth) !Connection {
-    suspend {
-        resume @handle();
-    }
-    const fd = (await (async open(loop, parsed.host, parsed.protocol, parsed.display) catch unreachable)) catch return error.UnableToConnectToServer;
-    errdefer os.close(fd);
+pub fn connectToDisplay(allocator: *Allocator, parsed: ParsedDisplay, optional_auth: ?Auth) !Connection {
+    const file = open(parsed.host, parsed.protocol, parsed.display) catch return error.UnableToConnectToServer;
+    errdefer file.close();
 
-    const auth = optional_auth orelse (await (async getAuth(
-        loop,
-        fd,
-        parsed.display,
-    ) catch unreachable)) catch |e| switch (e) {
-        error.FileClosed => return error.AuthFileUnavailable,
+    const auth = optional_auth orelse getAuth(allocator, file, parsed.display) catch |e| switch (e) {
+        error.WouldBlock => unreachable,
         error.IsDir => return error.AuthFileUnavailable,
         error.SharingViolation => return error.AuthFileUnavailable,
         error.PathAlreadyExists => return error.AuthFileUnavailable,
@@ -151,6 +138,9 @@ pub async fn connectToDisplay(loop: *event.Loop, parsed: ParsedDisplay, optional
         error.NotDir => return error.AuthFileUnavailable,
         error.AccessDenied => return error.AuthFileUnavailable,
         error.HomeDirectoryNotFound => return error.AuthFileUnavailable,
+        error.OperationAborted => return error.AuthFileUnavailable,
+        error.BrokenPipe => return error.AuthFileUnavailable,
+        error.DeviceBusy => return error.AuthFileUnavailable,
 
         error.Unexpected => return error.Unexpected,
 
@@ -160,7 +150,7 @@ pub async fn connectToDisplay(loop: *event.Loop, parsed: ParsedDisplay, optional
         error.OutOfMemory => return error.OutOfMemory,
     };
     std.debug.warn("auth: {}\n", auth);
-    return await (async connectToFd(loop, fd, auth) catch unreachable);
+    return connectToFile(allocator, file, auth);
 }
 
 fn xpad(n: usize) usize {
@@ -178,43 +168,38 @@ test "xpad" {
     assert(xpad(8) == 0);
 }
 
-/// fd must be O_RDWR|O_NONBLOCK
-pub async fn connectToFd(loop: *event.Loop, fd: i32, auth: ?Auth) !Connection {
-    suspend {
-        resume @handle();
-    }
+/// file must be `O_RDWR`.
+/// `O_NONBLOCK` may be set if `std.event.Loop.instance != null`.
+pub fn connectToFile(allocator: *Allocator, file: File, auth: ?Auth) !Connection {
     var conn = Connection{
-        .fd = fd,
+        .allocator = allocator,
+        .file = file,
         .setup = undefined,
         .status = undefined,
     };
 
-    try await (async writeSetup(loop, fd, auth) catch unreachable);
-    try await (async readSetup(loop, &conn) catch unreachable);
+    try writeSetup(file, auth);
+    try readSetup(allocator, &conn);
 
     // _xcb_ext_init(c) &&
     // _xcb_xid_init(c)
     return conn;
 }
 
-async fn readSetup(loop: *event.Loop, conn: *Connection) !void {
-    suspend {
-        resume @handle();
-    }
-    const stream = &event.net.InStream.init(loop, conn.fd).stream;
+fn readSetup(allocator: *Allocator, conn: *Connection) !void {
+    const stream = &conn.file.inStream().stream;
 
     const xcb_setup_generic_t = extern struct {
         status: u8,
         pad0: [5]u8,
         length: u16,
     };
-    var header: xcb_setup_generic_t = undefined;
-    try await (async stream.readStruct(xcb_setup_generic_t, &header) catch unreachable);
+    const header = try stream.readStruct(xcb_setup_generic_t);
 
-    conn.setup = try loop.allocator.alloc(u8, header.length * 4);
-    errdefer loop.allocator.free(conn.setup);
+    conn.setup = try allocator.alloc(u8, header.length * 4);
+    errdefer allocator.free(conn.setup);
 
-    try await (async stream.readFull(conn.setup) catch unreachable);
+    try stream.readNoEof(conn.setup);
 
     conn.status = switch (header.status) {
         0 => Connection.Status.SetupFailed,
@@ -224,12 +209,9 @@ async fn readSetup(loop: *event.Loop, conn: *Connection) !void {
     };
 }
 
-async fn writeSetup(loop: *event.Loop, fd: i32, auth: ?Auth) !void {
-    suspend {
-        resume @handle();
-    }
+fn writeSetup(file: File, auth: ?Auth) !void {
     const pad = [3]u8{ 0, 0, 0 };
-    var parts: [6]posix.iovec_const = undefined;
+    var parts: [6]os.iovec_const = undefined;
     var parts_index: usize = 0;
     var setup_req = xcb_setup_request_t{
         .byte_order = if (builtin.endian == builtin.Endian.Big) 0x42 else 0x6c,
@@ -265,42 +247,34 @@ async fn writeSetup(loop: *event.Loop, fd: i32, auth: ?Auth) !void {
 
     assert(parts_index <= parts.len);
 
-    return await (async event.net.writevPosix(loop, fd, &parts, parts_index) catch unreachable);
+    return file.writev_iovec(parts[0..parts_index]);
 }
 
-pub async fn getAuth(loop: *event.Loop, sockfd: i32, display: u32) !Auth {
-    suspend {
-        resume @handle();
-    }
-    std.debug.warn("getAuth\n");
-    var xau_file_name_buf: ?[]u8 = null;
-    defer if (xau_file_name_buf) |buf| loop.allocator.free(buf);
+pub fn getAuth(allocator: *Allocator, sock: File, display: u32) !Auth {
+    const xau_file = if (os.getenv("XAUTHORITY")) |xau_file_name| blk: {
+        std.debug.warn("opening {}\n", xau_file_name);
+        break :blk try fs.File.openRead(xau_file_name);
+    } else blk: {
+        const home = os.getenv("HOME") orelse return error.HomeDirectoryNotFound;
+        var dir = try fs.Dir.open(allocator, home);
+        defer dir.close();
 
-    const xau_file_name = std.os.getEnvPosix("XAUTHORITY") orelse blk: {
-        const home = std.os.getEnvPosix("HOME") orelse return error.HomeDirectoryNotFound;
-        const home_path = try os.path.join(loop.allocator, home, ".Xauthority");
-        xau_file_name_buf = home_path; // so that it gets freed
-        break :blk home_path;
+        std.debug.warn("opening $HOME/.Xauthority\n");
+        break :blk try dir.openRead(".Xauthority");
     };
+    defer xau_file.close();
 
-    std.debug.warn("opening {}\n", xau_file_name);
-    const fd = try await (async event.fs.openRead(loop, xau_file_name) catch unreachable);
-    std.debug.warn("opened {}\n", xau_file_name);
-    var close_op = try event.fs.CloseOperation.start(loop);
-    var close_op_consumed = false;
-    defer if (!close_op_consumed) close_op.finish();
+    const stream = &xau_file.inStream().stream;
 
-    const stream = &event.fs.InStream.init(loop, fd, 0).stream;
-
-    const family = try await (async stream.readIntBe(u16) catch unreachable);
-    const address = try await (async readCountedString(loop, stream) catch unreachable);
-    errdefer loop.allocator.free(address);
-    const number = try await (async readCountedString(loop, stream) catch unreachable);
-    errdefer loop.allocator.free(number);
-    const name = try await (async readCountedString(loop, stream) catch unreachable);
-    errdefer loop.allocator.free(name);
-    const data = try await (async readCountedString(loop, stream) catch unreachable);
-    errdefer loop.allocator.free(data);
+    const family = try stream.readIntBig(u16);
+    const address = try readCountedString(allocator, stream);
+    errdefer allocator.free(address);
+    const number = try readCountedString(allocator, stream);
+    errdefer allocator.free(number);
+    const name = try readCountedString(allocator, stream);
+    errdefer allocator.free(name);
+    const data = try readCountedString(allocator, stream);
+    errdefer allocator.free(data);
 
     return Auth{
         .family = family,
@@ -311,14 +285,11 @@ pub async fn getAuth(loop: *event.Loop, sockfd: i32, display: u32) !Auth {
     };
 }
 
-async fn readCountedString(loop: *event.Loop, stream: var) ![]u8 {
-    suspend {
-        resume @handle();
-    }
-    const len = try await (async stream.readIntBe(u16) catch unreachable);
-    const buf = try loop.allocator.alloc(u8, len);
-    errdefer loop.allocator.free(buf);
+fn readCountedString(allocator: *Allocator, stream: var) ![]u8 {
+    const len = try stream.readIntBig(u16);
+    const buf = try allocator.alloc(u8, len);
+    errdefer allocator.free(buf);
 
-    try await (async stream.readFull(buf) catch unreachable);
+    try stream.readNoEof(buf);
     return buf;
 }

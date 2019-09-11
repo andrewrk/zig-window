@@ -1,38 +1,28 @@
 const std = @import("std");
-const event = std.event;
-const window = @import("../src/main.zig");
+const window = @import("window");
+
+pub const io_mode = .evented;
 
 pub fn main() !void {
-    var da = std.heap.DirectAllocator.init();
-    defer da.deinit();
-
-    const allocator = &da.allocator;
-
-    var loop: event.Loop = undefined;
-    try loop.initMultiThreaded(allocator);
+    const loop = std.event.Loop.instance.?;
+    try loop.initSingleThreaded(std.heap.direct_allocator);
     defer loop.deinit();
 
-    const handle = try async<allocator> asyncMainCantFail(&loop);
-    defer cancel handle;
-
+    var result: @typeOf(asyncMain).ReturnType.ErrorSet!void = undefined;
+    var frame: @Frame(asyncMain) = undefined;
+    _ = @asyncCall(&frame, &result, asyncMain, loop);
     loop.run();
+    return result;
 }
 
-async fn asyncMainCantFail(loop: *event.Loop) void {
-    suspend {
-        resume @handle();
-    }
-    (await (async asyncMain(loop) catch unreachable)) catch unreachable;
-    std.debug.warn("async main no problem\n");
-}
+async fn asyncMain(loop: *std.event.Loop) !void {
+    loop.beginOneEvent();
+    defer loop.finishOneEvent();
 
-async fn asyncMain(loop: *event.Loop) !void {
-    suspend {
-        resume @handle();
-    }
-    const conn = try await try async window.openDefaultDisplay(loop);
+    const conn = try window.openDefaultDisplay(std.heap.direct_allocator);
     switch (conn.status) {
-        window.Connection.Status.Ok => {},
+        .Ok => {},
         else => std.debug.warn("unable to open default display: {}\n", conn.setup),
     }
+    std.debug.warn("OK\n");
 }
