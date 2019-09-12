@@ -30,7 +30,10 @@ fn allMain() !void {
     const conn = try window.openDefaultDisplay(std.heap.direct_allocator);
     switch (conn.status) {
         .Ok => {},
-        else => std.debug.warn("unable to open default display: {}\n", conn.setup),
+        else => {
+            std.debug.warn("unable to open default display: {}\n", conn.setup);
+            std.os.exit(1);
+        },
     }
     std.debug.warn("OK\n");
 }

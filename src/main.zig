@@ -33,6 +33,14 @@ pub const Auth = struct {
     number: []u8,
     name: []u8,
     data: []u8,
+
+    fn deinit(self: *Auth, allocator: *Allocator) void {
+        allocator.free(self.address);
+        allocator.free(self.number);
+        allocator.free(self.name);
+        allocator.free(self.data);
+        self.* = undefined;
+    }
 };
 
 pub fn openDefaultDisplay(allocator: *Allocator) !Connection {
@@ -118,38 +126,43 @@ pub fn connectToDisplay(allocator: *Allocator, parsed: ParsedDisplay, optional_a
     const file = open(parsed.host, parsed.protocol, parsed.display) catch return error.UnableToConnectToServer;
     errdefer file.close();
 
-    const auth = optional_auth orelse getAuth(allocator, file, parsed.display) catch |e| switch (e) {
-        error.WouldBlock => unreachable,
-        error.IsDir => return error.AuthFileUnavailable,
-        error.SharingViolation => return error.AuthFileUnavailable,
-        error.PathAlreadyExists => return error.AuthFileUnavailable,
-        error.FileNotFound => return error.AuthFileUnavailable,
-        error.PipeBusy => return error.AuthFileUnavailable,
-        error.NameTooLong => return error.AuthFileUnavailable,
-        error.InvalidUtf8 => return error.AuthFileUnavailable,
-        error.BadPathName => return error.AuthFileUnavailable,
-        error.FileTooBig => return error.AuthFileUnavailable,
-        error.SymLinkLoop => return error.AuthFileUnavailable,
-        error.ProcessFdQuotaExceeded => return error.AuthFileUnavailable,
-        error.NoDevice => return error.AuthFileUnavailable,
-        error.NoSpaceLeft => return error.AuthFileUnavailable,
-        error.EndOfStream => return error.AuthFileUnavailable,
-        error.InputOutput => return error.AuthFileUnavailable,
-        error.NotDir => return error.AuthFileUnavailable,
-        error.AccessDenied => return error.AuthFileUnavailable,
-        error.HomeDirectoryNotFound => return error.AuthFileUnavailable,
-        error.OperationAborted => return error.AuthFileUnavailable,
-        error.BrokenPipe => return error.AuthFileUnavailable,
-        error.DeviceBusy => return error.AuthFileUnavailable,
+    var cleanup_auth = false;
+    var auth = if (optional_auth) |a| a else blk: {
+        cleanup_auth = true;
+        break :blk getAuth(allocator, file, parsed.display) catch |e| switch (e) {
+            error.WouldBlock => unreachable,
+            error.IsDir => return error.AuthFileUnavailable,
+            error.SharingViolation => return error.AuthFileUnavailable,
+            error.PathAlreadyExists => return error.AuthFileUnavailable,
+            error.FileNotFound => return error.AuthFileUnavailable,
+            error.PipeBusy => return error.AuthFileUnavailable,
+            error.NameTooLong => return error.AuthFileUnavailable,
+            error.InvalidUtf8 => return error.AuthFileUnavailable,
+            error.BadPathName => return error.AuthFileUnavailable,
+            error.FileTooBig => return error.AuthFileUnavailable,
+            error.SymLinkLoop => return error.AuthFileUnavailable,
+            error.ProcessFdQuotaExceeded => return error.AuthFileUnavailable,
+            error.NoDevice => return error.AuthFileUnavailable,
+            error.NoSpaceLeft => return error.AuthFileUnavailable,
+            error.EndOfStream => return error.AuthFileUnavailable,
+            error.InputOutput => return error.AuthFileUnavailable,
+            error.NotDir => return error.AuthFileUnavailable,
+            error.AccessDenied => return error.AuthFileUnavailable,
+            error.HomeDirectoryNotFound => return error.AuthFileUnavailable,
+            error.OperationAborted => return error.AuthFileUnavailable,
+            error.BrokenPipe => return error.AuthFileUnavailable,
+            error.DeviceBusy => return error.AuthFileUnavailable,
 
-        error.Unexpected => return error.Unexpected,
+            error.Unexpected => return error.Unexpected,
 
-        error.SystemFdQuotaExceeded => return error.SystemResources,
-        error.SystemResources => return error.AuthFileUnavailable,
+            error.SystemFdQuotaExceeded => return error.SystemResources,
+            error.SystemResources => return error.AuthFileUnavailable,
 
-        error.OutOfMemory => return error.OutOfMemory,
+            error.OutOfMemory => return error.OutOfMemory,
+        };
     };
-    std.debug.warn("auth: {}\n", auth);
+    defer if (cleanup_auth) auth.deinit(allocator);
+
     return connectToFile(allocator, file, auth);
 }
 
@@ -181,8 +194,6 @@ pub fn connectToFile(allocator: *Allocator, file: File, auth: ?Auth) !Connection
     try writeSetup(file, auth);
     try readSetup(allocator, &conn);
 
-    // _xcb_ext_init(c) &&
-    // _xcb_xid_init(c)
     return conn;
 }
 
@@ -252,37 +263,50 @@ fn writeSetup(file: File, auth: ?Auth) !void {
 
 pub fn getAuth(allocator: *Allocator, sock: File, display: u32) !Auth {
     const xau_file = if (os.getenv("XAUTHORITY")) |xau_file_name| blk: {
-        std.debug.warn("opening {}\n", xau_file_name);
         break :blk try fs.File.openRead(xau_file_name);
     } else blk: {
         const home = os.getenv("HOME") orelse return error.HomeDirectoryNotFound;
         var dir = try fs.Dir.open(allocator, home);
         defer dir.close();
 
-        std.debug.warn("opening $HOME/.Xauthority\n");
         break :blk try dir.openRead(".Xauthority");
     };
     defer xau_file.close();
 
     const stream = &xau_file.inStream().stream;
 
-    const family = try stream.readIntBig(u16);
-    const address = try readCountedString(allocator, stream);
-    errdefer allocator.free(address);
-    const number = try readCountedString(allocator, stream);
-    errdefer allocator.free(number);
-    const name = try readCountedString(allocator, stream);
-    errdefer allocator.free(name);
-    const data = try readCountedString(allocator, stream);
-    errdefer allocator.free(data);
+    var hostname_buf: [os.HOST_NAME_MAX]u8 = undefined;
+    const hostname = try os.gethostname(&hostname_buf);
 
-    return Auth{
-        .family = family,
-        .address = address,
-        .number = number,
-        .name = name,
-        .data = data,
-    };
+    while (true) {
+        var auth = blk: {
+            const family = try stream.readIntBig(u16);
+            const address = try readCountedString(allocator, stream);
+            errdefer allocator.free(address);
+            const number = try readCountedString(allocator, stream);
+            errdefer allocator.free(number);
+            const name = try readCountedString(allocator, stream);
+            errdefer allocator.free(name);
+            const data = try readCountedString(allocator, stream);
+            errdefer allocator.free(data);
+
+            break :blk Auth{
+                .family = family,
+                .address = address,
+                .number = number,
+                .name = name,
+                .data = data,
+            };
+        };
+        if (mem.eql(u8, hostname, auth.address)) {
+            return auth;
+        } else {
+            auth.deinit(allocator);
+            continue;
+        }
+    }
+
+    return error.AuthNotFound;
 }
 
 fn readCountedString(allocator: *Allocator, stream: var) ![]u8 {
