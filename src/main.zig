@@ -152,6 +152,7 @@ pub fn connectToDisplay(allocator: *Allocator, parsed: ParsedDisplay, optional_a
             error.OperationAborted => return error.AuthFileUnavailable,
             error.BrokenPipe => return error.AuthFileUnavailable,
             error.DeviceBusy => return error.AuthFileUnavailable,
+            error.PermissionDenied => return error.AuthFileUnavailable,
 
             error.Unexpected => return error.Unexpected,
 
