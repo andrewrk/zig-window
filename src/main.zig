@@ -267,7 +267,7 @@ pub fn getAuth(allocator: *Allocator, sock: File, display: u32) !Auth {
         break :blk try fs.File.openRead(xau_file_name);
     } else blk: {
         const home = os.getenv("HOME") orelse return error.HomeDirectoryNotFound;
-        var dir = try fs.Dir.open(allocator, home);
+        var dir = try fs.Dir.open(home);
         defer dir.close();
 
         break :blk try dir.openRead(".Xauthority");
