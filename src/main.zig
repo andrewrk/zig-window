@@ -117,7 +117,7 @@ pub fn open(host: []const u8, protocol: []const u8, display: u32) !File {
     }
 
     var path_buf: [fs.MAX_PATH_BYTES]u8 = undefined;
-    const socket_path = std.fmt.bufPrint(path_buf[0..], "/tmp/.X11-unix/X{}", display) catch unreachable;
+    const socket_path = std.fmt.bufPrint(path_buf[0..], "/tmp/.X11-unix/X{}", .{display}) catch unreachable;
 
     return net.connectUnixSocket(socket_path);
 }
@@ -131,6 +131,8 @@ pub fn connectToDisplay(allocator: *Allocator, parsed: ParsedDisplay, optional_a
         cleanup_auth = true;
         break :blk getAuth(allocator, file, parsed.display) catch |e| switch (e) {
             error.WouldBlock => unreachable,
+            error.OperationAborted => unreachable,
+            error.ConnectionResetByPeer => return error.AuthFileUnavailable,
             error.IsDir => return error.AuthFileUnavailable,
             error.SharingViolation => return error.AuthFileUnavailable,
             error.PathAlreadyExists => return error.AuthFileUnavailable,
@@ -149,7 +151,6 @@ pub fn connectToDisplay(allocator: *Allocator, parsed: ParsedDisplay, optional_a
             error.NotDir => return error.AuthFileUnavailable,
             error.AccessDenied => return error.AuthFileUnavailable,
             error.HomeDirectoryNotFound => return error.AuthFileUnavailable,
-            error.OperationAborted => return error.AuthFileUnavailable,
             error.BrokenPipe => return error.AuthFileUnavailable,
             error.DeviceBusy => return error.AuthFileUnavailable,
             error.PermissionDenied => return error.AuthFileUnavailable,
@@ -164,7 +165,17 @@ pub fn connectToDisplay(allocator: *Allocator, parsed: ParsedDisplay, optional_a
     };
     defer if (cleanup_auth) auth.deinit(allocator);
 
-    return connectToFile(allocator, file, auth);
+    return connectToFile(allocator, file, auth) catch |err| switch (err) {
+        error.WouldBlock => unreachable,
+        error.OperationAborted => unreachable,
+        error.DiskQuota => unreachable,
+        error.FileTooBig => unreachable,
+        error.NoSpaceLeft => unreachable,
+        error.IsDir => return error.UnableToConnectToServer,
+        error.BrokenPipe => return error.UnableToConnectToServer,
+        error.ConnectionResetByPeer => return error.UnableToConnectToServer,
+        else => |e| return e,
+    };
 }
 
 fn xpad(n: usize) usize {
