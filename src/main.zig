@@ -67,7 +67,6 @@ pub const OpenDisplayError = error{
     UserResourceLimitReached,
     FileDescriptorIncompatibleWithEpoll,
     Unexpected,
-    Unimplemented,
     InputOutput,
     AccessDenied,
     EndOfStream,
@@ -81,7 +80,7 @@ pub fn openDisplay(allocator: *Allocator, name: []const u8) OpenDisplayError!Con
         error.MissingDisplayIndex => return error.InvalidDisplayFormat,
         error.InvalidCharacter => return error.InvalidDisplayFormat,
     };
-    return connectToDisplay(allocator, parsed, null);
+    return try connectToDisplay(allocator, parsed, null);
 }
 
 pub const ParsedDisplay = struct {
@@ -270,18 +269,18 @@ fn writeSetup(file: File, auth: ?Auth) !void {
 
     assert(parts_index <= parts.len);
 
-    return file.writev_iovec(parts[0..parts_index]);
+    return file.writev(parts[0..parts_index]);
 }
 
 pub fn getAuth(allocator: *Allocator, sock: File, display: u32) !Auth {
     const xau_file = if (os.getenv("XAUTHORITY")) |xau_file_name| blk: {
-        break :blk try fs.File.openRead(xau_file_name);
+        break :blk try fs.openFileAbsolute(xau_file_name, .{});
     } else blk: {
         const home = os.getenv("HOME") orelse return error.HomeDirectoryNotFound;
         var dir = try fs.Dir.open(home);
         defer dir.close();
 
-        break :blk try dir.openRead(".Xauthority");
+        break :blk try dir.openFile(".Xauthority", .{});
     };
     defer xau_file.close();
 
