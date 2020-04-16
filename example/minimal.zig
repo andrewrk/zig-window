@@ -31,12 +31,12 @@ pub fn main() !void {
         X.WhitePixel(display, screen_num),
     );
 
-    const window_name = [1][*]const u8{c"window name"};
+    const window_name = [1][*:0]const u8{"window name"};
     var windowName: X.TextProperty = undefined;
     if (X.StringListToTextProperty(&window_name, 1, &windowName) == 0)
         return error.OutOfMemory;
 
-    const icon_name = [1][*]const u8{c"icon name"};
+    const icon_name = [1][*:0]const u8{"icon name"};
     var iconName: X.TextProperty = undefined;
     if (X.StringListToTextProperty(&icon_name, 1, &iconName) == 0)
         return error.OutOfMemory;
@@ -53,16 +53,16 @@ pub fn main() !void {
     wm_hints.initial_state = X.NormalState;
     wm_hints.input = X.True;
 
-    const appname = c"appname";
+    const appname = "appname";
     class_hints.res_name = appname;
-    class_hints.res_class = c"hellox";
+    class_hints.res_class = "hellox";
 
     X.SetWMProperties(display, win, &windowName, &iconName, null, 0, size_hints, wm_hints, class_hints);
 
     _ = X.MapWindow(display, win);
 
     while (true) {
-        const message = c"Hello, X Window System!";
+        const message = "Hello, X Window System!";
 
         var report: X.Event = undefined;
         assert(X.NextEvent(display, &report) == 0);

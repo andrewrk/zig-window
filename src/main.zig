@@ -103,7 +103,7 @@ pub fn parseDisplay(name: []const u8) !ParsedDisplay {
     } else name;
 
     const colon = mem.lastIndexOfScalar(u8, after_prot, ':') orelse return error.MissingColon;
-    var it = mem.separate(after_prot[colon + 1 ..], ".");
+    var it = mem.split(after_prot[colon + 1 ..], ".");
     result.display = try std.fmt.parseInt(u32, it.next() orelse return error.MissingDisplayIndex, 10);
     result.screen = if (it.next()) |s| try std.fmt.parseInt(u32, s, 10) else 0;
     result.host = after_prot[0..colon];
@@ -153,6 +153,7 @@ pub fn connectToDisplay(allocator: *Allocator, parsed: ParsedDisplay, optional_a
             error.BrokenPipe => return error.AuthFileUnavailable,
             error.DeviceBusy => return error.AuthFileUnavailable,
             error.PermissionDenied => return error.AuthFileUnavailable,
+            error.FileLocksNotSupported => return error.AuthFileUnavailable,
 
             error.Unexpected => return error.Unexpected,
 
@@ -209,7 +210,7 @@ pub fn connectToFile(allocator: *Allocator, file: File, auth: ?Auth) !Connection
 }
 
 fn readSetup(allocator: *Allocator, conn: *Connection) !void {
-    const stream = &conn.file.inStream().stream;
+    const stream = conn.file.inStream();
 
     const xcb_setup_generic_t = extern struct {
         status: u8,
@@ -269,7 +270,7 @@ fn writeSetup(file: File, auth: ?Auth) !void {
 
     assert(parts_index <= parts.len);
 
-    return file.writev(parts[0..parts_index]);
+    return file.writevAll(parts[0..parts_index]);
 }
 
 pub fn getAuth(allocator: *Allocator, sock: File, display: u32) !Auth {
@@ -277,14 +278,14 @@ pub fn getAuth(allocator: *Allocator, sock: File, display: u32) !Auth {
         break :blk try fs.openFileAbsolute(xau_file_name, .{});
     } else blk: {
         const home = os.getenv("HOME") orelse return error.HomeDirectoryNotFound;
-        var dir = try fs.Dir.open(home);
+        var dir = try fs.cwd().openDir(home, .{});
         defer dir.close();
 
         break :blk try dir.openFile(".Xauthority", .{});
     };
     defer xau_file.close();
 
-    const stream = &xau_file.inStream().stream;
+    const stream = xau_file.inStream();
 
     var hostname_buf: [os.HOST_NAME_MAX]u8 = undefined;
     const hostname = try os.gethostname(&hostname_buf);
