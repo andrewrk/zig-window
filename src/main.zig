@@ -71,6 +71,9 @@ pub const OpenDisplayError = error{
     AccessDenied,
     EndOfStream,
     InvalidStatus,
+    ConnectionTimedOut,
+    NotOpenForReading,
+    NotOpenForWriting,
 };
 
 pub fn openDisplay(allocator: *Allocator, name: []const u8) OpenDisplayError!Connection {
@@ -154,6 +157,8 @@ pub fn connectToDisplay(allocator: *Allocator, parsed: ParsedDisplay, optional_a
             error.DeviceBusy => return error.AuthFileUnavailable,
             error.PermissionDenied => return error.AuthFileUnavailable,
             error.FileLocksNotSupported => return error.AuthFileUnavailable,
+            error.ConnectionTimedOut => return error.AuthFileUnavailable,
+            error.NotOpenForReading => return error.AuthFileUnavailable,
 
             error.Unexpected => return error.Unexpected,
 
@@ -321,7 +326,7 @@ pub fn getAuth(allocator: *Allocator, sock: File, display: u32) !Auth {
     return error.AuthNotFound;
 }
 
-fn readCountedString(allocator: *Allocator, stream: var) ![]u8 {
+fn readCountedString(allocator: *Allocator, stream: anytype) ![]u8 {
     const len = try stream.readIntBig(u16);
     const buf = try allocator.alloc(u8, len);
     errdefer allocator.free(buf);
