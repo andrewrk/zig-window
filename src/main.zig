@@ -25,6 +25,12 @@ pub const Connection = struct {
         Ok = 1,
         Authenticate = 2,
     };
+
+    pub fn close(self: *Connection) void {
+        self.allocator.free(self.setup);
+        self.file.close();
+        self.* = undefined;
+    }
 };
 
 pub const Auth = struct {
