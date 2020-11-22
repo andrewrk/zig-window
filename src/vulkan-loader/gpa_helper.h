@@ -19,7 +19,7 @@
  * Author: Jon Ashburn <jon@lunarg.com>
  */
 
-#include <string.h>
+#include <libc_bits.h>
 #include "debug_utils.h"
 #include "wsi.h"
 

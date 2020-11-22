@@ -25,14 +25,7 @@
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <inttypes.h>
-#ifndef WIN32
-#include <signal.h>
-#else
-#endif
+#include "libc_bits.h"
 #include "vk_loader_platform.h"
 #include "debug_utils.h"
 #include "vulkan/vk_layer.h"

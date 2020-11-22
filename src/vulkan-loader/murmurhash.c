@@ -27,9 +27,7 @@
  * USE OR OTHER DEALINGS IN THE MATERIALS.
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdint.h>
+#include <libc_bits.h>
 #include "murmurhash.h"
 
 uint32_t murmurhash(const char *key, size_t len, uint32_t seed) {

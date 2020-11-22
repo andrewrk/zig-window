@@ -27,21 +27,8 @@
 
 #ifndef __XCB_H__
 #define __XCB_H__
-#include <sys/types.h>
-
-#if defined(__solaris__)
-#include <inttypes.h>
-#else
+#include <libc_bits.h>
 #include <stdint.h>
-#endif
-
-#ifndef _WIN32
-#include <sys/uio.h>
-#else
-#include "xcb_windefs.h"
-#endif
-#include <pthread.h>
-
 
 #ifdef __cplusplus
 extern "C" {

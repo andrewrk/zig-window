@@ -26,13 +26,9 @@
 /* cJSON */
 /* JSON parser in C. */
 
-#include <string.h>
-#include <stdio.h>
-#include <math.h>
-#include <stdlib.h>
+#include "libc_bits.h"
 #include <float.h>
 #include <limits.h>
-#include <ctype.h>
 #include "cJSON.h"
 
 static const char *ep;

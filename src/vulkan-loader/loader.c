@@ -25,37 +25,9 @@
  *
  */
 
-// This needs to be defined first, or else we'll get redefinitions on NTSTATUS values
-#ifdef _WIN32
-#define UMDF_USING_NTSTATUS
-#include <ntstatus.h>
-#endif
-
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
-#include <inttypes.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <string.h>
-#include <stddef.h>
-
-#if defined(__APPLE__)
-#include <CoreFoundation/CoreFoundation.h>
-#include <sys/param.h>
-#endif
-
-// Time related functions
-#include <time.h>
-
-#include <sys/types.h>
-#if defined(_WIN32)
-#include "dirent_on_windows.h"
-#else  // _WIN32
-#include <dirent.h>
-#endif  // _WIN32
 #include "vk_loader_platform.h"
 #include "loader.h"
 #include "gpa_helper.h"
@@ -64,22 +36,6 @@
 #include "vulkan/vk_icd.h"
 #include "cJSON.h"
 #include "murmurhash.h"
-
-#if defined(_WIN32)
-#include <cfgmgr32.h>
-#include <initguid.h>
-#include <devpkey.h>
-#include <winternl.h>
-#include <strsafe.h>
-#ifdef __MINGW32__
-#undef strcpy  // fix error with redfined strcpy when building with MinGW-w64
-#endif
-#include <dxgi1_6.h>
-#include "adapters.h"
-
-typedef HRESULT (APIENTRY *PFN_CreateDXGIFactory1)(REFIID riid, void **ppFactory);
-static PFN_CreateDXGIFactory1 fpCreateDXGIFactory1;
-#endif
 
 // This is a CMake generated file with #defines for any functions/includes
 // that it found present.  This is currently necessary to properly determine

@@ -22,9 +22,7 @@
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <libc_bits.h>
 #include "vk_loader_platform.h"
 #include "loader.h"
 #include "vk_loader_extensions.h"

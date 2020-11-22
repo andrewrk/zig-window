@@ -26,9 +26,6 @@
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
-#include <stdlib.h>
-#include <string.h>
-
 #include "vk_loader_platform.h"
 #include "loader.h"
 #include "debug_utils.h"

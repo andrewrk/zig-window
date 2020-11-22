@@ -42,15 +42,7 @@
 //#ifndef _GNU_SOURCE
 //#define _GNU_SOURCE 1
 //#endif
-#include <unistd.h>
-// Note: The following file is for dynamic loading:
-#include <dlfcn.h>
-#include <pthread.h>
-#include <assert.h>
-#include <string.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <libgen.h>
+#include <libc_bits.h>
 
 // VK Library Filenames, Paths, etc.:
 #define PATH_SEPARATOR ':'

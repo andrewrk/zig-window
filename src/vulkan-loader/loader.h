@@ -34,7 +34,7 @@
 #include "vk_loader_layer.h"
 #include <vulkan/vk_layer.h>
 #include <vulkan/vk_icd.h>
-#include <assert.h>
+#include <libc_bits.h>
 #include "vk_layer_dispatch_table.h"
 #include "vk_loader_extensions.h"
 
