@@ -40,13 +40,23 @@ pub fn build(b: *Builder) void {
         vulkan_loader.addCSourceFile(c_file, &cflags);
     }
 
+    // a dummy .so file that we can link "static-window" against to trick the linker
+    // into making a valid ELF executable that can be loaded with ld
+    const dummy_so = b.addSharedLibrary("dummy", "src/dummy.zig", b.version(0, 0, 0));
+    dummy_so.setBuildMode(mode);
+    dummy_so.setTarget(target);
+    dummy_so.install();
+
     const static_window_exe = b.addExecutable("static-window", "src/static-window.zig");
     // Uncommenting this is a hack that makes the window show up even before we've
     // worked out the PIE problems.
     //static_window_exe.linkLibC();
-    static_window_exe.pie = true;
+    // setting pie to true is causing a segfault somewhere in the call to NativeTargetInfo.detect(...)
+    // commented out for now, not sure if we even need this
+    //static_window_exe.pie = true;
     static_window_exe.setTarget(target);
     static_window_exe.setBuildMode(mode);
     static_window_exe.install();
     static_window_exe.linkLibrary(vulkan_loader);
+    static_window_exe.linkLibrary(dummy_so);
 }
