@@ -27,6 +27,8 @@ const DlErrorFn = fn () callconv(.C) [*:0]const u8;
 var general_purpose_allocator = std.heap.GeneralPurposeAllocator(.{}){};
 
 pub fn main() anyerror!void {
+    @setAlignStack(16);
+
     const gpa = &general_purpose_allocator.allocator;
     defer _ = general_purpose_allocator.deinit();
 
