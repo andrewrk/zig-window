@@ -42,6 +42,8 @@ pub fn main() anyerror!void {
         std.log.debug("we're not. detecting the dynamic linker path", .{});
 
         const info = try std.zig.system.NativeTargetInfo.detect(arena, .{});
+        // print a messsage so we know if we segfaulted in NativeTargetInfo.detect
+        std.log.debug("NativeTargetInfo.detect has returned\n", .{});
         const dyld_path = info.dynamic_linker.get() orelse @panic("OS has no dynamic linker");
         std.log.debug("dyld_path={}", .{dyld_path});
         const dyld_z = arena.dupeZ(u8, dyld_path) catch @panic("out of memory");
