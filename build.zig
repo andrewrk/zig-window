@@ -14,14 +14,15 @@ pub fn build(b: *Builder) void {
 
     const vulkan_loader = b.addStaticLibrary("vulkan", null);
     vulkan_loader.setTarget(target);
-    vulkan_loader.pie = true;
+    vulkan_loader.force_pic = true;
     vulkan_loader.addIncludeDir("src/vulkan-loader/include");
     vulkan_loader.addIncludeDir("src");
     vulkan_loader.defineCMacro("API_NAME=Vulkan");
     vulkan_loader.defineCMacro("FALLBACK_CONFIG_DIRS=\"/etc/xdg\"");
     vulkan_loader.defineCMacro("FALLBACK_DATA_DIRS=\"/usr/local/share:/usr/share\"");
-    vulkan_loader.defineCMacro("SYSCONFDIR=\"/run/opengl-driver/share/\""); // TODO
     vulkan_loader.defineCMacro("VK_USE_PLATFORM_XCB_KHR");
+    // TODO patch vulkan-loader to make this configurable at runtime
+    vulkan_loader.defineCMacro("SYSCONFDIR=\"/run/opengl-driver/share/\"");
 
     const cflags = [_][]const u8{"-std=c11"};
     const c_files = [_][]const u8{
