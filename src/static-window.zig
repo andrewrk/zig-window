@@ -48,10 +48,12 @@ pub fn main() anyerror!void {
         std.log.debug("dyld_path={}", .{dyld_path});
         const dyld_z = arena.dupeZ(u8, dyld_path) catch @panic("out of memory");
 
-        const argv = arena.allocSentinel(?[*:0]const u8, std.os.argv.len + 1, null) catch @panic("out of memory");
+        const argv = arena.allocSentinel(?[*:0]const u8, std.os.argv.len + 3, null) catch @panic("out of memory");
         argv[0] = dyld_z;
+        argv[1] = "--preload";
+        argv[2] = "libdl.so.2";
         for (std.os.argv) |arg, i| {
-            argv[i + 1] = arg;
+            argv[i + 3] = arg;
         }
         // TODO make std.os.environ slice be also null terminated
         const envp = @ptrCast([*:null]const ?[*:0]const u8, std.os.environ.ptr);
