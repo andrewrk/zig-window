@@ -336,6 +336,12 @@ static const char *parse_string(cJSON *item, const char *str) {
     return ptr;
 }
 
+static char *strchr2(const char *s, int c)
+{
+	char *r = strchrnul(s, c);
+	return *(unsigned char *)r == (unsigned char)c ? r : 0;
+}
+
 /* Render the cstring provided to an escaped version that can be printed. */
 static char *print_string_ptr(const char *str, printbuffer *p) {
     const char *ptr;
@@ -371,7 +377,7 @@ static char *print_string_ptr(const char *str, printbuffer *p) {
     }
     ptr = str;
     while ((token = *ptr) && ++len) {
-        if (strchr("\"\\\b\f\n\r\t", token))
+        if (strchr2("\"\\\b\f\n\r\t", token))
             len++;
         else if (token < 32)
             len += 5;

@@ -51,9 +51,9 @@ struct dirent {
 	char d_name[256];
 };
 
-extern FILE *const stdin;
-extern FILE *const stdout;
-extern FILE *const stderr;
+extern __attribute__((weak)) FILE *const stdin;
+extern __attribute__((weak)) FILE *const stdout;
+extern __attribute__((weak)) FILE *const stderr;
 
 #define F_OK 0
 #define R_OK 4
@@ -79,121 +79,124 @@ extern FILE *const stderr;
 #define SEEK_CUR 1
 #define SEEK_END 2
 
-_Noreturn void abort (void);
+_Noreturn void __attribute__((weak)) abort (void);
 
-int atoi (const char *);
-long atol (const char *);
-long long atoll (const char *);
-double atof (const char *);
+int __attribute__((weak)) atoi (const char *);
+long __attribute__((weak)) atol (const char *);
+long long __attribute__((weak)) atoll (const char *);
+double __attribute__((weak)) atof (const char *);
 
-float strtof (const char *__restrict, char **__restrict);
-double strtod (const char *__restrict, char **__restrict);
-long double strtold (const char *__restrict, char **__restrict);
+float __attribute__((weak)) strtof (const char *__restrict, char **__restrict);
+double __attribute__((weak)) strtod (const char *__restrict, char **__restrict);
+long double __attribute__((weak)) strtold (const char *__restrict, char **__restrict);
 
-long strtol (const char *__restrict, char **__restrict, int);
-unsigned long strtoul (const char *__restrict, char **__restrict, int);
-long long strtoll (const char *__restrict, char **__restrict, int);
-unsigned long long strtoull (const char *__restrict, char **__restrict, int);
-void *malloc (size_t);
-void *calloc (size_t, size_t);
-void *realloc (void *, size_t);
-void free (void *);
-void *aligned_alloc(size_t, size_t);
-void *memcpy (void *__restrict, const void *__restrict, size_t);
-void *memmove (void *, const void *, size_t);
-void *memset (void *, int, size_t);
-int memcmp (const void *, const void *, size_t);
-void *memchr (const void *, int, size_t);
-char *strcpy (char *__restrict, const char *__restrict);
-char *strncpy (char *__restrict, const char *__restrict, size_t);
-char *strcat (char *__restrict, const char *__restrict);
-char *strncat (char *__restrict, const char *__restrict, size_t);
-int strcmp (const char *, const char *);
-int strncmp (const char *, const char *, size_t);
-int strcoll (const char *, const char *);
-size_t strxfrm (char *__restrict, const char *__restrict, size_t);
-char *strchr (const char *, int);
-char *strrchr (const char *, int);
-size_t strcspn (const char *, const char *);
-size_t strspn (const char *, const char *);
-char *strpbrk (const char *, const char *);
-char *strstr (const char *, const char *);
-char *strtok (char *__restrict, const char *__restrict);
-size_t strlen (const char *);
-char *strerror (int);
-char *getenv (const char *);
-int fputs(const char *__restrict, FILE *__restrict);
-int puts(const char *);
-int printf(const char *__restrict, ...);
-int fprintf(FILE *__restrict, const char *__restrict, ...);
-int sprintf(char *__restrict, const char *__restrict, ...);
-int snprintf(char *__restrict, size_t, const char *__restrict, ...);
+long __attribute__((weak)) strtol (const char *__restrict, char **__restrict, int);
+unsigned long __attribute__((weak)) strtoul (const char *__restrict, char **__restrict, int);
+long long __attribute__((weak)) strtoll (const char *__restrict, char **__restrict, int);
+unsigned long long __attribute__((weak)) strtoull (const char *__restrict, char **__restrict, int);
+void *__attribute__((weak)) malloc (size_t);
+void *__attribute__((weak)) calloc (size_t, size_t);
+void *__attribute__((weak)) realloc (void *, size_t);
+void __attribute__((weak)) free (void *);
+void *__attribute__((weak)) aligned_alloc(size_t, size_t);
+void *__attribute__((weak)) memcpy (void *__restrict, const void *__restrict, size_t);
+void *__attribute__((weak)) memmove (void *, const void *, size_t);
+void *__attribute__((weak)) memset (void *, int, size_t);
+int __attribute__((weak)) memcmp (const void *, const void *, size_t);
+void *__attribute__((weak)) memchr (const void *, int, size_t);
+char *__attribute__((weak)) strcpy (char *__restrict, const char *__restrict);
+char *__attribute__((weak)) strncpy (char *__restrict, const char *__restrict, size_t);
+char *__attribute__((weak)) strcat (char *__restrict, const char *__restrict);
+char *__attribute__((weak)) strncat (char *__restrict, const char *__restrict, size_t);
+int __attribute__((weak)) strcmp (const char *, const char *);
+int __attribute__((weak)) strncmp (const char *, const char *, size_t);
+int __attribute__((weak)) strcoll (const char *, const char *);
+size_t __attribute__((weak)) strxfrm (char *__restrict, const char *__restrict, size_t);
+char *__attribute__((weak)) strchr (const char *, int);
+char *__attribute__((weak)) strrchr (const char *, int);
+size_t __attribute__((weak)) strcspn (const char *, const char *);
+size_t __attribute__((weak)) strspn (const char *, const char *);
+char *__attribute__((weak)) strpbrk (const char *, const char *);
+char *__attribute__((weak)) strstr (const char *, const char *);
+char *__attribute__((weak)) strtok (char *__restrict, const char *__restrict);
+size_t __attribute__((weak)) strlen (const char *);
+char *__attribute__((weak)) strerror (int);
+char *__attribute__((weak)) getenv (const char *);
+int __attribute__((weak)) fputs(const char *__restrict, FILE *__restrict);
+int __attribute__((weak)) puts(const char *);
+int __attribute__((weak)) printf(const char *__restrict, ...);
+int __attribute__((weak)) fprintf(FILE *__restrict, const char *__restrict, ...);
+int __attribute__((weak)) sprintf(char *__restrict, const char *__restrict, ...);
+int __attribute__((weak)) snprintf(char *__restrict, size_t, const char *__restrict, ...);
+char * __attribute__((weak)) strchrnul(const char *, int);
 
-int vprintf(const char *__restrict, __isoc_va_list);
-int vfprintf(FILE *__restrict, const char *__restrict, __isoc_va_list);
-int vsprintf(char *__restrict, const char *__restrict, __isoc_va_list);
-int vsnprintf(char *__restrict, size_t, const char *__restrict, __isoc_va_list);
+int __attribute__((weak)) vprintf(const char *__restrict, __isoc_va_list);
+int __attribute__((weak)) vfprintf(FILE *__restrict, const char *__restrict, __isoc_va_list);
+int __attribute__((weak)) vsprintf(char *__restrict, const char *__restrict, __isoc_va_list);
+int __attribute__((weak)) vsnprintf(char *__restrict, size_t, const char *__restrict, __isoc_va_list);
 
-int fgetc(FILE *);
-int getc(FILE *);
-int getchar(void);
-int ungetc(int, FILE *);
-int fputc(int, FILE *);
-int putc(int, FILE *);
-int putchar(int);
-FILE *fopen(const char *__restrict, const char *__restrict);
-int fclose(FILE *);
-int fseek(FILE *, long, int);
-long ftell(FILE *);
-void rewind(FILE *);
-size_t fread(void *__restrict, size_t, size_t, FILE *__restrict);
-size_t fwrite(const void *__restrict, size_t, size_t, FILE *__restrict);
+int __attribute__((weak)) fgetc(FILE *);
+int __attribute__((weak)) getc(FILE *);
+int __attribute__((weak)) getchar(void);
+int __attribute__((weak)) ungetc(int, FILE *);
+int __attribute__((weak)) fputc(int, FILE *);
+int __attribute__((weak)) putc(int, FILE *);
+int __attribute__((weak)) putchar(int);
+FILE *__attribute__((weak)) fopen(const char *__restrict, const char *__restrict);
+int __attribute__((weak)) fclose(FILE *);
+int __attribute__((weak)) fseek(FILE *, long, int);
+long __attribute__((weak)) ftell(FILE *);
+void __attribute__((weak)) rewind(FILE *);
+size_t __attribute__((weak)) fread(void *__restrict, size_t, size_t, FILE *__restrict);
+size_t __attribute__((weak)) fwrite(const void *__restrict, size_t, size_t, FILE *__restrict);
 
-int closedir(DIR *);
-DIR *fdopendir(int);
-DIR *opendir(const char *);
-struct dirent *readdir(DIR *);
+int __attribute__((weak)) closedir(DIR *);
+DIR *__attribute__((weak)) fdopendir(int);
+DIR *__attribute__((weak)) opendir(const char *);
+struct dirent *__attribute__((weak)) readdir(DIR *);
 
-time_t time (time_t *);
-struct tm *localtime (const time_t *);
-time_t mktime (struct tm *);
+time_t __attribute__((weak)) time (time_t *);
+struct tm *__attribute__((weak)) localtime (const time_t *);
+time_t __attribute__((weak)) mktime (struct tm *);
 
-int access(const char *, int);
-char *dirname(char *);
-char *basename(char *);
-ssize_t readlink(const char *__restrict, char *__restrict, size_t);
-ssize_t readlinkat(int, const char *__restrict, char *__restrict, size_t);
-uid_t getuid(void);
-uid_t geteuid(void);
-gid_t getgid(void);
-gid_t getegid(void);
-int getgroups(int, gid_t []);
-int setuid(uid_t);
-int seteuid(uid_t);
-int setgid(gid_t);
-int setegid(gid_t);
+int __attribute__((weak)) access(const char *, int);
+char *__attribute__((weak)) dirname(char *);
+char *__attribute__((weak)) basename(char *);
+ssize_t __attribute__((weak)) readlink(const char *__restrict, char *__restrict, size_t);
+ssize_t __attribute__((weak)) readlinkat(int, const char *__restrict, char *__restrict, size_t);
+uid_t __attribute__((weak)) getuid(void);
+uid_t __attribute__((weak)) geteuid(void);
+gid_t __attribute__((weak)) getgid(void);
+gid_t __attribute__((weak)) getegid(void);
+int __attribute__((weak)) getgroups(int, gid_t []);
+int __attribute__((weak)) setuid(uid_t);
+int __attribute__((weak)) seteuid(uid_t);
+int __attribute__((weak)) setgid(gid_t);
+int __attribute__((weak)) setegid(gid_t);
 
-int    dlclose(void *);
-char  *dlerror(void);
-void  *dlopen(const char *, int);
-void  *dlsym(void *__restrict, const char *__restrict);
+int    __attribute__((weak)) dlclose(void *);
+char  *__attribute__((weak)) dlerror(void);
+void  *__attribute__((weak)) dlopen(const char *, int);
+void  *__attribute__((weak)) dlsym(void *__restrict, const char *__restrict);
 
-pthread_t pthread_self(void);
+double __attribute__((weak)) pow(double, double);
 
-int pthread_mutex_init(pthread_mutex_t *__restrict, const pthread_mutexattr_t *__restrict);
-int pthread_mutex_lock(pthread_mutex_t *);
-int pthread_mutex_unlock(pthread_mutex_t *);
-int pthread_mutex_trylock(pthread_mutex_t *);
-int pthread_mutex_timedlock(pthread_mutex_t *__restrict, const struct timespec *__restrict);
-int pthread_mutex_destroy(pthread_mutex_t *);
-int pthread_mutex_consistent(pthread_mutex_t *);
+pthread_t __attribute__((weak)) pthread_self(void);
 
-int pthread_cond_init(pthread_cond_t *__restrict, const pthread_condattr_t *__restrict);
-int pthread_cond_destroy(pthread_cond_t *);
-int pthread_cond_wait(pthread_cond_t *__restrict, pthread_mutex_t *__restrict);
-int pthread_cond_timedwait(pthread_cond_t *__restrict, pthread_mutex_t *__restrict, const struct timespec *__restrict);
-int pthread_cond_broadcast(pthread_cond_t *);
-int pthread_cond_signal(pthread_cond_t *);
+int __attribute__((weak)) pthread_mutex_init(pthread_mutex_t *__restrict, const pthread_mutexattr_t *__restrict);
+int __attribute__((weak)) pthread_mutex_lock(pthread_mutex_t *);
+int __attribute__((weak)) pthread_mutex_unlock(pthread_mutex_t *);
+int __attribute__((weak)) pthread_mutex_trylock(pthread_mutex_t *);
+int __attribute__((weak)) pthread_mutex_timedlock(pthread_mutex_t *__restrict, const struct timespec *__restrict);
+int __attribute__((weak)) pthread_mutex_destroy(pthread_mutex_t *);
+int __attribute__((weak)) pthread_mutex_consistent(pthread_mutex_t *);
+
+int __attribute__((weak)) pthread_cond_init(pthread_cond_t *__restrict, const pthread_condattr_t *__restrict);
+int __attribute__((weak)) pthread_cond_destroy(pthread_cond_t *);
+int __attribute__((weak)) pthread_cond_wait(pthread_cond_t *__restrict, pthread_mutex_t *__restrict);
+int __attribute__((weak)) pthread_cond_timedwait(pthread_cond_t *__restrict, pthread_mutex_t *__restrict, const struct timespec *__restrict);
+int __attribute__((weak)) pthread_cond_broadcast(pthread_cond_t *);
+int __attribute__((weak)) pthread_cond_signal(pthread_cond_t *);
 
 #define stdin  (stdin)
 #define stdout (stdout)
