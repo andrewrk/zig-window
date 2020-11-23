@@ -1053,6 +1053,27 @@ static size_t loader_platform_combine_path(char *dest, size_t len, ...) {
     return required_len;
 }
 
+static int isdigit(int c) {
+	return (unsigned)c-'0' < 10;
+}
+
+static int isspace(int c) {
+	return c == ' ' || (unsigned)c-'\t' < 5;
+}
+
+static int atoi(const char *s) {
+	int n=0, neg=0;
+	while (isspace(*s)) s++;
+	switch (*s) {
+	case '-': neg=1;
+	case '+': s++;
+	}
+	/* Compute n as a negative number to avoid overflow on INT_MIN */
+	while (isdigit(*s))
+		n = 10*n - (*s++ - '0');
+	return neg ? n : -n;
+}
+
 // Given string of three part form "maj.min.pat" convert to a vulkan version number.
 static uint32_t loader_make_version(char *vers_str) {
     uint32_t major = 0, minor = 0, patch = 0;

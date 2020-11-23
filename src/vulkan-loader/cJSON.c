@@ -35,8 +35,8 @@ static const char *ep;
 
 const char *cJSON_GetErrorPtr(void) { return ep; }
 
-static void *(*cJSON_malloc)(size_t sz) = malloc;
-static void (*cJSON_free)(void *ptr) = free;
+#define cJSON_malloc malloc
+#define cJSON_free free
 
 static char *cJSON_strdup(const char *str) {
     size_t len;
@@ -48,16 +48,7 @@ static char *cJSON_strdup(const char *str) {
     return copy;
 }
 
-void cJSON_InitHooks(cJSON_Hooks *hooks) {
-    if (!hooks) { /* Reset hooks */
-        cJSON_malloc = malloc;
-        cJSON_free = free;
-        return;
-    }
-
-    cJSON_malloc = (hooks->malloc_fn) ? hooks->malloc_fn : malloc;
-    cJSON_free = (hooks->free_fn) ? hooks->free_fn : free;
-}
+void cJSON_InitHooks(cJSON_Hooks *hooks) { }
 
 /* Internal constructor. */
 static cJSON *cJSON_New_Item(void) {

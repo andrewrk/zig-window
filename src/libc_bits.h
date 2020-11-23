@@ -81,7 +81,6 @@ extern __attribute__((weak)) FILE *const stderr;
 
 _Noreturn void __attribute__((weak)) abort (void);
 
-int __attribute__((weak)) atoi (const char *);
 long __attribute__((weak)) atol (const char *);
 long long __attribute__((weak)) atoll (const char *);
 double __attribute__((weak)) atof (const char *);
