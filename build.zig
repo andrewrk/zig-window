@@ -49,12 +49,6 @@ pub fn build(b: *Builder) void {
     dummy_so.install();
 
     const static_window_exe = b.addExecutable("static-window", "src/static-window.zig");
-    // Uncommenting this is a hack that makes the window show up even before we've
-    // worked out the PIE problems.
-    //static_window_exe.linkLibC();
-    // setting pie to true is causing a segfault somewhere in the call to NativeTargetInfo.detect(...)
-    // commented out for now, not sure if we even need this
-    //static_window_exe.pie = true;
     static_window_exe.setTarget(target);
     static_window_exe.setBuildMode(mode);
     static_window_exe.install();

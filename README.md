@@ -28,13 +28,24 @@ nonstandard dynamic linkers.
 
 ### Building
 
-Tested with Zig 0.7.0+c7170e4a5.
+Tested with Zig 0.7.0+479f259ea.
 
 ```
 zig build
+patchelf  --remove-needed libdummy.so.0 zig-cache/bin/static-window
 ./zig-cache/bin/static-window
 ```
 
-Right now this is segfaulting for me after it reloads with the glibc dyld and
-I'm working on figuring out why. There is a line you can uncomment in build.zig
-to `linkLibC()` which is a hack that makes everything work.
+Removing the external dependency on `patchelf` is TODO.
+
+Reported to work on these systems so far:
+
+ * NixOS
+ * Arch Linux
+ * clearlinux
+
+Work-in-progress systems:
+
+ * Debian: Looks like the hard-coded libdl.so.2 is not correct on this system?
+ * musl-based Void Linux: It's crashing in the call to `createInstance`.
+

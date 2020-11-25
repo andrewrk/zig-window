@@ -118,7 +118,6 @@ size_t __attribute__((weak)) strspn (const char *, const char *);
 char *__attribute__((weak)) strpbrk (const char *, const char *);
 char *__attribute__((weak)) strstr (const char *, const char *);
 char *__attribute__((weak)) strtok (char *__restrict, const char *__restrict);
-size_t __attribute__((weak)) strlen (const char *);
 char *__attribute__((weak)) strerror (int);
 char *__attribute__((weak)) getenv (const char *);
 int __attribute__((weak)) fputs(const char *__restrict, FILE *__restrict);
@@ -197,10 +196,6 @@ int __attribute__((weak)) pthread_cond_timedwait(pthread_cond_t *__restrict, pth
 int __attribute__((weak)) pthread_cond_broadcast(pthread_cond_t *);
 int __attribute__((weak)) pthread_cond_signal(pthread_cond_t *);
 
-#define stdin  (stdin)
-#define stdout (stdout)
-#define stderr (stderr)
-
 #ifdef NDEBUG
 #define assert(x) (void)0
 #else
@@ -271,6 +266,12 @@ int __attribute__((weak)) pthread_cond_signal(pthread_cond_t *);
 #define PRIu16 "u"
 #define PRIu32 "u"
 #define PRIu64 __PRI64 "u"
+
+static inline size_t strlen(const char *s) {
+	const char *a = s;
+	for (; *s; s++);
+	return s-a;
+}
 
 #ifdef __cplusplus
 }
