@@ -41,7 +41,7 @@ downloading - this makes Zig target the "baseline" CPU instead of using
 the fancy cool features of your native CPU.
 
 This should work just fine on other CPU architectures though; for example you
-could change `x86_64 to `aarch64` for 64-bit ARM.
+could change `x86_64` to `aarch64` for 64-bit ARM.
 
 Removing the external dependency on `patchelf` is TODO.
 
