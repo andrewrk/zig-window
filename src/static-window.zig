@@ -47,16 +47,41 @@ pub fn main() anyerror!void {
         std.log.debug("dyld_path={}", .{dyld_path});
         const dyld_z = arena.dupeZ(u8, dyld_path) catch @panic("out of memory");
 
-        const argv = arena.allocSentinel(?[*:0]const u8, std.os.argv.len + 3, null) catch @panic("out of memory");
+        const argv = arena.allocSentinel(?[*:0]const u8, std.os.argv.len + 1, null) catch @panic("out of memory");
         argv[0] = dyld_z;
-        argv[1] = "--preload";
-        argv[2] = "libdl.so.2";
         for (std.os.argv) |arg, i| {
-            argv[i + 3] = arg;
+            argv[i + 1] = arg;
         }
-        // TODO make std.os.environ slice be also null terminated
-        const envp = @ptrCast([*:null]const ?[*:0]const u8, std.os.environ.ptr);
-        return std.os.execveZ(dyld_z, argv, envp);
+
+        // Create a new set of environemnt variables so we can set LD_PRELOAD
+        // NOTE: we tried using the --preload option but not all loaders support it (i.e. Ubuntu/Debian)
+        //
+        // future improvement, restore the original LD_PRELOAD value on next invocation if we are going
+        // to start any children processes
+        //
+        const envp = arena.alloc(?[*:0]const u8, std.os.environ.len + 2) catch @panic("out of memory");
+        for (std.os.environ) |evar, i| {
+            envp[i] = evar;
+        }
+        var envp_len = std.os.environ.len;
+
+        var ld_preload_existed = false;
+        for (envp[0..envp_len]) |evar_ptr, i| {
+            const evar = std.mem.span(evar_ptr.?);
+            if (std.mem.startsWith(u8, evar, "LD_PRELOAD=")) {
+                envp[i] = @ptrCast([*:0]u8, (try std.mem.concat(arena, u8, &[_][]const u8{evar, " libdl.so.2\x00"})).ptr);
+                std.log.debug("changing environment variable '{}' to '{}'", .{evar, envp[i]});
+                ld_preload_existed = true;
+                break;
+            }
+        }
+        if (!ld_preload_existed) {
+            envp[envp_len] = "LD_PRELOAD=libdl.so.2";
+            std.log.debug("setting environment variable '{}'", .{envp[envp_len]});
+            envp_len += 1;
+        }
+        envp[envp_len] = null;
+        return std.os.execveZ(dyld_z, argv, @ptrCast([*:null]const ?[*:0]const u8, envp.ptr));
     };
 
     std.log.debug("got dlopen. init vulkan", .{});
