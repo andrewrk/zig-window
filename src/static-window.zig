@@ -65,17 +65,16 @@ pub fn main() anyerror!void {
         }
         var envp_len = std.os.environ.len;
 
-        var ld_preload_existed = false;
+        const libdl_name = "libdl.so.2";
+
         for (envp[0..envp_len]) |evar_ptr, i| {
             const evar = std.mem.span(evar_ptr.?);
             if (std.mem.startsWith(u8, evar, "LD_PRELOAD=")) {
-                envp[i] = @ptrCast([*:0]u8, (try std.mem.concat(arena, u8, &[_][]const u8{evar, " libdl.so.2\x00"})).ptr);
-                std.log.debug("changing environment variable '{}' to '{}'", .{evar, envp[i]});
-                ld_preload_existed = true;
+                envp[i] = try std.fmt.allocPrintZ(arena, "{s} {s}", .{ evar, libdl_name });
+                std.log.debug("changing environment variable '{}' to '{}'", .{ evar, envp[i] });
                 break;
             }
-        }
-        if (!ld_preload_existed) {
+        } else {
             envp[envp_len] = "LD_PRELOAD=libdl.so.2";
             std.log.debug("setting environment variable '{}'", .{envp[envp_len]});
             envp_len += 1;
