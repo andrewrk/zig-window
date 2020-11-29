@@ -23,19 +23,36 @@ const DlHandle = opaque {
 const DlOpenFn = fn (name: [*:0]const u8, flags: c_int) callconv(.C) ?*DlHandle;
 const DlSymFn = fn (handle: *DlHandle, symbol: [*:0]const u8) callconv(.C) usize;
 const DlErrorFn = fn () callconv(.C) [*:0]const u8;
+const ExitFn = fn (code: c_int) callconv(.C) noreturn;
+const LibCStartMainFn = fn (
+    main: fn (c_int, [*:null]const ?[*:0]const u8, [*:null]const ?[*:0]const u8) callconv(.C) c_int,
+    argc: c_int,
+    argv: [*:null]const ?[*:0]const u8,
+) c_int;
+
+fn libc_main(
+    argc: c_int,
+    argv: [*:null]const ?[*:0]const u8,
+    envp: [*:null]const ?[*:0]const u8,
+) callconv(.C) c_int {
+    main2() catch return -1;
+    return 0;
+}
 
 var general_purpose_allocator = std.heap.GeneralPurposeAllocator(.{}){};
+var global_arena: std.heap.ArenaAllocator = undefined;
+var dlopen: DlOpenFn = undefined;
 
 pub fn main() anyerror!void {
     const gpa = &general_purpose_allocator.allocator;
     defer _ = general_purpose_allocator.deinit();
 
-    var arena_instance = std.heap.ArenaAllocator.init(gpa);
-    defer arena_instance.deinit();
-    const arena = &arena_instance.allocator;
+    global_arena = std.heap.ArenaAllocator.init(gpa);
+    defer global_arena.deinit();
+    const arena = &global_arena.allocator;
 
     std.log.debug("detecting whether we are running in the dynamic linker", .{});
-    const dlopen = @extern(DlOpenFn, .{
+    dlopen = @extern(DlOpenFn, .{
         .name = "dlopen",
         .linkage = .Weak,
     }) orelse {
@@ -83,7 +100,31 @@ pub fn main() anyerror!void {
         return std.os.execveZ(dyld_z, argv, @ptrCast([*:null]const ?[*:0]const u8, envp.ptr));
     };
 
-    std.log.debug("got dlopen. init vulkan", .{});
+    std.log.debug("got dlopen. detect libc", .{});
+
+    const info = try std.zig.system.NativeTargetInfo.detect(arena, .{});
+    if (info.target.abi.isMusl()) {
+        const __libc_start_main = @extern(LibCStartMainFn, .{
+            .name = "__libc_start_main",
+            .linkage = .Weak,
+        }).?;
+        const exit = @extern(ExitFn, .{
+            .name = "exit",
+            .linkage = .Weak,
+        }).?;
+        std.log.debug("musl. invoke __libc_start_main", .{});
+        const argv_ptr = @ptrCast([*:null]const ?[*:0]const u8, std.os.argv.ptr);
+        exit(__libc_start_main(libc_main, @intCast(c_int, std.os.argv.len), argv_ptr));
+    } else {
+        return main2();
+    }
+}
+
+fn main2() anyerror!void {
+    const gpa = &general_purpose_allocator.allocator;
+    const arena = &global_arena.allocator;
+
+    std.log.debug("initialize vulkan", .{});
 
     // This loads shared libraries, so that when we dlopen libxcb.so.1, it will have
     // already been loaded by the vulkan driver. This requires a patch to Vulkan-Loader
