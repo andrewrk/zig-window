@@ -35,7 +35,13 @@ fn libc_main(
     argv: [*:null]const ?[*:0]const u8,
     envp: [*:null]const ?[*:0]const u8,
 ) callconv(.C) c_int {
-    main2() catch return -1;
+    const result = main2() catch |err| {
+        std.log.err("{}", .{@errorName(err)});
+        if (@errorReturnTrace()) |trace| {
+            std.debug.dumpStackTrace(trace.*);
+        }
+        return 1;
+    };
     return 0;
 }
 
