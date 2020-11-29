@@ -47,14 +47,12 @@ Removing the external dependency on `patchelf` is TODO.
 
 Reported to work on these systems so far:
 
+ * Ubuntu
  * NixOS
  * Arch Linux
  * clearlinux
  * glibc-based void linux
+ * musl-based void linux
 
-Work-in-progress systems:
-
- * Debian: Looks like the hard-coded libdl.so.2 is not correct on this system?
- * musl-based Void Linux: It's crashing in the call to `createInstance`,
-   inside "src/string/strlen.c:17:29: 0x7fe983621b62 in strlen (src/string/strlen.c)"
-
+Please file an issue if you find that `vkcube` from your package manager works
+but binaries produced by this project do not.
