@@ -106,24 +106,20 @@ pub fn main() anyerror!void {
         return std.os.execveZ(dyld_z, argv, @ptrCast([*:null]const ?[*:0]const u8, envp.ptr));
     };
 
-    std.log.debug("got dlopen. detect libc", .{});
+    std.log.debug("got dlopen. invoke __libc_start_main", .{});
 
-    const info = try std.zig.system.NativeTargetInfo.detect(arena, .{});
-    if (info.target.abi.isMusl()) {
-        const __libc_start_main = @extern(LibCStartMainFn, .{
-            .name = "__libc_start_main",
-            .linkage = .Weak,
-        }).?;
-        const exit = @extern(ExitFn, .{
-            .name = "exit",
-            .linkage = .Weak,
-        }).?;
-        std.log.debug("musl. invoke __libc_start_main", .{});
-        const argv_ptr = @ptrCast([*:null]const ?[*:0]const u8, std.os.argv.ptr);
-        exit(__libc_start_main(libc_main, @intCast(c_int, std.os.argv.len), argv_ptr));
-    } else {
-        return main2();
-    }
+    const __libc_start_main = @extern(LibCStartMainFn, .{
+        .name = "__libc_start_main",
+        .linkage = .Weak,
+    }).?;
+    const exit = @extern(ExitFn, .{
+        .name = "exit",
+        .linkage = .Weak,
+    }).?;
+    const argv_ptr = @ptrCast([*:null]const ?[*:0]const u8, std.os.argv.ptr);
+    const rc = __libc_start_main(libc_main, @intCast(c_int, std.os.argv.len), argv_ptr);
+    if (rc != 0)
+        exit(rc);
 }
 
 fn main2() anyerror!void {
