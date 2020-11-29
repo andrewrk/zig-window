@@ -88,17 +88,17 @@ pub fn main() anyerror!void {
         }
         var envp_len = std.os.environ.len;
 
-        const libdl_name = "libdl.so.2";
+        const lib_names = "libdl.so.2 libpthread.so.0";
 
         for (envp[0..envp_len]) |evar_ptr, i| {
             const evar = std.mem.span(evar_ptr.?);
             if (std.mem.startsWith(u8, evar, "LD_PRELOAD=")) {
-                envp[i] = try std.fmt.allocPrintZ(arena, "{s} {s}", .{ evar, libdl_name });
+                envp[i] = try std.fmt.allocPrintZ(arena, "{s} {s}", .{ evar, lib_names });
                 std.log.debug("changing environment variable '{}' to '{}'", .{ evar, envp[i] });
                 break;
             }
         } else {
-            envp[envp_len] = "LD_PRELOAD=libdl.so.2";
+            envp[envp_len] = "LD_PRELOAD=" ++ lib_names;
             std.log.debug("setting environment variable '{}'", .{envp[envp_len]});
             envp_len += 1;
         }
