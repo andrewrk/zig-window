@@ -48,6 +48,7 @@ Removing the external dependency on `patchelf` is TODO.
 Reported to work on these systems so far:
 
  * Ubuntu
+ * Debian
  * NixOS
  * Arch Linux
  * clearlinux
