@@ -11,7 +11,7 @@ pub fn main() anyerror!void {
     switch (conn.status) {
         .Ok => {},
         else => {
-            std.debug.warn("unable to open default display: {}\n", .{conn.setup});
+            std.debug.warn("unable to open default display: {s}\n", .{conn.setup});
             std.process.exit(1);
         },
     }

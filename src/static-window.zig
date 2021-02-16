@@ -36,7 +36,7 @@ fn libc_main(
     envp: [*:null]const ?[*:0]const u8,
 ) callconv(.C) c_int {
     const result = main2() catch |err| {
-        std.log.err("{}", .{@errorName(err)});
+        std.log.err("{s}", .{@errorName(err)});
         if (@errorReturnTrace()) |trace| {
             std.debug.dumpStackTrace(trace.*);
         }
@@ -67,7 +67,7 @@ pub fn main() anyerror!void {
         const info = try std.zig.system.NativeTargetInfo.detect(arena, .{});
         std.log.debug("prepare to execve reload", .{});
         const dyld_path = info.dynamic_linker.get() orelse @panic("OS has no dynamic linker");
-        std.log.debug("dyld_path={}", .{dyld_path});
+        std.log.debug("dyld_path={s}", .{dyld_path});
         const dyld_z = arena.dupeZ(u8, dyld_path) catch @panic("out of memory");
 
         const argv = arena.allocSentinel(?[*:0]const u8, std.os.argv.len + 1, null) catch @panic("out of memory");
@@ -94,12 +94,12 @@ pub fn main() anyerror!void {
             const evar = std.mem.span(evar_ptr.?);
             if (std.mem.startsWith(u8, evar, "LD_PRELOAD=")) {
                 envp[i] = try std.fmt.allocPrintZ(arena, "{s} {s}", .{ evar, lib_names });
-                std.log.debug("changing environment variable '{}' to '{}'", .{ evar, envp[i] });
+                std.log.debug("changing environment variable '{s}' to '{s}'", .{ evar, envp[i] });
                 break;
             }
         } else {
             envp[envp_len] = "LD_PRELOAD=" ++ lib_names;
-            std.log.debug("setting environment variable '{}'", .{envp[envp_len]});
+            std.log.debug("setting environment variable '{s}'", .{envp[envp_len]});
             envp_len += 1;
         }
         envp[envp_len] = null;

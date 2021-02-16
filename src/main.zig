@@ -6,7 +6,6 @@ const fs = std.fs;
 const net = std.net;
 const assert = std.debug.assert;
 const Allocator = std.mem.Allocator;
-const File = std.fs.File;
 
 usingnamespace @import("xproto.zig");
 
@@ -16,7 +15,7 @@ pub const Display = struct {
 
 pub const Connection = struct {
     allocator: *Allocator,
-    file: File,
+    socket: net.Stream,
     setup: []u8,
     status: Status,
 
@@ -28,7 +27,7 @@ pub const Connection = struct {
 
     pub fn close(self: *Connection) void {
         self.allocator.free(self.setup);
-        self.file.close();
+        self.socket.close();
         self.* = undefined;
     }
 };
@@ -119,26 +118,27 @@ pub fn parseDisplay(name: []const u8) !ParsedDisplay {
     return result;
 }
 
-pub fn open(host: []const u8, protocol: []const u8, display: u32) !File {
+pub fn open(host: []const u8, protocol: []const u8, display: u32) !net.Stream {
     if (protocol.len != 0 and !mem.eql(u8, protocol, "unix")) {
         return error.UnsupportedProtocol;
     }
 
     var path_buf: [fs.MAX_PATH_BYTES]u8 = undefined;
-    const socket_path = std.fmt.bufPrint(path_buf[0..], "/tmp/.X11-unix/X{}", .{display}) catch unreachable;
+    const socket_path = std.fmt.bufPrint(path_buf[0..], "/tmp/.X11-unix/X{d}", .{display}) catch unreachable;
 
     return net.connectUnixSocket(socket_path);
 }
 
 pub fn connectToDisplay(allocator: *Allocator, parsed: ParsedDisplay, optional_auth: ?Auth) !Connection {
-    const file = open(parsed.host, parsed.protocol, parsed.display) catch return error.UnableToConnectToServer;
-    errdefer file.close();
+    const sock = open(parsed.host, parsed.protocol, parsed.display) catch return error.UnableToConnectToServer;
+    errdefer sock.close();
 
     var cleanup_auth = false;
     var auth = if (optional_auth) |a| a else blk: {
         cleanup_auth = true;
-        break :blk getAuth(allocator, file, parsed.display) catch |e| switch (e) {
+        break :blk getAuth(allocator, sock, parsed.display) catch |e| switch (e) {
             error.WouldBlock => unreachable,
+
             error.OperationAborted => unreachable,
             error.ConnectionResetByPeer => return error.AuthFileUnavailable,
             error.IsDir => return error.AuthFileUnavailable,
@@ -176,12 +176,13 @@ pub fn connectToDisplay(allocator: *Allocator, parsed: ParsedDisplay, optional_a
     };
     defer if (cleanup_auth) auth.deinit(allocator);
 
-    return connectToFile(allocator, file, auth) catch |err| switch (err) {
+    return connectToStream(allocator, sock, auth) catch |err| switch (err) {
         error.WouldBlock => unreachable,
-        error.OperationAborted => unreachable,
         error.DiskQuota => unreachable,
+        error.OperationAborted => unreachable,
         error.FileTooBig => unreachable,
         error.NoSpaceLeft => unreachable,
+
         error.IsDir => return error.UnableToConnectToServer,
         error.BrokenPipe => return error.UnableToConnectToServer,
         error.ConnectionResetByPeer => return error.UnableToConnectToServer,
@@ -204,36 +205,36 @@ test "xpad" {
     assert(xpad(8) == 0);
 }
 
-/// file must be `O_RDWR`.
+/// sock must be `O_RDWR`.
 /// `O_NONBLOCK` may be set if `std.event.Loop.instance != null`.
-pub fn connectToFile(allocator: *Allocator, file: File, auth: ?Auth) !Connection {
+pub fn connectToStream(allocator: *Allocator, sock: net.Stream, auth: ?Auth) !Connection {
     var conn = Connection{
         .allocator = allocator,
-        .file = file,
+        .socket = sock,
         .setup = undefined,
         .status = undefined,
     };
 
-    try writeSetup(file, auth);
+    try writeSetup(sock, auth);
     try readSetup(allocator, &conn);
 
     return conn;
 }
 
 fn readSetup(allocator: *Allocator, conn: *Connection) !void {
-    const stream = conn.file.inStream();
+    const reader = conn.socket.reader();
 
     const xcb_setup_generic_t = extern struct {
         status: u8,
         pad0: [5]u8,
         length: u16,
     };
-    const header = try stream.readStruct(xcb_setup_generic_t);
+    const header = try reader.readStruct(xcb_setup_generic_t);
 
     conn.setup = try allocator.alloc(u8, header.length * 4);
     errdefer allocator.free(conn.setup);
 
-    try stream.readNoEof(conn.setup);
+    try reader.readNoEof(conn.setup);
 
     conn.status = switch (header.status) {
         0 => Connection.Status.SetupFailed,
@@ -243,7 +244,7 @@ fn readSetup(allocator: *Allocator, conn: *Connection) !void {
     };
 }
 
-fn writeSetup(file: File, auth: ?Auth) !void {
+fn writeSetup(sock: net.Stream, auth: ?Auth) !void {
     const pad = [3]u8{ 0, 0, 0 };
     var parts: [6]os.iovec_const = undefined;
     var parts_index: usize = 0;
@@ -281,10 +282,10 @@ fn writeSetup(file: File, auth: ?Auth) !void {
 
     assert(parts_index <= parts.len);
 
-    return file.writevAll(parts[0..parts_index]);
+    return sock.writevAll(parts[0..parts_index]);
 }
 
-pub fn getAuth(allocator: *Allocator, sock: File, display: u32) !Auth {
+pub fn getAuth(allocator: *Allocator, sock: net.Stream, display: u32) !Auth {
     const xau_file = if (os.getenv("XAUTHORITY")) |xau_file_name| blk: {
         break :blk try fs.openFileAbsolute(xau_file_name, .{});
     } else blk: {
@@ -296,7 +297,7 @@ pub fn getAuth(allocator: *Allocator, sock: File, display: u32) !Auth {
     };
     defer xau_file.close();
 
-    const stream = xau_file.inStream();
+    const stream = xau_file.reader();
 
     var hostname_buf: [os.HOST_NAME_MAX]u8 = undefined;
     const hostname = try os.gethostname(&hostname_buf);
