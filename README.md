@@ -32,8 +32,8 @@ Tested with Zig 0.7.0+479f259ea.
 
 ```
 zig build -Dtarget=x86_64-linux
-patchelf  --remove-needed libdummy.so.0 zig-cache/bin/static-window
-./zig-cache/bin/static-window
+patchelf  --remove-needed libdummy.so.0 zig-out/bin/static-window
+./zig-out/bin/static-window
 ```
 
 The `-Dtarget` parameter is important if you want to put the binary up for

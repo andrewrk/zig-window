@@ -35,7 +35,10 @@ fn libc_main(
     argv: [*:null]const ?[*:0]const u8,
     envp: [*:null]const ?[*:0]const u8,
 ) callconv(.C) c_int {
-    const result = main2() catch |err| {
+    _ = argc;
+    _ = argv;
+    _ = envp;
+    _ = main2() catch |err| {
         std.log.err("{s}", .{@errorName(err)});
         if (@errorReturnTrace()) |trace| {
             std.debug.dumpStackTrace(trace.*);
@@ -50,12 +53,12 @@ var global_arena: std.heap.ArenaAllocator = undefined;
 var dlopen: DlOpenFn = undefined;
 
 pub fn main() anyerror!void {
-    const gpa = &general_purpose_allocator.allocator;
+    const gpa = general_purpose_allocator.allocator();
     defer _ = general_purpose_allocator.deinit();
 
     global_arena = std.heap.ArenaAllocator.init(gpa);
     defer global_arena.deinit();
-    const arena = &global_arena.allocator;
+    const arena = global_arena.allocator();
 
     std.log.debug("detecting whether we are running in the dynamic linker", .{});
     dlopen = @extern(DlOpenFn, .{
@@ -127,8 +130,7 @@ pub fn main() anyerror!void {
 }
 
 fn main2() anyerror!void {
-    const gpa = &general_purpose_allocator.allocator;
-    const arena = &global_arena.allocator;
+    const gpa = general_purpose_allocator.allocator();
 
     std.log.debug("initialize vulkan", .{});
 
@@ -144,7 +146,7 @@ fn main2() anyerror!void {
         .linkage = .Weak,
     }).?;
 
-    const xcb = dlopen("libxcb.so.1", std.c.RTLD_LAZY | std.c.RTLD_LOCAL) orelse {
+    const xcb = dlopen("libxcb.so.1", std.c.RTLD.LAZY | std.c.RTLD.LOCAL) orelse {
         std.debug.panic("unable to load xcb: {s}", .{dlerror()});
     };
     const xcb_connect = xcb.sym(
@@ -186,7 +188,7 @@ fn main2() anyerror!void {
             _class: u16,
             visual: xcb_visualid_t,
             value_mask: u32,
-            value_list: ?*const c_void,
+            value_list: ?*const anyopaque,
         ) callconv(.C) xcb_void_cookie_t,
     ).?;
     const xcb_intern_atom = xcb.sym("xcb_intern_atom", XcbInternAtomFn).?;
@@ -201,7 +203,7 @@ fn main2() anyerror!void {
             type: xcb_atom_t,
             format: u8,
             data_len: u32,
-            data: ?*const c_void,
+            data: ?*const anyopaque,
         ) callconv(.C) xcb_void_cookie_t,
     ).?;
     const xcb_map_window = xcb.sym(
@@ -505,15 +507,16 @@ const xcb_screen_t = extern struct {
     allowed_depths_len: u8,
 };
 
-pub const xcb_prop_mode_t = extern enum(c_int) {
+pub const xcb_prop_mode_t = enum(c_int) {
     REPLACE = 0,
     PREPEND = 1,
     APPEND = 2,
     _,
 };
 
-const xcb_atom_enum_t = extern enum(c_int) {
-    NONE = 0,
+const xcb_atom_enum_t = enum(c_int) {
+    // NOTE(hazeycode): not sure how to define this, where NONE and ANY have the same value?
+    // NONE = 0,
     ANY = 0,
     PRIMARY = 1,
     SECONDARY = 2,
@@ -586,7 +589,7 @@ const xcb_atom_enum_t = extern enum(c_int) {
     _,
 };
 
-const xcb_window_class_t = extern enum(c_int) {
+const xcb_window_class_t = enum(c_int) {
     COPY_FROM_PARENT = 0,
     INPUT_OUTPUT = 1,
     INPUT_ONLY = 2,
@@ -595,7 +598,7 @@ const xcb_window_class_t = extern enum(c_int) {
 
 const VkXcbSurfaceCreateInfoKHR = extern struct {
     sType: c.VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkXcbSurfaceCreateFlagsKHR,
     connection: *xcb_connection_t,
     window: xcb_window_t,
@@ -664,7 +667,7 @@ const SwapChainSupportDetails = struct {
     formats: std.ArrayList(c.VkSurfaceFormatKHR),
     presentModes: std.ArrayList(c.VkPresentModeKHR),
 
-    fn init(allocator: *Allocator) SwapChainSupportDetails {
+    fn init(allocator: Allocator) SwapChainSupportDetails {
         var result = SwapChainSupportDetails{
             .capabilities = undefined,
             .formats = std.ArrayList(c.VkSurfaceFormatKHR).init(allocator),
@@ -681,7 +684,7 @@ const SwapChainSupportDetails = struct {
     }
 };
 
-fn initVulkan(allocator: *Allocator, connection: *xcb_connection_t, window: xcb_window_t) !void {
+fn initVulkan(allocator: Allocator, connection: *xcb_connection_t, window: xcb_window_t) !void {
     try setupDebugCallback();
     try createSurface(connection, window);
     try pickPhysicalDevice(allocator);
@@ -696,7 +699,7 @@ fn initVulkan(allocator: *Allocator, connection: *xcb_connection_t, window: xcb_
     try createSyncObjects();
 }
 
-fn createInstance(allocator: *Allocator) !void {
+fn createInstance(allocator: Allocator) !void {
     if (enableValidationLayers) {
         if (!(try checkValidationLayerSupport(allocator))) {
             return error.ValidationLayerRequestedButNotAvailable;
@@ -772,7 +775,7 @@ fn checkSuccess(result: c.VkResult) !void {
     }
 }
 
-fn checkValidationLayerSupport(allocator: *Allocator) !bool {
+fn checkValidationLayerSupport(allocator: Allocator) !bool {
     var layerCount: u32 = undefined;
 
     try checkSuccess(c.vkEnumerateInstanceLayerProperties(&layerCount, null));
@@ -827,7 +830,7 @@ fn createSurface(connection: *xcb_connection_t, window: xcb_window_t) !void {
     try checkSuccess(vkCreateXcbSurfaceKHR(instance, &surfaceCreateInfo, null, &surface));
 }
 
-fn createCommandBuffers(allocator: *Allocator) !void {
+fn createCommandBuffers(allocator: Allocator) !void {
     commandBuffers = try allocator.alloc(c.VkCommandBuffer, swapChainFramebuffers.len);
 
     const allocInfo = c.VkCommandBufferAllocateInfo{
@@ -840,7 +843,7 @@ fn createCommandBuffers(allocator: *Allocator) !void {
 
     try checkSuccess(c.vkAllocateCommandBuffers(global_device, &allocInfo, commandBuffers.ptr));
 
-    for (commandBuffers) |command_buffer, i| {
+    for (commandBuffers) |_, i| {
         const beginInfo = c.VkCommandBufferBeginInfo{
             .sType = c.VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
             .flags = c.VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT,
@@ -900,7 +903,7 @@ fn createSyncObjects() !void {
     }
 }
 
-fn createCommandPool(allocator: *Allocator) !void {
+fn createCommandPool(allocator: Allocator) !void {
     const queueFamilyIndices = try findQueueFamilies(allocator, physicalDevice);
 
     const poolInfo = c.VkCommandPoolCreateInfo{
@@ -914,7 +917,7 @@ fn createCommandPool(allocator: *Allocator) !void {
     try checkSuccess(c.vkCreateCommandPool(global_device, &poolInfo, null, &commandPool));
 }
 
-fn createFramebuffers(allocator: *Allocator) !void {
+fn createFramebuffers(allocator: Allocator) !void {
     swapChainFramebuffers = try allocator.alloc(c.VkFramebuffer, swapChainImageViews.len);
 
     for (swapChainImageViews) |swap_chain_image_view, i| {
@@ -953,7 +956,7 @@ fn createShaderModule(code: []align(@alignOf(u32)) const u8) !c.VkShaderModule {
     return shaderModule;
 }
 
-fn createGraphicsPipeline(allocator: *Allocator) !void {
+fn createGraphicsPipeline(_: Allocator) !void {
     const vertShaderCode align(4) = @embedFile("../shaders/vert.spv").*;
     const fragShaderCode align(4) = @embedFile("../shaders/frag.spv").*;
 
@@ -1188,7 +1191,7 @@ fn createRenderPass() !void {
     try checkSuccess(c.vkCreateRenderPass(global_device, &renderPassInfo, null, &renderPass));
 }
 
-fn createImageViews(allocator: *Allocator) !void {
+fn createImageViews(allocator: Allocator) !void {
     swapChainImageViews = try allocator.alloc(c.VkImageView, swapChainImages.len);
     errdefer allocator.free(swapChainImageViews);
 
@@ -1269,7 +1272,7 @@ fn chooseSwapExtent(capabilities: c.VkSurfaceCapabilitiesKHR) c.VkExtent2D {
     }
 }
 
-fn createSwapChain(allocator: *Allocator) !void {
+fn createSwapChain(allocator: Allocator) !void {
     var swapChainSupport = try querySwapChainSupport(allocator, physicalDevice);
     defer swapChainSupport.deinit();
 
@@ -1325,7 +1328,7 @@ fn createSwapChain(allocator: *Allocator) !void {
     swapChainExtent = extent;
 }
 
-fn createLogicalDevice(allocator: *Allocator) !void {
+fn createLogicalDevice(allocator: Allocator) !void {
     const indices = try findQueueFamilies(allocator, physicalDevice);
 
     var queueCreateInfos = std.ArrayList(c.VkDeviceQueueCreateInfo).init(allocator);
@@ -1430,7 +1433,7 @@ fn createLogicalDevice(allocator: *Allocator) !void {
     c.vkGetDeviceQueue(global_device, indices.presentFamily.?, 0, &presentQueue);
 }
 
-fn pickPhysicalDevice(allocator: *Allocator) !void {
+fn pickPhysicalDevice(allocator: Allocator) !void {
     var deviceCount: u32 = 0;
     try checkSuccess(c.vkEnumeratePhysicalDevices(instance, &deviceCount, null));
 
@@ -1449,7 +1452,7 @@ fn pickPhysicalDevice(allocator: *Allocator) !void {
     } else return error.FailedToFindSuitableGPU;
 }
 
-fn findQueueFamilies(allocator: *Allocator, device: c.VkPhysicalDevice) !QueueFamilyIndices {
+fn findQueueFamilies(allocator: Allocator, device: c.VkPhysicalDevice) !QueueFamilyIndices {
     var indices = QueueFamilyIndices.init();
 
     var queueFamilyCount: u32 = 0;
@@ -1484,7 +1487,7 @@ fn findQueueFamilies(allocator: *Allocator, device: c.VkPhysicalDevice) !QueueFa
     return indices;
 }
 
-fn isDeviceSuitable(allocator: *Allocator, device: c.VkPhysicalDevice) !bool {
+fn isDeviceSuitable(allocator: Allocator, device: c.VkPhysicalDevice) !bool {
     const indices = try findQueueFamilies(allocator, device);
 
     const extensionsSupported = try checkDeviceExtensionSupport(allocator, device);
@@ -1499,7 +1502,7 @@ fn isDeviceSuitable(allocator: *Allocator, device: c.VkPhysicalDevice) !bool {
     return indices.isComplete() and extensionsSupported and swapChainAdequate;
 }
 
-fn querySwapChainSupport(allocator: *Allocator, device: c.VkPhysicalDevice) !SwapChainSupportDetails {
+fn querySwapChainSupport(allocator: Allocator, device: c.VkPhysicalDevice) !SwapChainSupportDetails {
     var details = SwapChainSupportDetails.init(allocator);
 
     try checkSuccess(c.vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities));
@@ -1523,7 +1526,7 @@ fn querySwapChainSupport(allocator: *Allocator, device: c.VkPhysicalDevice) !Swa
     return details;
 }
 
-fn checkDeviceExtensionSupport(allocator: *Allocator, device: c.VkPhysicalDevice) !bool {
+fn checkDeviceExtensionSupport(allocator: Allocator, device: c.VkPhysicalDevice) !bool {
     var extensionCount: u32 = undefined;
     try checkSuccess(c.vkEnumerateDeviceExtensionProperties(device, null, &extensionCount, null));
 
@@ -1534,9 +1537,8 @@ fn checkDeviceExtensionSupport(allocator: *Allocator, device: c.VkPhysicalDevice
     const CStrHashMap = std.HashMap(
         [*:0]const u8,
         void,
-        hash_cstr,
-        eql_cstr,
-        std.hash_map.DefaultMaxLoadPercentage,
+        HashCStrContext,
+        std.hash_map.default_max_load_percentage,
     );
     var requiredExtensions = CStrHashMap.init(allocator);
     defer requiredExtensions.deinit();
@@ -1562,8 +1564,15 @@ fn debugCallback(
     code: i32,
     layerPrefix: [*:0]const u8,
     msg: [*:0]const u8,
-    userData: ?*c_void,
+    userData: ?*anyopaque,
 ) callconv(.C) c.VkBool32 {
+    _ = flags;
+    _ = objType;
+    _ = obj;
+    _ = location;
+    _ = code;
+    _ = layerPrefix;
+    _ = userData;
     std.debug.warn("validation layer: {s}\n", .{msg});
     return c.VK_FALSE;
 }
@@ -1591,7 +1600,7 @@ fn CreateDebugReportCallbackEXT(
 }
 
 /// caller must free returned memory
-fn getRequiredExtensions(allocator: *Allocator) ![][*]const u8 {
+fn getRequiredExtensions(allocator: Allocator) ![][*]const u8 {
     var glfwExtensionCount: u32 = 0;
     var glfwExtensions: [*]const [*]const u8 = c.glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 
@@ -1655,17 +1664,19 @@ fn drawFrame() !void {
     currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 }
 
-fn hash_cstr(a: [*:0]const u8) u64 {
-    // FNV 32-bit hash
-    var h: u32 = 2166136261;
-    var i: usize = 0;
-    while (a[i] != 0) : (i += 1) {
-        h ^= a[i];
-        h *%= 16777619;
+const HashCStrContext = struct {
+    pub fn hash(_: @This(), a: [*:0]const u8) u64 {
+        // FNV 32-bit hash
+        var h: u32 = 2166136261;
+        var i: usize = 0;
+        while (a[i] != 0) : (i += 1) {
+            h ^= a[i];
+            h *%= 16777619;
+        }
+        return h;
     }
-    return h;
-}
 
-fn eql_cstr(a: [*:0]const u8, b: [*:0]const u8) bool {
-    return std.cstr.cmp(a, b) == 0;
-}
+    pub fn eql(_: @This(), a: [*:0]const u8, b: [*:0]const u8) bool {
+        return std.cstr.cmp(a, b) == 0;
+    }
+};
