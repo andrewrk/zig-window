@@ -1,3 +1,24 @@
+const __SWORD_TYPE = isize;
+const __SQUAD_TYPE = __quad_t;
+const __UQUAD_TYPE = __u_quad_t;
+const __U32_TYPE = c_uint;
+const __SLONGWORD_TYPE = c_long;
+const __ULONGWORD_TYPE = c_ulong;
+const VK_QUEUE_FAMILY_EXTERNAL = ~@as(u32, 1);
+
+// NOTE(hazeycode): upgrading to Zig 0.9.0: I don't know how to define these:
+const L = 0;
+const UL = 0;
+const ULL = 0;
+const u = 0;
+const U = 0;
+const msg = 0;
+const typedef = 0;
+const __restrict = 0;
+const params = 0;
+const name = 0;
+// NOTE(hazeycode): end
+
 pub const ptrdiff_t = c_long;
 pub const wchar_t = c_int;
 pub const max_align_t = extern struct {
@@ -43,7 +64,7 @@ pub const __suseconds_t = c_long;
 pub const __daddr_t = c_int;
 pub const __key_t = c_int;
 pub const __clockid_t = c_int;
-pub const __timer_t = ?*c_void;
+pub const __timer_t = ?*anyopaque;
 pub const __blksize_t = c_long;
 pub const __blkcnt_t = c_long;
 pub const __blkcnt64_t = c_long;
@@ -137,7 +158,7 @@ pub const VK_PIPELINE_CACHE_HEADER_VERSION_BEGIN_RANGE = enum_VkPipelineCacheHea
 pub const VK_PIPELINE_CACHE_HEADER_VERSION_END_RANGE = enum_VkPipelineCacheHeaderVersion.VK_PIPELINE_CACHE_HEADER_VERSION_END_RANGE;
 pub const VK_PIPELINE_CACHE_HEADER_VERSION_RANGE_SIZE = enum_VkPipelineCacheHeaderVersion.VK_PIPELINE_CACHE_HEADER_VERSION_RANGE_SIZE;
 pub const VK_PIPELINE_CACHE_HEADER_VERSION_MAX_ENUM = enum_VkPipelineCacheHeaderVersion.VK_PIPELINE_CACHE_HEADER_VERSION_MAX_ENUM;
-pub const enum_VkPipelineCacheHeaderVersion = extern enum {
+pub const enum_VkPipelineCacheHeaderVersion = enum(c_int) {
     VK_PIPELINE_CACHE_HEADER_VERSION_ONE = 1,
     VK_PIPELINE_CACHE_HEADER_VERSION_BEGIN_RANGE = 1,
     VK_PIPELINE_CACHE_HEADER_VERSION_END_RANGE = 1,
@@ -180,7 +201,7 @@ pub const VK_RESULT_BEGIN_RANGE = enum_VkResult.VK_RESULT_BEGIN_RANGE;
 pub const VK_RESULT_END_RANGE = enum_VkResult.VK_RESULT_END_RANGE;
 pub const VK_RESULT_RANGE_SIZE = enum_VkResult.VK_RESULT_RANGE_SIZE;
 pub const VK_RESULT_MAX_ENUM = enum_VkResult.VK_RESULT_MAX_ENUM;
-pub const enum_VkResult = extern enum(c_int) {
+pub const enum_VkResult = enum(c_int) {
     VK_SUCCESS = 0,
     VK_NOT_READY = 1,
     VK_TIMEOUT = 2,
@@ -514,7 +535,7 @@ pub const VK_STRUCTURE_TYPE_BEGIN_RANGE = enum_VkStructureType.VK_STRUCTURE_TYPE
 pub const VK_STRUCTURE_TYPE_END_RANGE = enum_VkStructureType.VK_STRUCTURE_TYPE_END_RANGE;
 pub const VK_STRUCTURE_TYPE_RANGE_SIZE = enum_VkStructureType.VK_STRUCTURE_TYPE_RANGE_SIZE;
 pub const VK_STRUCTURE_TYPE_MAX_ENUM = enum_VkStructureType.VK_STRUCTURE_TYPE_MAX_ENUM;
-pub const enum_VkStructureType = extern enum {
+pub const enum_VkStructureType = enum(c_int) {
     VK_STRUCTURE_TYPE_APPLICATION_INFO = 0,
     VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO = 1,
     VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO = 2,
@@ -826,7 +847,7 @@ pub const VK_SYSTEM_ALLOCATION_SCOPE_BEGIN_RANGE = enum_VkSystemAllocationScope.
 pub const VK_SYSTEM_ALLOCATION_SCOPE_END_RANGE = enum_VkSystemAllocationScope.VK_SYSTEM_ALLOCATION_SCOPE_END_RANGE;
 pub const VK_SYSTEM_ALLOCATION_SCOPE_RANGE_SIZE = enum_VkSystemAllocationScope.VK_SYSTEM_ALLOCATION_SCOPE_RANGE_SIZE;
 pub const VK_SYSTEM_ALLOCATION_SCOPE_MAX_ENUM = enum_VkSystemAllocationScope.VK_SYSTEM_ALLOCATION_SCOPE_MAX_ENUM;
-pub const enum_VkSystemAllocationScope = extern enum {
+pub const enum_VkSystemAllocationScope = enum(c_int) {
     VK_SYSTEM_ALLOCATION_SCOPE_COMMAND = 0,
     VK_SYSTEM_ALLOCATION_SCOPE_OBJECT = 1,
     VK_SYSTEM_ALLOCATION_SCOPE_CACHE = 2,
@@ -843,7 +864,7 @@ pub const VK_INTERNAL_ALLOCATION_TYPE_BEGIN_RANGE = enum_VkInternalAllocationTyp
 pub const VK_INTERNAL_ALLOCATION_TYPE_END_RANGE = enum_VkInternalAllocationType.VK_INTERNAL_ALLOCATION_TYPE_END_RANGE;
 pub const VK_INTERNAL_ALLOCATION_TYPE_RANGE_SIZE = enum_VkInternalAllocationType.VK_INTERNAL_ALLOCATION_TYPE_RANGE_SIZE;
 pub const VK_INTERNAL_ALLOCATION_TYPE_MAX_ENUM = enum_VkInternalAllocationType.VK_INTERNAL_ALLOCATION_TYPE_MAX_ENUM;
-pub const enum_VkInternalAllocationType = extern enum {
+pub const enum_VkInternalAllocationType = enum(c_int) {
     VK_INTERNAL_ALLOCATION_TYPE_EXECUTABLE = 0,
     //VK_INTERNAL_ALLOCATION_TYPE_BEGIN_RANGE = 0,
     //VK_INTERNAL_ALLOCATION_TYPE_END_RANGE = 0,
@@ -1116,7 +1137,7 @@ pub const VK_FORMAT_BEGIN_RANGE = enum_VkFormat.VK_FORMAT_BEGIN_RANGE;
 pub const VK_FORMAT_END_RANGE = enum_VkFormat.VK_FORMAT_END_RANGE;
 pub const VK_FORMAT_RANGE_SIZE = enum_VkFormat.VK_FORMAT_RANGE_SIZE;
 pub const VK_FORMAT_MAX_ENUM = enum_VkFormat.VK_FORMAT_MAX_ENUM;
-pub const enum_VkFormat = extern enum {
+pub const enum_VkFormat = enum(c_int) {
     VK_FORMAT_UNDEFINED = 0,
     VK_FORMAT_R4G4_UNORM_PACK8 = 1,
     VK_FORMAT_R4G4B4A4_UNORM_PACK16 = 2,
@@ -1355,7 +1376,7 @@ pub const VK_IMAGE_TYPE_BEGIN_RANGE = enum_VkImageType.VK_IMAGE_TYPE_BEGIN_RANGE
 pub const VK_IMAGE_TYPE_END_RANGE = enum_VkImageType.VK_IMAGE_TYPE_END_RANGE;
 pub const VK_IMAGE_TYPE_RANGE_SIZE = enum_VkImageType.VK_IMAGE_TYPE_RANGE_SIZE;
 pub const VK_IMAGE_TYPE_MAX_ENUM = enum_VkImageType.VK_IMAGE_TYPE_MAX_ENUM;
-pub const enum_VkImageType = extern enum {
+pub const enum_VkImageType = enum(c_int) {
     VK_IMAGE_TYPE_1D = 0,
     VK_IMAGE_TYPE_2D = 1,
     VK_IMAGE_TYPE_3D = 2,
@@ -1371,7 +1392,7 @@ pub const VK_IMAGE_TILING_BEGIN_RANGE = enum_VkImageTiling.VK_IMAGE_TILING_BEGIN
 pub const VK_IMAGE_TILING_END_RANGE = enum_VkImageTiling.VK_IMAGE_TILING_END_RANGE;
 pub const VK_IMAGE_TILING_RANGE_SIZE = enum_VkImageTiling.VK_IMAGE_TILING_RANGE_SIZE;
 pub const VK_IMAGE_TILING_MAX_ENUM = enum_VkImageTiling.VK_IMAGE_TILING_MAX_ENUM;
-pub const enum_VkImageTiling = extern enum {
+pub const enum_VkImageTiling = enum(c_int) {
     VK_IMAGE_TILING_OPTIMAL = 0,
     VK_IMAGE_TILING_LINEAR = 1,
     VK_IMAGE_TILING_BEGIN_RANGE = 0,
@@ -1389,7 +1410,7 @@ pub const VK_PHYSICAL_DEVICE_TYPE_BEGIN_RANGE = enum_VkPhysicalDeviceType.VK_PHY
 pub const VK_PHYSICAL_DEVICE_TYPE_END_RANGE = enum_VkPhysicalDeviceType.VK_PHYSICAL_DEVICE_TYPE_END_RANGE;
 pub const VK_PHYSICAL_DEVICE_TYPE_RANGE_SIZE = enum_VkPhysicalDeviceType.VK_PHYSICAL_DEVICE_TYPE_RANGE_SIZE;
 pub const VK_PHYSICAL_DEVICE_TYPE_MAX_ENUM = enum_VkPhysicalDeviceType.VK_PHYSICAL_DEVICE_TYPE_MAX_ENUM;
-pub const enum_VkPhysicalDeviceType = extern enum {
+pub const enum_VkPhysicalDeviceType = enum(c_int) {
     VK_PHYSICAL_DEVICE_TYPE_OTHER = 0,
     VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU = 1,
     VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU = 2,
@@ -1408,7 +1429,7 @@ pub const VK_QUERY_TYPE_BEGIN_RANGE = enum_VkQueryType.VK_QUERY_TYPE_BEGIN_RANGE
 pub const VK_QUERY_TYPE_END_RANGE = enum_VkQueryType.VK_QUERY_TYPE_END_RANGE;
 pub const VK_QUERY_TYPE_RANGE_SIZE = enum_VkQueryType.VK_QUERY_TYPE_RANGE_SIZE;
 pub const VK_QUERY_TYPE_MAX_ENUM = enum_VkQueryType.VK_QUERY_TYPE_MAX_ENUM;
-pub const enum_VkQueryType = extern enum {
+pub const enum_VkQueryType = enum(c_int) {
     VK_QUERY_TYPE_OCCLUSION = 0,
     VK_QUERY_TYPE_PIPELINE_STATISTICS = 1,
     VK_QUERY_TYPE_TIMESTAMP = 2,
@@ -1424,7 +1445,7 @@ pub const VK_SHARING_MODE_BEGIN_RANGE = enum_VkSharingMode.VK_SHARING_MODE_BEGIN
 pub const VK_SHARING_MODE_END_RANGE = enum_VkSharingMode.VK_SHARING_MODE_END_RANGE;
 pub const VK_SHARING_MODE_RANGE_SIZE = enum_VkSharingMode.VK_SHARING_MODE_RANGE_SIZE;
 pub const VK_SHARING_MODE_MAX_ENUM = enum_VkSharingMode.VK_SHARING_MODE_MAX_ENUM;
-pub const enum_VkSharingMode = extern enum {
+pub const enum_VkSharingMode = enum(c_int) {
     VK_SHARING_MODE_EXCLUSIVE = 0,
     VK_SHARING_MODE_CONCURRENT = 1,
     VK_SHARING_MODE_RANGE_SIZE = 2,
@@ -1450,7 +1471,7 @@ pub const VK_IMAGE_LAYOUT_BEGIN_RANGE = enum_VkImageLayout.VK_IMAGE_LAYOUT_BEGIN
 pub const VK_IMAGE_LAYOUT_END_RANGE = enum_VkImageLayout.VK_IMAGE_LAYOUT_END_RANGE;
 pub const VK_IMAGE_LAYOUT_RANGE_SIZE = enum_VkImageLayout.VK_IMAGE_LAYOUT_RANGE_SIZE;
 pub const VK_IMAGE_LAYOUT_MAX_ENUM = enum_VkImageLayout.VK_IMAGE_LAYOUT_MAX_ENUM;
-pub const enum_VkImageLayout = extern enum {
+pub const enum_VkImageLayout = enum(c_int) {
     VK_IMAGE_LAYOUT_UNDEFINED = 0,
     VK_IMAGE_LAYOUT_GENERAL = 1,
     VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL = 2,
@@ -1479,7 +1500,7 @@ pub const VK_IMAGE_VIEW_TYPE_BEGIN_RANGE = enum_VkImageViewType.VK_IMAGE_VIEW_TY
 pub const VK_IMAGE_VIEW_TYPE_END_RANGE = enum_VkImageViewType.VK_IMAGE_VIEW_TYPE_END_RANGE;
 pub const VK_IMAGE_VIEW_TYPE_RANGE_SIZE = enum_VkImageViewType.VK_IMAGE_VIEW_TYPE_RANGE_SIZE;
 pub const VK_IMAGE_VIEW_TYPE_MAX_ENUM = enum_VkImageViewType.VK_IMAGE_VIEW_TYPE_MAX_ENUM;
-pub const enum_VkImageViewType = extern enum {
+pub const enum_VkImageViewType = enum(c_int) {
     VK_IMAGE_VIEW_TYPE_1D = 0,
     VK_IMAGE_VIEW_TYPE_2D = 1,
     VK_IMAGE_VIEW_TYPE_3D = 2,
@@ -1502,7 +1523,7 @@ pub const VK_COMPONENT_SWIZZLE_BEGIN_RANGE = enum_VkComponentSwizzle.VK_COMPONEN
 pub const VK_COMPONENT_SWIZZLE_END_RANGE = enum_VkComponentSwizzle.VK_COMPONENT_SWIZZLE_END_RANGE;
 pub const VK_COMPONENT_SWIZZLE_RANGE_SIZE = enum_VkComponentSwizzle.VK_COMPONENT_SWIZZLE_RANGE_SIZE;
 pub const VK_COMPONENT_SWIZZLE_MAX_ENUM = enum_VkComponentSwizzle.VK_COMPONENT_SWIZZLE_MAX_ENUM;
-pub const enum_VkComponentSwizzle = extern enum {
+pub const enum_VkComponentSwizzle = enum(c_int) {
     VK_COMPONENT_SWIZZLE_IDENTITY = 0,
     VK_COMPONENT_SWIZZLE_ZERO = 1,
     VK_COMPONENT_SWIZZLE_ONE = 2,
@@ -1520,7 +1541,7 @@ pub const VK_VERTEX_INPUT_RATE_BEGIN_RANGE = enum_VkVertexInputRate.VK_VERTEX_IN
 pub const VK_VERTEX_INPUT_RATE_END_RANGE = enum_VkVertexInputRate.VK_VERTEX_INPUT_RATE_END_RANGE;
 pub const VK_VERTEX_INPUT_RATE_RANGE_SIZE = enum_VkVertexInputRate.VK_VERTEX_INPUT_RATE_RANGE_SIZE;
 pub const VK_VERTEX_INPUT_RATE_MAX_ENUM = enum_VkVertexInputRate.VK_VERTEX_INPUT_RATE_MAX_ENUM;
-pub const enum_VkVertexInputRate = extern enum {
+pub const enum_VkVertexInputRate = enum(c_int) {
     VK_VERTEX_INPUT_RATE_VERTEX = 0,
     VK_VERTEX_INPUT_RATE_INSTANCE = 1,
     VK_VERTEX_INPUT_RATE_RANGE_SIZE = 2,
@@ -1542,7 +1563,7 @@ pub const VK_PRIMITIVE_TOPOLOGY_BEGIN_RANGE = enum_VkPrimitiveTopology.VK_PRIMIT
 pub const VK_PRIMITIVE_TOPOLOGY_END_RANGE = enum_VkPrimitiveTopology.VK_PRIMITIVE_TOPOLOGY_END_RANGE;
 pub const VK_PRIMITIVE_TOPOLOGY_RANGE_SIZE = enum_VkPrimitiveTopology.VK_PRIMITIVE_TOPOLOGY_RANGE_SIZE;
 pub const VK_PRIMITIVE_TOPOLOGY_MAX_ENUM = enum_VkPrimitiveTopology.VK_PRIMITIVE_TOPOLOGY_MAX_ENUM;
-pub const enum_VkPrimitiveTopology = extern enum {
+pub const enum_VkPrimitiveTopology = enum(c_int) {
     VK_PRIMITIVE_TOPOLOGY_POINT_LIST = 0,
     VK_PRIMITIVE_TOPOLOGY_LINE_LIST = 1,
     VK_PRIMITIVE_TOPOLOGY_LINE_STRIP = 2,
@@ -1566,7 +1587,7 @@ pub const VK_POLYGON_MODE_BEGIN_RANGE = enum_VkPolygonMode.VK_POLYGON_MODE_BEGIN
 pub const VK_POLYGON_MODE_END_RANGE = enum_VkPolygonMode.VK_POLYGON_MODE_END_RANGE;
 pub const VK_POLYGON_MODE_RANGE_SIZE = enum_VkPolygonMode.VK_POLYGON_MODE_RANGE_SIZE;
 pub const VK_POLYGON_MODE_MAX_ENUM = enum_VkPolygonMode.VK_POLYGON_MODE_MAX_ENUM;
-pub const enum_VkPolygonMode = extern enum {
+pub const enum_VkPolygonMode = enum(c_int) {
     VK_POLYGON_MODE_FILL = 0,
     VK_POLYGON_MODE_LINE = 1,
     VK_POLYGON_MODE_POINT = 2,
@@ -1581,7 +1602,7 @@ pub const VK_FRONT_FACE_BEGIN_RANGE = enum_VkFrontFace.VK_FRONT_FACE_BEGIN_RANGE
 pub const VK_FRONT_FACE_END_RANGE = enum_VkFrontFace.VK_FRONT_FACE_END_RANGE;
 pub const VK_FRONT_FACE_RANGE_SIZE = enum_VkFrontFace.VK_FRONT_FACE_RANGE_SIZE;
 pub const VK_FRONT_FACE_MAX_ENUM = enum_VkFrontFace.VK_FRONT_FACE_MAX_ENUM;
-pub const enum_VkFrontFace = extern enum {
+pub const enum_VkFrontFace = enum(c_int) {
     VK_FRONT_FACE_COUNTER_CLOCKWISE = 0,
     VK_FRONT_FACE_CLOCKWISE = 1,
     VK_FRONT_FACE_RANGE_SIZE = 2,
@@ -1600,7 +1621,7 @@ pub const VK_COMPARE_OP_BEGIN_RANGE = enum_VkCompareOp.VK_COMPARE_OP_BEGIN_RANGE
 pub const VK_COMPARE_OP_END_RANGE = enum_VkCompareOp.VK_COMPARE_OP_END_RANGE;
 pub const VK_COMPARE_OP_RANGE_SIZE = enum_VkCompareOp.VK_COMPARE_OP_RANGE_SIZE;
 pub const VK_COMPARE_OP_MAX_ENUM = enum_VkCompareOp.VK_COMPARE_OP_MAX_ENUM;
-pub const enum_VkCompareOp = extern enum {
+pub const enum_VkCompareOp = enum(c_int) {
     VK_COMPARE_OP_NEVER = 0,
     VK_COMPARE_OP_LESS = 1,
     VK_COMPARE_OP_EQUAL = 2,
@@ -1625,7 +1646,7 @@ pub const VK_STENCIL_OP_BEGIN_RANGE = enum_VkStencilOp.VK_STENCIL_OP_BEGIN_RANGE
 pub const VK_STENCIL_OP_END_RANGE = enum_VkStencilOp.VK_STENCIL_OP_END_RANGE;
 pub const VK_STENCIL_OP_RANGE_SIZE = enum_VkStencilOp.VK_STENCIL_OP_RANGE_SIZE;
 pub const VK_STENCIL_OP_MAX_ENUM = enum_VkStencilOp.VK_STENCIL_OP_MAX_ENUM;
-pub const enum_VkStencilOp = extern enum {
+pub const enum_VkStencilOp = enum(c_int) {
     VK_STENCIL_OP_KEEP = 0,
     VK_STENCIL_OP_ZERO = 1,
     VK_STENCIL_OP_REPLACE = 2,
@@ -1658,7 +1679,7 @@ pub const VK_LOGIC_OP_BEGIN_RANGE = enum_VkLogicOp.VK_LOGIC_OP_BEGIN_RANGE;
 pub const VK_LOGIC_OP_END_RANGE = enum_VkLogicOp.VK_LOGIC_OP_END_RANGE;
 pub const VK_LOGIC_OP_RANGE_SIZE = enum_VkLogicOp.VK_LOGIC_OP_RANGE_SIZE;
 pub const VK_LOGIC_OP_MAX_ENUM = enum_VkLogicOp.VK_LOGIC_OP_MAX_ENUM;
-pub const enum_VkLogicOp = extern enum {
+pub const enum_VkLogicOp = enum(c_int) {
     VK_LOGIC_OP_CLEAR = 0,
     VK_LOGIC_OP_AND = 1,
     VK_LOGIC_OP_AND_REVERSE = 2,
@@ -1702,7 +1723,7 @@ pub const VK_BLEND_FACTOR_BEGIN_RANGE = enum_VkBlendFactor.VK_BLEND_FACTOR_BEGIN
 pub const VK_BLEND_FACTOR_END_RANGE = enum_VkBlendFactor.VK_BLEND_FACTOR_END_RANGE;
 pub const VK_BLEND_FACTOR_RANGE_SIZE = enum_VkBlendFactor.VK_BLEND_FACTOR_RANGE_SIZE;
 pub const VK_BLEND_FACTOR_MAX_ENUM = enum_VkBlendFactor.VK_BLEND_FACTOR_MAX_ENUM;
-pub const enum_VkBlendFactor = extern enum {
+pub const enum_VkBlendFactor = enum(c_int) {
     VK_BLEND_FACTOR_ZERO = 0,
     VK_BLEND_FACTOR_ONE = 1,
     VK_BLEND_FACTOR_SRC_COLOR = 2,
@@ -1781,7 +1802,7 @@ pub const VK_BLEND_OP_BEGIN_RANGE = enum_VkBlendOp.VK_BLEND_OP_BEGIN_RANGE;
 pub const VK_BLEND_OP_END_RANGE = enum_VkBlendOp.VK_BLEND_OP_END_RANGE;
 pub const VK_BLEND_OP_RANGE_SIZE = enum_VkBlendOp.VK_BLEND_OP_RANGE_SIZE;
 pub const VK_BLEND_OP_MAX_ENUM = enum_VkBlendOp.VK_BLEND_OP_MAX_ENUM;
-pub const enum_VkBlendOp = extern enum {
+pub const enum_VkBlendOp = enum(c_int) {
     VK_BLEND_OP_ADD = 0,
     VK_BLEND_OP_SUBTRACT = 1,
     VK_BLEND_OP_REVERSE_SUBTRACT = 2,
@@ -1853,7 +1874,7 @@ pub const VK_DYNAMIC_STATE_BEGIN_RANGE = enum_VkDynamicState.VK_DYNAMIC_STATE_BE
 pub const VK_DYNAMIC_STATE_END_RANGE = enum_VkDynamicState.VK_DYNAMIC_STATE_END_RANGE;
 pub const VK_DYNAMIC_STATE_RANGE_SIZE = enum_VkDynamicState.VK_DYNAMIC_STATE_RANGE_SIZE;
 pub const VK_DYNAMIC_STATE_MAX_ENUM = enum_VkDynamicState.VK_DYNAMIC_STATE_MAX_ENUM;
-pub const enum_VkDynamicState = extern enum {
+pub const enum_VkDynamicState = enum(c_int) {
     VK_DYNAMIC_STATE_VIEWPORT = 0,
     VK_DYNAMIC_STATE_SCISSOR = 1,
     VK_DYNAMIC_STATE_LINE_WIDTH = 2,
@@ -1877,7 +1898,7 @@ pub const VK_FILTER_BEGIN_RANGE = enum_VkFilter.VK_FILTER_BEGIN_RANGE;
 pub const VK_FILTER_END_RANGE = enum_VkFilter.VK_FILTER_END_RANGE;
 pub const VK_FILTER_RANGE_SIZE = enum_VkFilter.VK_FILTER_RANGE_SIZE;
 pub const VK_FILTER_MAX_ENUM = enum_VkFilter.VK_FILTER_MAX_ENUM;
-pub const enum_VkFilter = extern enum {
+pub const enum_VkFilter = enum(c_int) {
     VK_FILTER_NEAREST = 0,
     VK_FILTER_LINEAR = 1,
     VK_FILTER_CUBIC_IMG = 1000015000,
@@ -1893,7 +1914,7 @@ pub const VK_SAMPLER_MIPMAP_MODE_BEGIN_RANGE = enum_VkSamplerMipmapMode.VK_SAMPL
 pub const VK_SAMPLER_MIPMAP_MODE_END_RANGE = enum_VkSamplerMipmapMode.VK_SAMPLER_MIPMAP_MODE_END_RANGE;
 pub const VK_SAMPLER_MIPMAP_MODE_RANGE_SIZE = enum_VkSamplerMipmapMode.VK_SAMPLER_MIPMAP_MODE_RANGE_SIZE;
 pub const VK_SAMPLER_MIPMAP_MODE_MAX_ENUM = enum_VkSamplerMipmapMode.VK_SAMPLER_MIPMAP_MODE_MAX_ENUM;
-pub const enum_VkSamplerMipmapMode = extern enum {
+pub const enum_VkSamplerMipmapMode = enum(c_int) {
     VK_SAMPLER_MIPMAP_MODE_NEAREST = 0,
     VK_SAMPLER_MIPMAP_MODE_LINEAR = 1,
     VK_SAMPLER_MIPMAP_MODE_BEGIN_RANGE = 0,
@@ -1911,7 +1932,7 @@ pub const VK_SAMPLER_ADDRESS_MODE_BEGIN_RANGE = enum_VkSamplerAddressMode.VK_SAM
 pub const VK_SAMPLER_ADDRESS_MODE_END_RANGE = enum_VkSamplerAddressMode.VK_SAMPLER_ADDRESS_MODE_END_RANGE;
 pub const VK_SAMPLER_ADDRESS_MODE_RANGE_SIZE = enum_VkSamplerAddressMode.VK_SAMPLER_ADDRESS_MODE_RANGE_SIZE;
 pub const VK_SAMPLER_ADDRESS_MODE_MAX_ENUM = enum_VkSamplerAddressMode.VK_SAMPLER_ADDRESS_MODE_MAX_ENUM;
-pub const enum_VkSamplerAddressMode = extern enum {
+pub const enum_VkSamplerAddressMode = enum(c_int) {
     VK_SAMPLER_ADDRESS_MODE_REPEAT = 0,
     VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT = 1,
     VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE = 2,
@@ -1933,7 +1954,7 @@ pub const VK_BORDER_COLOR_BEGIN_RANGE = enum_VkBorderColor.VK_BORDER_COLOR_BEGIN
 pub const VK_BORDER_COLOR_END_RANGE = enum_VkBorderColor.VK_BORDER_COLOR_END_RANGE;
 pub const VK_BORDER_COLOR_RANGE_SIZE = enum_VkBorderColor.VK_BORDER_COLOR_RANGE_SIZE;
 pub const VK_BORDER_COLOR_MAX_ENUM = enum_VkBorderColor.VK_BORDER_COLOR_MAX_ENUM;
-pub const enum_VkBorderColor = extern enum {
+pub const enum_VkBorderColor = enum(c_int) {
     VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK = 0,
     VK_BORDER_COLOR_INT_TRANSPARENT_BLACK = 1,
     VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK = 2,
@@ -1961,7 +1982,7 @@ pub const VK_DESCRIPTOR_TYPE_BEGIN_RANGE = enum_VkDescriptorType.VK_DESCRIPTOR_T
 pub const VK_DESCRIPTOR_TYPE_END_RANGE = enum_VkDescriptorType.VK_DESCRIPTOR_TYPE_END_RANGE;
 pub const VK_DESCRIPTOR_TYPE_RANGE_SIZE = enum_VkDescriptorType.VK_DESCRIPTOR_TYPE_RANGE_SIZE;
 pub const VK_DESCRIPTOR_TYPE_MAX_ENUM = enum_VkDescriptorType.VK_DESCRIPTOR_TYPE_MAX_ENUM;
-pub const enum_VkDescriptorType = extern enum {
+pub const enum_VkDescriptorType = enum(c_int) {
     VK_DESCRIPTOR_TYPE_SAMPLER = 0,
     VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER = 1,
     VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE = 2,
@@ -1986,7 +2007,7 @@ pub const VK_ATTACHMENT_LOAD_OP_BEGIN_RANGE = enum_VkAttachmentLoadOp.VK_ATTACHM
 pub const VK_ATTACHMENT_LOAD_OP_END_RANGE = enum_VkAttachmentLoadOp.VK_ATTACHMENT_LOAD_OP_END_RANGE;
 pub const VK_ATTACHMENT_LOAD_OP_RANGE_SIZE = enum_VkAttachmentLoadOp.VK_ATTACHMENT_LOAD_OP_RANGE_SIZE;
 pub const VK_ATTACHMENT_LOAD_OP_MAX_ENUM = enum_VkAttachmentLoadOp.VK_ATTACHMENT_LOAD_OP_MAX_ENUM;
-pub const enum_VkAttachmentLoadOp = extern enum {
+pub const enum_VkAttachmentLoadOp = enum(c_int) {
     VK_ATTACHMENT_LOAD_OP_LOAD = 0,
     VK_ATTACHMENT_LOAD_OP_CLEAR = 1,
     VK_ATTACHMENT_LOAD_OP_DONT_CARE = 2,
@@ -2000,7 +2021,7 @@ pub const VK_ATTACHMENT_STORE_OP_BEGIN_RANGE = enum_VkAttachmentStoreOp.VK_ATTAC
 pub const VK_ATTACHMENT_STORE_OP_END_RANGE = enum_VkAttachmentStoreOp.VK_ATTACHMENT_STORE_OP_END_RANGE;
 pub const VK_ATTACHMENT_STORE_OP_RANGE_SIZE = enum_VkAttachmentStoreOp.VK_ATTACHMENT_STORE_OP_RANGE_SIZE;
 pub const VK_ATTACHMENT_STORE_OP_MAX_ENUM = enum_VkAttachmentStoreOp.VK_ATTACHMENT_STORE_OP_MAX_ENUM;
-pub const enum_VkAttachmentStoreOp = extern enum {
+pub const enum_VkAttachmentStoreOp = enum(c_int) {
     VK_ATTACHMENT_STORE_OP_STORE = 0,
     VK_ATTACHMENT_STORE_OP_DONT_CARE = 1,
     VK_ATTACHMENT_STORE_OP_RANGE_SIZE = 2,
@@ -2013,7 +2034,7 @@ pub const VK_PIPELINE_BIND_POINT_BEGIN_RANGE = enum_VkPipelineBindPoint.VK_PIPEL
 pub const VK_PIPELINE_BIND_POINT_END_RANGE = enum_VkPipelineBindPoint.VK_PIPELINE_BIND_POINT_END_RANGE;
 pub const VK_PIPELINE_BIND_POINT_RANGE_SIZE = enum_VkPipelineBindPoint.VK_PIPELINE_BIND_POINT_RANGE_SIZE;
 pub const VK_PIPELINE_BIND_POINT_MAX_ENUM = enum_VkPipelineBindPoint.VK_PIPELINE_BIND_POINT_MAX_ENUM;
-pub const enum_VkPipelineBindPoint = extern enum {
+pub const enum_VkPipelineBindPoint = enum(c_int) {
     VK_PIPELINE_BIND_POINT_GRAPHICS = 0,
     VK_PIPELINE_BIND_POINT_COMPUTE = 1,
     VK_PIPELINE_BIND_POINT_RANGE_SIZE = 2,
@@ -2026,7 +2047,7 @@ pub const VK_COMMAND_BUFFER_LEVEL_BEGIN_RANGE = enum_VkCommandBufferLevel.VK_COM
 pub const VK_COMMAND_BUFFER_LEVEL_END_RANGE = enum_VkCommandBufferLevel.VK_COMMAND_BUFFER_LEVEL_END_RANGE;
 pub const VK_COMMAND_BUFFER_LEVEL_RANGE_SIZE = enum_VkCommandBufferLevel.VK_COMMAND_BUFFER_LEVEL_RANGE_SIZE;
 pub const VK_COMMAND_BUFFER_LEVEL_MAX_ENUM = enum_VkCommandBufferLevel.VK_COMMAND_BUFFER_LEVEL_MAX_ENUM;
-pub const enum_VkCommandBufferLevel = extern enum {
+pub const enum_VkCommandBufferLevel = enum(c_int) {
     VK_COMMAND_BUFFER_LEVEL_PRIMARY = 0,
     VK_COMMAND_BUFFER_LEVEL_SECONDARY = 1,
     VK_COMMAND_BUFFER_LEVEL_RANGE_SIZE = 2,
@@ -2039,7 +2060,7 @@ pub const VK_INDEX_TYPE_BEGIN_RANGE = enum_VkIndexType.VK_INDEX_TYPE_BEGIN_RANGE
 pub const VK_INDEX_TYPE_END_RANGE = enum_VkIndexType.VK_INDEX_TYPE_END_RANGE;
 pub const VK_INDEX_TYPE_RANGE_SIZE = enum_VkIndexType.VK_INDEX_TYPE_RANGE_SIZE;
 pub const VK_INDEX_TYPE_MAX_ENUM = enum_VkIndexType.VK_INDEX_TYPE_MAX_ENUM;
-pub const enum_VkIndexType = extern enum {
+pub const enum_VkIndexType = enum(c_int) {
     VK_INDEX_TYPE_UINT16 = 0,
     VK_INDEX_TYPE_UINT32 = 1,
     VK_INDEX_TYPE_BEGIN_RANGE = 0,
@@ -2054,7 +2075,7 @@ pub const VK_SUBPASS_CONTENTS_BEGIN_RANGE = enum_VkSubpassContents.VK_SUBPASS_CO
 pub const VK_SUBPASS_CONTENTS_END_RANGE = enum_VkSubpassContents.VK_SUBPASS_CONTENTS_END_RANGE;
 pub const VK_SUBPASS_CONTENTS_RANGE_SIZE = enum_VkSubpassContents.VK_SUBPASS_CONTENTS_RANGE_SIZE;
 pub const VK_SUBPASS_CONTENTS_MAX_ENUM = enum_VkSubpassContents.VK_SUBPASS_CONTENTS_MAX_ENUM;
-pub const enum_VkSubpassContents = extern enum {
+pub const enum_VkSubpassContents = enum(c_int) {
     VK_SUBPASS_CONTENTS_INLINE = 0,
     VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS = 1,
     VK_SUBPASS_CONTENTS_RANGE_SIZE = 2,
@@ -2104,7 +2125,7 @@ pub const VK_OBJECT_TYPE_BEGIN_RANGE = enum_VkObjectType.VK_OBJECT_TYPE_BEGIN_RA
 pub const VK_OBJECT_TYPE_END_RANGE = enum_VkObjectType.VK_OBJECT_TYPE_END_RANGE;
 pub const VK_OBJECT_TYPE_RANGE_SIZE = enum_VkObjectType.VK_OBJECT_TYPE_RANGE_SIZE;
 pub const VK_OBJECT_TYPE_MAX_ENUM = enum_VkObjectType.VK_OBJECT_TYPE_MAX_ENUM;
-pub const enum_VkObjectType = extern enum {
+pub const enum_VkObjectType = enum(c_int) {
     VK_OBJECT_TYPE_UNKNOWN = 0,
     VK_OBJECT_TYPE_INSTANCE = 1,
     VK_OBJECT_TYPE_PHYSICAL_DEVICE = 2,
@@ -2185,7 +2206,7 @@ pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION
 pub const VK_FORMAT_FEATURE_DISJOINT_BIT_KHR = enum_VkFormatFeatureFlagBits.VK_FORMAT_FEATURE_DISJOINT_BIT_KHR;
 pub const VK_FORMAT_FEATURE_COSITED_CHROMA_SAMPLES_BIT_KHR = enum_VkFormatFeatureFlagBits.VK_FORMAT_FEATURE_COSITED_CHROMA_SAMPLES_BIT_KHR;
 pub const VK_FORMAT_FEATURE_FLAG_BITS_MAX_ENUM = enum_VkFormatFeatureFlagBits.VK_FORMAT_FEATURE_FLAG_BITS_MAX_ENUM;
-pub const enum_VkFormatFeatureFlagBits = extern enum {
+pub const enum_VkFormatFeatureFlagBits = enum(c_int) {
     VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT = 1,
     VK_FORMAT_FEATURE_STORAGE_IMAGE_BIT = 2,
     VK_FORMAT_FEATURE_STORAGE_IMAGE_ATOMIC_BIT = 4,
@@ -2254,7 +2275,7 @@ pub const VK_IMAGE_CREATE_EXTENDED_USAGE_BIT_KHR = enum_VkImageCreateFlagBits.VK
 pub const VK_IMAGE_CREATE_DISJOINT_BIT_KHR = enum_VkImageCreateFlagBits.VK_IMAGE_CREATE_DISJOINT_BIT_KHR;
 pub const VK_IMAGE_CREATE_ALIAS_BIT_KHR = enum_VkImageCreateFlagBits.VK_IMAGE_CREATE_ALIAS_BIT_KHR;
 pub const VK_IMAGE_CREATE_FLAG_BITS_MAX_ENUM = enum_VkImageCreateFlagBits.VK_IMAGE_CREATE_FLAG_BITS_MAX_ENUM;
-pub const enum_VkImageCreateFlagBits = extern enum {
+pub const enum_VkImageCreateFlagBits = enum(c_int) {
     VK_IMAGE_CREATE_SPARSE_BINDING_BIT = 1,
     VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT = 2,
     VK_IMAGE_CREATE_SPARSE_ALIASED_BIT = 4,
@@ -2286,7 +2307,7 @@ pub const VK_SAMPLE_COUNT_16_BIT = enum_VkSampleCountFlagBits.VK_SAMPLE_COUNT_16
 pub const VK_SAMPLE_COUNT_32_BIT = enum_VkSampleCountFlagBits.VK_SAMPLE_COUNT_32_BIT;
 pub const VK_SAMPLE_COUNT_64_BIT = enum_VkSampleCountFlagBits.VK_SAMPLE_COUNT_64_BIT;
 pub const VK_SAMPLE_COUNT_FLAG_BITS_MAX_ENUM = enum_VkSampleCountFlagBits.VK_SAMPLE_COUNT_FLAG_BITS_MAX_ENUM;
-pub const enum_VkSampleCountFlagBits = extern enum {
+pub const enum_VkSampleCountFlagBits = enum(c_int) {
     VK_SAMPLE_COUNT_1_BIT = 1,
     VK_SAMPLE_COUNT_2_BIT = 2,
     VK_SAMPLE_COUNT_4_BIT = 4,
@@ -2313,7 +2334,7 @@ pub const VK_MEMORY_PROPERTY_HOST_CACHED_BIT = enum_VkMemoryPropertyFlagBits.VK_
 pub const VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT = enum_VkMemoryPropertyFlagBits.VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT;
 pub const VK_MEMORY_PROPERTY_PROTECTED_BIT = enum_VkMemoryPropertyFlagBits.VK_MEMORY_PROPERTY_PROTECTED_BIT;
 pub const VK_MEMORY_PROPERTY_FLAG_BITS_MAX_ENUM = enum_VkMemoryPropertyFlagBits.VK_MEMORY_PROPERTY_FLAG_BITS_MAX_ENUM;
-pub const enum_VkMemoryPropertyFlagBits = extern enum {
+pub const enum_VkMemoryPropertyFlagBits = enum(c_int) {
     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT = 1,
     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT = 2,
     VK_MEMORY_PROPERTY_HOST_COHERENT_BIT = 4,
@@ -2328,7 +2349,7 @@ pub const VK_MEMORY_HEAP_DEVICE_LOCAL_BIT = enum_VkMemoryHeapFlagBits.VK_MEMORY_
 pub const VK_MEMORY_HEAP_MULTI_INSTANCE_BIT = enum_VkMemoryHeapFlagBits.VK_MEMORY_HEAP_MULTI_INSTANCE_BIT;
 pub const VK_MEMORY_HEAP_MULTI_INSTANCE_BIT_KHR = enum_VkMemoryHeapFlagBits.VK_MEMORY_HEAP_MULTI_INSTANCE_BIT_KHR;
 pub const VK_MEMORY_HEAP_FLAG_BITS_MAX_ENUM = enum_VkMemoryHeapFlagBits.VK_MEMORY_HEAP_FLAG_BITS_MAX_ENUM;
-pub const enum_VkMemoryHeapFlagBits = extern enum {
+pub const enum_VkMemoryHeapFlagBits = enum(c_int) {
     VK_MEMORY_HEAP_DEVICE_LOCAL_BIT = 1,
     VK_MEMORY_HEAP_MULTI_INSTANCE_BIT = 2,
     VK_MEMORY_HEAP_MULTI_INSTANCE_BIT_KHR = 2,
@@ -2339,7 +2360,7 @@ pub const VkMemoryHeapFlags = VkFlags;
 pub const VkDeviceCreateFlags = VkFlags;
 pub const VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT = enum_VkDeviceQueueCreateFlagBits.VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT;
 pub const VK_DEVICE_QUEUE_CREATE_FLAG_BITS_MAX_ENUM = enum_VkDeviceQueueCreateFlagBits.VK_DEVICE_QUEUE_CREATE_FLAG_BITS_MAX_ENUM;
-pub const enum_VkDeviceQueueCreateFlagBits = extern enum {
+pub const enum_VkDeviceQueueCreateFlagBits = enum(c_int) {
     VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT = 1,
     VK_DEVICE_QUEUE_CREATE_FLAG_BITS_MAX_ENUM = 2147483647,
 };
@@ -2385,7 +2406,7 @@ pub const VK_SPARSE_IMAGE_FORMAT_SINGLE_MIPTAIL_BIT = enum_VkSparseImageFormatFl
 pub const VK_SPARSE_IMAGE_FORMAT_ALIGNED_MIP_SIZE_BIT = enum_VkSparseImageFormatFlagBits.VK_SPARSE_IMAGE_FORMAT_ALIGNED_MIP_SIZE_BIT;
 pub const VK_SPARSE_IMAGE_FORMAT_NONSTANDARD_BLOCK_SIZE_BIT = enum_VkSparseImageFormatFlagBits.VK_SPARSE_IMAGE_FORMAT_NONSTANDARD_BLOCK_SIZE_BIT;
 pub const VK_SPARSE_IMAGE_FORMAT_FLAG_BITS_MAX_ENUM = enum_VkSparseImageFormatFlagBits.VK_SPARSE_IMAGE_FORMAT_FLAG_BITS_MAX_ENUM;
-pub const enum_VkSparseImageFormatFlagBits = extern enum {
+pub const enum_VkSparseImageFormatFlagBits = enum(c_int) {
     VK_SPARSE_IMAGE_FORMAT_SINGLE_MIPTAIL_BIT = 1,
     VK_SPARSE_IMAGE_FORMAT_ALIGNED_MIP_SIZE_BIT = 2,
     VK_SPARSE_IMAGE_FORMAT_NONSTANDARD_BLOCK_SIZE_BIT = 4,
@@ -2395,7 +2416,7 @@ pub const VkSparseImageFormatFlagBits = enum_VkSparseImageFormatFlagBits;
 pub const VkSparseImageFormatFlags = VkFlags;
 pub const VK_SPARSE_MEMORY_BIND_METADATA_BIT = enum_VkSparseMemoryBindFlagBits.VK_SPARSE_MEMORY_BIND_METADATA_BIT;
 pub const VK_SPARSE_MEMORY_BIND_FLAG_BITS_MAX_ENUM = enum_VkSparseMemoryBindFlagBits.VK_SPARSE_MEMORY_BIND_FLAG_BITS_MAX_ENUM;
-pub const enum_VkSparseMemoryBindFlagBits = extern enum {
+pub const enum_VkSparseMemoryBindFlagBits = enum(c_int) {
     VK_SPARSE_MEMORY_BIND_METADATA_BIT = 1,
     VK_SPARSE_MEMORY_BIND_FLAG_BITS_MAX_ENUM = 2147483647,
 };
@@ -2420,7 +2441,7 @@ pub const VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_CONTROL_SHADER_PATCHES_BIT = 
 pub const VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_EVALUATION_SHADER_INVOCATIONS_BIT = enum_VkQueryPipelineStatisticFlagBits.VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_EVALUATION_SHADER_INVOCATIONS_BIT;
 pub const VK_QUERY_PIPELINE_STATISTIC_COMPUTE_SHADER_INVOCATIONS_BIT = enum_VkQueryPipelineStatisticFlagBits.VK_QUERY_PIPELINE_STATISTIC_COMPUTE_SHADER_INVOCATIONS_BIT;
 pub const VK_QUERY_PIPELINE_STATISTIC_FLAG_BITS_MAX_ENUM = enum_VkQueryPipelineStatisticFlagBits.VK_QUERY_PIPELINE_STATISTIC_FLAG_BITS_MAX_ENUM;
-pub const enum_VkQueryPipelineStatisticFlagBits = extern enum {
+pub const enum_VkQueryPipelineStatisticFlagBits = enum(c_int) {
     VK_QUERY_PIPELINE_STATISTIC_INPUT_ASSEMBLY_VERTICES_BIT = 1,
     VK_QUERY_PIPELINE_STATISTIC_INPUT_ASSEMBLY_PRIMITIVES_BIT = 2,
     VK_QUERY_PIPELINE_STATISTIC_VERTEX_SHADER_INVOCATIONS_BIT = 4,
@@ -2441,7 +2462,7 @@ pub const VK_QUERY_RESULT_WAIT_BIT = enum_VkQueryResultFlagBits.VK_QUERY_RESULT_
 pub const VK_QUERY_RESULT_WITH_AVAILABILITY_BIT = enum_VkQueryResultFlagBits.VK_QUERY_RESULT_WITH_AVAILABILITY_BIT;
 pub const VK_QUERY_RESULT_PARTIAL_BIT = enum_VkQueryResultFlagBits.VK_QUERY_RESULT_PARTIAL_BIT;
 pub const VK_QUERY_RESULT_FLAG_BITS_MAX_ENUM = enum_VkQueryResultFlagBits.VK_QUERY_RESULT_FLAG_BITS_MAX_ENUM;
-pub const enum_VkQueryResultFlagBits = extern enum {
+pub const enum_VkQueryResultFlagBits = enum(c_int) {
     VK_QUERY_RESULT_64_BIT = 1,
     VK_QUERY_RESULT_WAIT_BIT = 2,
     VK_QUERY_RESULT_WITH_AVAILABILITY_BIT = 4,
@@ -2455,7 +2476,7 @@ pub const VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT = enum_VkBufferCreateFlagBits.VK
 pub const VK_BUFFER_CREATE_SPARSE_ALIASED_BIT = enum_VkBufferCreateFlagBits.VK_BUFFER_CREATE_SPARSE_ALIASED_BIT;
 pub const VK_BUFFER_CREATE_PROTECTED_BIT = enum_VkBufferCreateFlagBits.VK_BUFFER_CREATE_PROTECTED_BIT;
 pub const VK_BUFFER_CREATE_FLAG_BITS_MAX_ENUM = enum_VkBufferCreateFlagBits.VK_BUFFER_CREATE_FLAG_BITS_MAX_ENUM;
-pub const enum_VkBufferCreateFlagBits = extern enum {
+pub const enum_VkBufferCreateFlagBits = enum(c_int) {
     VK_BUFFER_CREATE_SPARSE_BINDING_BIT = 1,
     VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT = 2,
     VK_BUFFER_CREATE_SPARSE_ALIASED_BIT = 4,
@@ -2474,7 +2495,7 @@ pub const VK_BUFFER_USAGE_INDEX_BUFFER_BIT = enum_VkBufferUsageFlagBits.VK_BUFFE
 pub const VK_BUFFER_USAGE_VERTEX_BUFFER_BIT = enum_VkBufferUsageFlagBits.VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
 pub const VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT = enum_VkBufferUsageFlagBits.VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT;
 pub const VK_BUFFER_USAGE_FLAG_BITS_MAX_ENUM = enum_VkBufferUsageFlagBits.VK_BUFFER_USAGE_FLAG_BITS_MAX_ENUM;
-pub const enum_VkBufferUsageFlagBits = extern enum {
+pub const enum_VkBufferUsageFlagBits = enum(c_int) {
     VK_BUFFER_USAGE_TRANSFER_SRC_BIT = 1,
     VK_BUFFER_USAGE_TRANSFER_DST_BIT = 2,
     VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT = 4,
@@ -2500,7 +2521,7 @@ pub const VK_PIPELINE_CREATE_DISPATCH_BASE = enum_VkPipelineCreateFlagBits.VK_PI
 pub const VK_PIPELINE_CREATE_VIEW_INDEX_FROM_DEVICE_INDEX_BIT_KHR = enum_VkPipelineCreateFlagBits.VK_PIPELINE_CREATE_VIEW_INDEX_FROM_DEVICE_INDEX_BIT_KHR;
 pub const VK_PIPELINE_CREATE_DISPATCH_BASE_KHR = enum_VkPipelineCreateFlagBits.VK_PIPELINE_CREATE_DISPATCH_BASE_KHR;
 pub const VK_PIPELINE_CREATE_FLAG_BITS_MAX_ENUM = enum_VkPipelineCreateFlagBits.VK_PIPELINE_CREATE_FLAG_BITS_MAX_ENUM;
-pub const enum_VkPipelineCreateFlagBits = extern enum {
+pub const enum_VkPipelineCreateFlagBits = enum(c_int) {
     VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT = 1,
     VK_PIPELINE_CREATE_ALLOW_DERIVATIVES_BIT = 2,
     VK_PIPELINE_CREATE_DERIVATIVE_BIT = 4,
@@ -2522,7 +2543,7 @@ pub const VK_SHADER_STAGE_COMPUTE_BIT = enum_VkShaderStageFlagBits.VK_SHADER_STA
 pub const VK_SHADER_STAGE_ALL_GRAPHICS = enum_VkShaderStageFlagBits.VK_SHADER_STAGE_ALL_GRAPHICS;
 pub const VK_SHADER_STAGE_ALL = enum_VkShaderStageFlagBits.VK_SHADER_STAGE_ALL;
 pub const VK_SHADER_STAGE_FLAG_BITS_MAX_ENUM = enum_VkShaderStageFlagBits.VK_SHADER_STAGE_FLAG_BITS_MAX_ENUM;
-pub const enum_VkShaderStageFlagBits = extern enum {
+pub const enum_VkShaderStageFlagBits = enum(c_int) {
     VK_SHADER_STAGE_VERTEX_BIT = 1,
     VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT = 2,
     VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT = 4,
@@ -2543,7 +2564,7 @@ pub const VK_CULL_MODE_FRONT_BIT = enum_VkCullModeFlagBits.VK_CULL_MODE_FRONT_BI
 pub const VK_CULL_MODE_BACK_BIT = enum_VkCullModeFlagBits.VK_CULL_MODE_BACK_BIT;
 pub const VK_CULL_MODE_FRONT_AND_BACK = enum_VkCullModeFlagBits.VK_CULL_MODE_FRONT_AND_BACK;
 pub const VK_CULL_MODE_FLAG_BITS_MAX_ENUM = enum_VkCullModeFlagBits.VK_CULL_MODE_FLAG_BITS_MAX_ENUM;
-pub const enum_VkCullModeFlagBits = extern enum {
+pub const enum_VkCullModeFlagBits = enum(c_int) {
     VK_CULL_MODE_NONE = 0,
     VK_CULL_MODE_FRONT_BIT = 1,
     VK_CULL_MODE_BACK_BIT = 2,
@@ -2570,7 +2591,7 @@ pub const VkSamplerCreateFlags = VkFlags;
 pub const VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR = enum_VkDescriptorSetLayoutCreateFlagBits.VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR;
 pub const VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT_EXT = enum_VkDescriptorSetLayoutCreateFlagBits.VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT_EXT;
 pub const VK_DESCRIPTOR_SET_LAYOUT_CREATE_FLAG_BITS_MAX_ENUM = enum_VkDescriptorSetLayoutCreateFlagBits.VK_DESCRIPTOR_SET_LAYOUT_CREATE_FLAG_BITS_MAX_ENUM;
-pub const enum_VkDescriptorSetLayoutCreateFlagBits = extern enum {
+pub const enum_VkDescriptorSetLayoutCreateFlagBits = enum(c_int) {
     VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR = 1,
     VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT_EXT = 2,
     VK_DESCRIPTOR_SET_LAYOUT_CREATE_FLAG_BITS_MAX_ENUM = 2147483647,
@@ -2580,7 +2601,7 @@ pub const VkDescriptorSetLayoutCreateFlags = VkFlags;
 pub const VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT = enum_VkDescriptorPoolCreateFlagBits.VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 pub const VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT_EXT = enum_VkDescriptorPoolCreateFlagBits.VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT_EXT;
 pub const VK_DESCRIPTOR_POOL_CREATE_FLAG_BITS_MAX_ENUM = enum_VkDescriptorPoolCreateFlagBits.VK_DESCRIPTOR_POOL_CREATE_FLAG_BITS_MAX_ENUM;
-pub const enum_VkDescriptorPoolCreateFlagBits = extern enum {
+pub const enum_VkDescriptorPoolCreateFlagBits = enum(c_int) {
     VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT = 1,
     VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT_EXT = 2,
     VK_DESCRIPTOR_POOL_CREATE_FLAG_BITS_MAX_ENUM = 2147483647,
@@ -2592,7 +2613,7 @@ pub const VkFramebufferCreateFlags = VkFlags;
 pub const VkRenderPassCreateFlags = VkFlags;
 pub const VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT = enum_VkAttachmentDescriptionFlagBits.VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT;
 pub const VK_ATTACHMENT_DESCRIPTION_FLAG_BITS_MAX_ENUM = enum_VkAttachmentDescriptionFlagBits.VK_ATTACHMENT_DESCRIPTION_FLAG_BITS_MAX_ENUM;
-pub const enum_VkAttachmentDescriptionFlagBits = extern enum {
+pub const enum_VkAttachmentDescriptionFlagBits = enum(c_int) {
     VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT = 1,
     VK_ATTACHMENT_DESCRIPTION_FLAG_BITS_MAX_ENUM = 2147483647,
 };
@@ -2601,7 +2622,7 @@ pub const VkAttachmentDescriptionFlags = VkFlags;
 pub const VK_SUBPASS_DESCRIPTION_PER_VIEW_ATTRIBUTES_BIT_NVX = enum_VkSubpassDescriptionFlagBits.VK_SUBPASS_DESCRIPTION_PER_VIEW_ATTRIBUTES_BIT_NVX;
 pub const VK_SUBPASS_DESCRIPTION_PER_VIEW_POSITION_X_ONLY_BIT_NVX = enum_VkSubpassDescriptionFlagBits.VK_SUBPASS_DESCRIPTION_PER_VIEW_POSITION_X_ONLY_BIT_NVX;
 pub const VK_SUBPASS_DESCRIPTION_FLAG_BITS_MAX_ENUM = enum_VkSubpassDescriptionFlagBits.VK_SUBPASS_DESCRIPTION_FLAG_BITS_MAX_ENUM;
-pub const enum_VkSubpassDescriptionFlagBits = extern enum {
+pub const enum_VkSubpassDescriptionFlagBits = enum(c_int) {
     VK_SUBPASS_DESCRIPTION_PER_VIEW_ATTRIBUTES_BIT_NVX = 1,
     VK_SUBPASS_DESCRIPTION_PER_VIEW_POSITION_X_ONLY_BIT_NVX = 2,
     VK_SUBPASS_DESCRIPTION_FLAG_BITS_MAX_ENUM = 2147483647,
@@ -2637,7 +2658,7 @@ pub const VK_DEPENDENCY_VIEW_LOCAL_BIT = enum_VkDependencyFlagBits.VK_DEPENDENCY
 pub const VK_DEPENDENCY_VIEW_LOCAL_BIT_KHR = enum_VkDependencyFlagBits.VK_DEPENDENCY_VIEW_LOCAL_BIT_KHR;
 pub const VK_DEPENDENCY_DEVICE_GROUP_BIT_KHR = enum_VkDependencyFlagBits.VK_DEPENDENCY_DEVICE_GROUP_BIT_KHR;
 pub const VK_DEPENDENCY_FLAG_BITS_MAX_ENUM = enum_VkDependencyFlagBits.VK_DEPENDENCY_FLAG_BITS_MAX_ENUM;
-pub const enum_VkDependencyFlagBits = extern enum {
+pub const enum_VkDependencyFlagBits = enum(c_int) {
     VK_DEPENDENCY_BY_REGION_BIT = 1,
     VK_DEPENDENCY_DEVICE_GROUP_BIT = 4,
     VK_DEPENDENCY_VIEW_LOCAL_BIT = 2,
@@ -2651,7 +2672,7 @@ pub const VK_COMMAND_POOL_CREATE_TRANSIENT_BIT = enum_VkCommandPoolCreateFlagBit
 pub const VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT = enum_VkCommandPoolCreateFlagBits.VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 pub const VK_COMMAND_POOL_CREATE_PROTECTED_BIT = enum_VkCommandPoolCreateFlagBits.VK_COMMAND_POOL_CREATE_PROTECTED_BIT;
 pub const VK_COMMAND_POOL_CREATE_FLAG_BITS_MAX_ENUM = enum_VkCommandPoolCreateFlagBits.VK_COMMAND_POOL_CREATE_FLAG_BITS_MAX_ENUM;
-pub const enum_VkCommandPoolCreateFlagBits = extern enum {
+pub const enum_VkCommandPoolCreateFlagBits = enum(c_int) {
     VK_COMMAND_POOL_CREATE_TRANSIENT_BIT = 1,
     VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT = 2,
     VK_COMMAND_POOL_CREATE_PROTECTED_BIT = 4,
@@ -2661,7 +2682,7 @@ pub const VkCommandPoolCreateFlagBits = enum_VkCommandPoolCreateFlagBits;
 pub const VkCommandPoolCreateFlags = VkFlags;
 pub const VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT = enum_VkCommandPoolResetFlagBits.VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT;
 pub const VK_COMMAND_POOL_RESET_FLAG_BITS_MAX_ENUM = enum_VkCommandPoolResetFlagBits.VK_COMMAND_POOL_RESET_FLAG_BITS_MAX_ENUM;
-pub const enum_VkCommandPoolResetFlagBits = extern enum {
+pub const enum_VkCommandPoolResetFlagBits = enum(c_int) {
     VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT = 1,
     VK_COMMAND_POOL_RESET_FLAG_BITS_MAX_ENUM = 2147483647,
 };
@@ -2675,7 +2696,7 @@ pub const VkCommandBufferUsageFlagBits = enum_VkCommandBufferUsageFlagBits;
 pub const VkCommandBufferUsageFlags = VkFlags;
 pub const VK_QUERY_CONTROL_PRECISE_BIT = enum_VkQueryControlFlagBits.VK_QUERY_CONTROL_PRECISE_BIT;
 pub const VK_QUERY_CONTROL_FLAG_BITS_MAX_ENUM = enum_VkQueryControlFlagBits.VK_QUERY_CONTROL_FLAG_BITS_MAX_ENUM;
-pub const enum_VkQueryControlFlagBits = extern enum {
+pub const enum_VkQueryControlFlagBits = enum(c_int) {
     VK_QUERY_CONTROL_PRECISE_BIT = 1,
     VK_QUERY_CONTROL_FLAG_BITS_MAX_ENUM = 2147483647,
 };
@@ -2683,7 +2704,7 @@ pub const VkQueryControlFlagBits = enum_VkQueryControlFlagBits;
 pub const VkQueryControlFlags = VkFlags;
 pub const VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT = enum_VkCommandBufferResetFlagBits.VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT;
 pub const VK_COMMAND_BUFFER_RESET_FLAG_BITS_MAX_ENUM = enum_VkCommandBufferResetFlagBits.VK_COMMAND_BUFFER_RESET_FLAG_BITS_MAX_ENUM;
-pub const enum_VkCommandBufferResetFlagBits = extern enum {
+pub const enum_VkCommandBufferResetFlagBits = enum(c_int) {
     VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT = 1,
     VK_COMMAND_BUFFER_RESET_FLAG_BITS_MAX_ENUM = 2147483647,
 };
@@ -2693,7 +2714,7 @@ pub const VK_STENCIL_FACE_FRONT_BIT = enum_VkStencilFaceFlagBits.VK_STENCIL_FACE
 pub const VK_STENCIL_FACE_BACK_BIT = enum_VkStencilFaceFlagBits.VK_STENCIL_FACE_BACK_BIT;
 pub const VK_STENCIL_FRONT_AND_BACK = enum_VkStencilFaceFlagBits.VK_STENCIL_FRONT_AND_BACK;
 pub const VK_STENCIL_FACE_FLAG_BITS_MAX_ENUM = enum_VkStencilFaceFlagBits.VK_STENCIL_FACE_FLAG_BITS_MAX_ENUM;
-pub const enum_VkStencilFaceFlagBits = extern enum {
+pub const enum_VkStencilFaceFlagBits = enum(c_int) {
     VK_STENCIL_FACE_FRONT_BIT = 1,
     VK_STENCIL_FACE_BACK_BIT = 2,
     VK_STENCIL_FRONT_AND_BACK = 3,
@@ -2703,7 +2724,7 @@ pub const VkStencilFaceFlagBits = enum_VkStencilFaceFlagBits;
 pub const VkStencilFaceFlags = VkFlags;
 pub const struct_VkApplicationInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     pApplicationName: ?[*]const u8,
     applicationVersion: u32,
     pEngineName: ?[*]const u8,
@@ -2713,7 +2734,7 @@ pub const struct_VkApplicationInfo = extern struct {
 pub const VkApplicationInfo = struct_VkApplicationInfo;
 pub const struct_VkInstanceCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkInstanceCreateFlags,
     pApplicationInfo: *const VkApplicationInfo,
     enabledLayerCount: u32,
@@ -2722,13 +2743,13 @@ pub const struct_VkInstanceCreateInfo = extern struct {
     ppEnabledExtensionNames: ?[*]const (?[*]const u8),
 };
 pub const VkInstanceCreateInfo = struct_VkInstanceCreateInfo;
-pub const PFN_vkAllocationFunction = ?fn (?*c_void, usize, usize, VkSystemAllocationScope) callconv(.C) ?*c_void;
-pub const PFN_vkReallocationFunction = ?fn (?*c_void, ?*c_void, usize, usize, VkSystemAllocationScope) callconv(.C) ?*c_void;
-pub const PFN_vkFreeFunction = ?fn (?*c_void, ?*c_void) callconv(.C) void;
-pub const PFN_vkInternalAllocationNotification = ?fn (?*c_void, usize, VkInternalAllocationType, VkSystemAllocationScope) callconv(.C) void;
-pub const PFN_vkInternalFreeNotification = ?fn (?*c_void, usize, VkInternalAllocationType, VkSystemAllocationScope) callconv(.C) void;
+pub const PFN_vkAllocationFunction = ?fn (?*anyopaque, usize, usize, VkSystemAllocationScope) callconv(.C) ?*anyopaque;
+pub const PFN_vkReallocationFunction = ?fn (?*anyopaque, ?*anyopaque, usize, usize, VkSystemAllocationScope) callconv(.C) ?*anyopaque;
+pub const PFN_vkFreeFunction = ?fn (?*anyopaque, ?*anyopaque) callconv(.C) void;
+pub const PFN_vkInternalAllocationNotification = ?fn (?*anyopaque, usize, VkInternalAllocationType, VkSystemAllocationScope) callconv(.C) void;
+pub const PFN_vkInternalFreeNotification = ?fn (?*anyopaque, usize, VkInternalAllocationType, VkSystemAllocationScope) callconv(.C) void;
 pub const struct_VkAllocationCallbacks = extern struct {
-    pUserData: ?*c_void,
+    pUserData: ?*anyopaque,
     pfnAllocation: PFN_vkAllocationFunction,
     pfnReallocation: PFN_vkReallocationFunction,
     pfnFree: PFN_vkFreeFunction,
@@ -2970,7 +2991,7 @@ pub const VkPhysicalDeviceMemoryProperties = struct_VkPhysicalDeviceMemoryProper
 pub const PFN_vkVoidFunction = ?fn () callconv(.C) void;
 pub const struct_VkDeviceQueueCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkDeviceQueueCreateFlags,
     queueFamilyIndex: u32,
     queueCount: u32,
@@ -2979,7 +3000,7 @@ pub const struct_VkDeviceQueueCreateInfo = extern struct {
 pub const VkDeviceQueueCreateInfo = struct_VkDeviceQueueCreateInfo;
 pub const struct_VkDeviceCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkDeviceCreateFlags,
     queueCreateInfoCount: u32,
     pQueueCreateInfos: ?[*]const VkDeviceQueueCreateInfo,
@@ -3004,7 +3025,7 @@ pub const struct_VkLayerProperties = extern struct {
 pub const VkLayerProperties = struct_VkLayerProperties;
 pub const struct_VkSubmitInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     waitSemaphoreCount: u32,
     pWaitSemaphores: ?[*]const VkSemaphore,
     pWaitDstStageMask: ?[*]const VkPipelineStageFlags,
@@ -3016,14 +3037,14 @@ pub const struct_VkSubmitInfo = extern struct {
 pub const VkSubmitInfo = struct_VkSubmitInfo;
 pub const struct_VkMemoryAllocateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     allocationSize: VkDeviceSize,
     memoryTypeIndex: u32,
 };
 pub const VkMemoryAllocateInfo = struct_VkMemoryAllocateInfo;
 pub const struct_VkMappedMemoryRange = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     memory: VkDeviceMemory,
     offset: VkDeviceSize,
     size: VkDeviceSize,
@@ -3098,7 +3119,7 @@ pub const struct_VkSparseImageMemoryBindInfo = extern struct {
 pub const VkSparseImageMemoryBindInfo = struct_VkSparseImageMemoryBindInfo;
 pub const struct_VkBindSparseInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     waitSemaphoreCount: u32,
     pWaitSemaphores: ?[*]const VkSemaphore,
     bufferBindCount: u32,
@@ -3113,25 +3134,25 @@ pub const struct_VkBindSparseInfo = extern struct {
 pub const VkBindSparseInfo = struct_VkBindSparseInfo;
 pub const struct_VkFenceCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkFenceCreateFlags,
 };
 pub const VkFenceCreateInfo = struct_VkFenceCreateInfo;
 pub const struct_VkSemaphoreCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkSemaphoreCreateFlags,
 };
 pub const VkSemaphoreCreateInfo = struct_VkSemaphoreCreateInfo;
 pub const struct_VkEventCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkEventCreateFlags,
 };
 pub const VkEventCreateInfo = struct_VkEventCreateInfo;
 pub const struct_VkQueryPoolCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkQueryPoolCreateFlags,
     queryType: VkQueryType,
     queryCount: u32,
@@ -3140,7 +3161,7 @@ pub const struct_VkQueryPoolCreateInfo = extern struct {
 pub const VkQueryPoolCreateInfo = struct_VkQueryPoolCreateInfo;
 pub const struct_VkBufferCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkBufferCreateFlags,
     size: VkDeviceSize,
     usage: VkBufferUsageFlags,
@@ -3151,7 +3172,7 @@ pub const struct_VkBufferCreateInfo = extern struct {
 pub const VkBufferCreateInfo = struct_VkBufferCreateInfo;
 pub const struct_VkBufferViewCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkBufferViewCreateFlags,
     buffer: VkBuffer,
     format: VkFormat,
@@ -3161,7 +3182,7 @@ pub const struct_VkBufferViewCreateInfo = extern struct {
 pub const VkBufferViewCreateInfo = struct_VkBufferViewCreateInfo;
 pub const struct_VkImageCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkImageCreateFlags,
     imageType: VkImageType,
     format: VkFormat,
@@ -3202,7 +3223,7 @@ pub const struct_VkImageSubresourceRange = extern struct {
 pub const VkImageSubresourceRange = struct_VkImageSubresourceRange;
 pub const struct_VkImageViewCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkImageViewCreateFlags,
     image: VkImage,
     viewType: VkImageViewType,
@@ -3213,7 +3234,7 @@ pub const struct_VkImageViewCreateInfo = extern struct {
 pub const VkImageViewCreateInfo = struct_VkImageViewCreateInfo;
 pub const struct_VkShaderModuleCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkShaderModuleCreateFlags,
     codeSize: usize,
     pCode: ?[*]const u32,
@@ -3221,10 +3242,10 @@ pub const struct_VkShaderModuleCreateInfo = extern struct {
 pub const VkShaderModuleCreateInfo = struct_VkShaderModuleCreateInfo;
 pub const struct_VkPipelineCacheCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkPipelineCacheCreateFlags,
     initialDataSize: usize,
-    pInitialData: ?*const c_void,
+    pInitialData: ?*const anyopaque,
 };
 pub const VkPipelineCacheCreateInfo = struct_VkPipelineCacheCreateInfo;
 pub const struct_VkSpecializationMapEntry = extern struct {
@@ -3237,12 +3258,12 @@ pub const struct_VkSpecializationInfo = extern struct {
     mapEntryCount: u32,
     pMapEntries: ?[*]const VkSpecializationMapEntry,
     dataSize: usize,
-    pData: ?*const c_void,
+    pData: ?*const anyopaque,
 };
 pub const VkSpecializationInfo = struct_VkSpecializationInfo;
 pub const struct_VkPipelineShaderStageCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkPipelineShaderStageCreateFlags,
     stage: VkShaderStageFlagBits,
     module: VkShaderModule,
@@ -3265,7 +3286,7 @@ pub const struct_VkVertexInputAttributeDescription = extern struct {
 pub const VkVertexInputAttributeDescription = struct_VkVertexInputAttributeDescription;
 pub const struct_VkPipelineVertexInputStateCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkPipelineVertexInputStateCreateFlags,
     vertexBindingDescriptionCount: u32,
     pVertexBindingDescriptions: ?[*]const VkVertexInputBindingDescription,
@@ -3275,7 +3296,7 @@ pub const struct_VkPipelineVertexInputStateCreateInfo = extern struct {
 pub const VkPipelineVertexInputStateCreateInfo = struct_VkPipelineVertexInputStateCreateInfo;
 pub const struct_VkPipelineInputAssemblyStateCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkPipelineInputAssemblyStateCreateFlags,
     topology: VkPrimitiveTopology,
     primitiveRestartEnable: VkBool32,
@@ -3283,7 +3304,7 @@ pub const struct_VkPipelineInputAssemblyStateCreateInfo = extern struct {
 pub const VkPipelineInputAssemblyStateCreateInfo = struct_VkPipelineInputAssemblyStateCreateInfo;
 pub const struct_VkPipelineTessellationStateCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkPipelineTessellationStateCreateFlags,
     patchControlPoints: u32,
 };
@@ -3314,7 +3335,7 @@ pub const struct_VkRect2D = extern struct {
 pub const VkRect2D = struct_VkRect2D;
 pub const struct_VkPipelineViewportStateCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkPipelineViewportStateCreateFlags,
     viewportCount: u32,
     pViewports: ?[*]const VkViewport,
@@ -3324,7 +3345,7 @@ pub const struct_VkPipelineViewportStateCreateInfo = extern struct {
 pub const VkPipelineViewportStateCreateInfo = struct_VkPipelineViewportStateCreateInfo;
 pub const struct_VkPipelineRasterizationStateCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkPipelineRasterizationStateCreateFlags,
     depthClampEnable: VkBool32,
     rasterizerDiscardEnable: VkBool32,
@@ -3340,7 +3361,7 @@ pub const struct_VkPipelineRasterizationStateCreateInfo = extern struct {
 pub const VkPipelineRasterizationStateCreateInfo = struct_VkPipelineRasterizationStateCreateInfo;
 pub const struct_VkPipelineMultisampleStateCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkPipelineMultisampleStateCreateFlags,
     rasterizationSamples: VkSampleCountFlagBits,
     sampleShadingEnable: VkBool32,
@@ -3362,7 +3383,7 @@ pub const struct_VkStencilOpState = extern struct {
 pub const VkStencilOpState = struct_VkStencilOpState;
 pub const struct_VkPipelineDepthStencilStateCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkPipelineDepthStencilStateCreateFlags,
     depthTestEnable: VkBool32,
     depthWriteEnable: VkBool32,
@@ -3388,7 +3409,7 @@ pub const struct_VkPipelineColorBlendAttachmentState = extern struct {
 pub const VkPipelineColorBlendAttachmentState = struct_VkPipelineColorBlendAttachmentState;
 pub const struct_VkPipelineColorBlendStateCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkPipelineColorBlendStateCreateFlags,
     logicOpEnable: VkBool32,
     logicOp: VkLogicOp,
@@ -3399,7 +3420,7 @@ pub const struct_VkPipelineColorBlendStateCreateInfo = extern struct {
 pub const VkPipelineColorBlendStateCreateInfo = struct_VkPipelineColorBlendStateCreateInfo;
 pub const struct_VkPipelineDynamicStateCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkPipelineDynamicStateCreateFlags,
     dynamicStateCount: u32,
     pDynamicStates: ?[*]const VkDynamicState,
@@ -3407,7 +3428,7 @@ pub const struct_VkPipelineDynamicStateCreateInfo = extern struct {
 pub const VkPipelineDynamicStateCreateInfo = struct_VkPipelineDynamicStateCreateInfo;
 pub const struct_VkGraphicsPipelineCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkPipelineCreateFlags,
     stageCount: u32,
     pStages: ?[*]const VkPipelineShaderStageCreateInfo,
@@ -3429,7 +3450,7 @@ pub const struct_VkGraphicsPipelineCreateInfo = extern struct {
 pub const VkGraphicsPipelineCreateInfo = struct_VkGraphicsPipelineCreateInfo;
 pub const struct_VkComputePipelineCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkPipelineCreateFlags,
     stage: VkPipelineShaderStageCreateInfo,
     layout: VkPipelineLayout,
@@ -3445,7 +3466,7 @@ pub const struct_VkPushConstantRange = extern struct {
 pub const VkPushConstantRange = struct_VkPushConstantRange;
 pub const struct_VkPipelineLayoutCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkPipelineLayoutCreateFlags,
     setLayoutCount: u32,
     pSetLayouts: ?[*]const VkDescriptorSetLayout,
@@ -3455,7 +3476,7 @@ pub const struct_VkPipelineLayoutCreateInfo = extern struct {
 pub const VkPipelineLayoutCreateInfo = struct_VkPipelineLayoutCreateInfo;
 pub const struct_VkSamplerCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkSamplerCreateFlags,
     magFilter: VkFilter,
     minFilter: VkFilter,
@@ -3484,7 +3505,7 @@ pub const struct_VkDescriptorSetLayoutBinding = extern struct {
 pub const VkDescriptorSetLayoutBinding = struct_VkDescriptorSetLayoutBinding;
 pub const struct_VkDescriptorSetLayoutCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkDescriptorSetLayoutCreateFlags,
     bindingCount: u32,
     pBindings: ?[*]const VkDescriptorSetLayoutBinding,
@@ -3497,7 +3518,7 @@ pub const struct_VkDescriptorPoolSize = extern struct {
 pub const VkDescriptorPoolSize = struct_VkDescriptorPoolSize;
 pub const struct_VkDescriptorPoolCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkDescriptorPoolCreateFlags,
     maxSets: u32,
     poolSizeCount: u32,
@@ -3506,7 +3527,7 @@ pub const struct_VkDescriptorPoolCreateInfo = extern struct {
 pub const VkDescriptorPoolCreateInfo = struct_VkDescriptorPoolCreateInfo;
 pub const struct_VkDescriptorSetAllocateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     descriptorPool: VkDescriptorPool,
     descriptorSetCount: u32,
     pSetLayouts: ?[*]const VkDescriptorSetLayout,
@@ -3526,7 +3547,7 @@ pub const struct_VkDescriptorBufferInfo = extern struct {
 pub const VkDescriptorBufferInfo = struct_VkDescriptorBufferInfo;
 pub const struct_VkWriteDescriptorSet = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     dstSet: VkDescriptorSet,
     dstBinding: u32,
     dstArrayElement: u32,
@@ -3539,7 +3560,7 @@ pub const struct_VkWriteDescriptorSet = extern struct {
 pub const VkWriteDescriptorSet = struct_VkWriteDescriptorSet;
 pub const struct_VkCopyDescriptorSet = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     srcSet: VkDescriptorSet,
     srcBinding: u32,
     srcArrayElement: u32,
@@ -3551,7 +3572,7 @@ pub const struct_VkCopyDescriptorSet = extern struct {
 pub const VkCopyDescriptorSet = struct_VkCopyDescriptorSet;
 pub const struct_VkFramebufferCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkFramebufferCreateFlags,
     renderPass: VkRenderPass,
     attachmentCount: u32,
@@ -3603,7 +3624,7 @@ pub const struct_VkSubpassDependency = extern struct {
 pub const VkSubpassDependency = struct_VkSubpassDependency;
 pub const struct_VkRenderPassCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkRenderPassCreateFlags,
     attachmentCount: u32,
     pAttachments: ?[*]const VkAttachmentDescription,
@@ -3615,14 +3636,14 @@ pub const struct_VkRenderPassCreateInfo = extern struct {
 pub const VkRenderPassCreateInfo = struct_VkRenderPassCreateInfo;
 pub const struct_VkCommandPoolCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkCommandPoolCreateFlags,
     queueFamilyIndex: u32,
 };
 pub const VkCommandPoolCreateInfo = struct_VkCommandPoolCreateInfo;
 pub const struct_VkCommandBufferAllocateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     commandPool: VkCommandPool,
     level: VkCommandBufferLevel,
     commandBufferCount: u32,
@@ -3630,7 +3651,7 @@ pub const struct_VkCommandBufferAllocateInfo = extern struct {
 pub const VkCommandBufferAllocateInfo = struct_VkCommandBufferAllocateInfo;
 pub const struct_VkCommandBufferInheritanceInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     renderPass: VkRenderPass,
     subpass: u32,
     framebuffer: VkFramebuffer,
@@ -3641,7 +3662,7 @@ pub const struct_VkCommandBufferInheritanceInfo = extern struct {
 pub const VkCommandBufferInheritanceInfo = struct_VkCommandBufferInheritanceInfo;
 pub const struct_VkCommandBufferBeginInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkCommandBufferUsageFlags,
     pInheritanceInfo: ?[*]const VkCommandBufferInheritanceInfo,
 };
@@ -3721,14 +3742,14 @@ pub const struct_VkImageResolve = extern struct {
 pub const VkImageResolve = struct_VkImageResolve;
 pub const struct_VkMemoryBarrier = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     srcAccessMask: VkAccessFlags,
     dstAccessMask: VkAccessFlags,
 };
 pub const VkMemoryBarrier = struct_VkMemoryBarrier;
 pub const struct_VkBufferMemoryBarrier = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     srcAccessMask: VkAccessFlags,
     dstAccessMask: VkAccessFlags,
     srcQueueFamilyIndex: u32,
@@ -3740,7 +3761,7 @@ pub const struct_VkBufferMemoryBarrier = extern struct {
 pub const VkBufferMemoryBarrier = struct_VkBufferMemoryBarrier;
 pub const struct_VkImageMemoryBarrier = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     srcAccessMask: VkAccessFlags,
     dstAccessMask: VkAccessFlags,
     oldLayout: VkImageLayout,
@@ -3753,7 +3774,7 @@ pub const struct_VkImageMemoryBarrier = extern struct {
 pub const VkImageMemoryBarrier = struct_VkImageMemoryBarrier;
 pub const struct_VkRenderPassBeginInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     renderPass: VkRenderPass,
     framebuffer: VkFramebuffer,
     renderArea: VkRect2D,
@@ -3815,7 +3836,7 @@ pub const PFN_vkQueueWaitIdle = ?fn (VkQueue) callconv(.C) VkResult;
 pub const PFN_vkDeviceWaitIdle = ?fn (VkDevice) callconv(.C) VkResult;
 pub const PFN_vkAllocateMemory = ?fn (VkDevice, ?[*]const VkMemoryAllocateInfo, ?[*]const VkAllocationCallbacks, ?[*]VkDeviceMemory) callconv(.C) VkResult;
 pub const PFN_vkFreeMemory = ?fn (VkDevice, VkDeviceMemory, ?[*]const VkAllocationCallbacks) callconv(.C) void;
-pub const PFN_vkMapMemory = ?fn (VkDevice, VkDeviceMemory, VkDeviceSize, VkDeviceSize, VkMemoryMapFlags, ?[*](?*c_void)) callconv(.C) VkResult;
+pub const PFN_vkMapMemory = ?fn (VkDevice, VkDeviceMemory, VkDeviceSize, VkDeviceSize, VkMemoryMapFlags, ?[*](?*anyopaque)) callconv(.C) VkResult;
 pub const PFN_vkUnmapMemory = ?fn (VkDevice, VkDeviceMemory) callconv(.C) void;
 pub const PFN_vkFlushMappedMemoryRanges = ?fn (VkDevice, u32, ?[*]const VkMappedMemoryRange) callconv(.C) VkResult;
 pub const PFN_vkInvalidateMappedMemoryRanges = ?fn (VkDevice, u32, ?[*]const VkMappedMemoryRange) callconv(.C) VkResult;
@@ -3841,7 +3862,7 @@ pub const PFN_vkSetEvent = ?fn (VkDevice, VkEvent) callconv(.C) VkResult;
 pub const PFN_vkResetEvent = ?fn (VkDevice, VkEvent) callconv(.C) VkResult;
 pub const PFN_vkCreateQueryPool = ?fn (VkDevice, ?[*]const VkQueryPoolCreateInfo, ?[*]const VkAllocationCallbacks, ?[*]VkQueryPool) callconv(.C) VkResult;
 pub const PFN_vkDestroyQueryPool = ?fn (VkDevice, VkQueryPool, ?[*]const VkAllocationCallbacks) callconv(.C) void;
-pub const PFN_vkGetQueryPoolResults = ?fn (VkDevice, VkQueryPool, u32, u32, usize, ?*c_void, VkDeviceSize, VkQueryResultFlags) callconv(.C) VkResult;
+pub const PFN_vkGetQueryPoolResults = ?fn (VkDevice, VkQueryPool, u32, u32, usize, ?*anyopaque, VkDeviceSize, VkQueryResultFlags) callconv(.C) VkResult;
 pub const PFN_vkCreateBuffer = ?fn (VkDevice, ?[*]const VkBufferCreateInfo, ?[*]const VkAllocationCallbacks, ?[*]VkBuffer) callconv(.C) VkResult;
 pub const PFN_vkDestroyBuffer = ?fn (VkDevice, VkBuffer, ?[*]const VkAllocationCallbacks) callconv(.C) void;
 pub const PFN_vkCreateBufferView = ?fn (VkDevice, ?[*]const VkBufferViewCreateInfo, ?[*]const VkAllocationCallbacks, ?[*]VkBufferView) callconv(.C) VkResult;
@@ -3855,7 +3876,7 @@ pub const PFN_vkCreateShaderModule = ?fn (VkDevice, ?[*]const VkShaderModuleCrea
 pub const PFN_vkDestroyShaderModule = ?fn (VkDevice, VkShaderModule, ?[*]const VkAllocationCallbacks) callconv(.C) void;
 pub const PFN_vkCreatePipelineCache = ?fn (VkDevice, ?[*]const VkPipelineCacheCreateInfo, ?[*]const VkAllocationCallbacks, ?[*]VkPipelineCache) callconv(.C) VkResult;
 pub const PFN_vkDestroyPipelineCache = ?fn (VkDevice, VkPipelineCache, ?[*]const VkAllocationCallbacks) callconv(.C) void;
-pub const PFN_vkGetPipelineCacheData = ?fn (VkDevice, VkPipelineCache, ?[*]usize, ?*c_void) callconv(.C) VkResult;
+pub const PFN_vkGetPipelineCacheData = ?fn (VkDevice, VkPipelineCache, ?[*]usize, ?*anyopaque) callconv(.C) VkResult;
 pub const PFN_vkMergePipelineCaches = ?fn (VkDevice, VkPipelineCache, u32, ?[*]const VkPipelineCache) callconv(.C) VkResult;
 pub const PFN_vkCreateGraphicsPipelines = ?fn (VkDevice, VkPipelineCache, u32, ?[*]const VkGraphicsPipelineCreateInfo, ?[*]const VkAllocationCallbacks, ?[*]VkPipeline) callconv(.C) VkResult;
 pub const PFN_vkCreateComputePipelines = ?fn (VkDevice, VkPipelineCache, u32, ?[*]const VkComputePipelineCreateInfo, ?[*]const VkAllocationCallbacks, ?[*]VkPipeline) callconv(.C) VkResult;
@@ -3909,7 +3930,7 @@ pub const PFN_vkCmdCopyImage = ?fn (VkCommandBuffer, VkImage, VkImageLayout, VkI
 pub const PFN_vkCmdBlitImage = ?fn (VkCommandBuffer, VkImage, VkImageLayout, VkImage, VkImageLayout, u32, ?[*]const VkImageBlit, VkFilter) callconv(.C) void;
 pub const PFN_vkCmdCopyBufferToImage = ?fn (VkCommandBuffer, VkBuffer, VkImage, VkImageLayout, u32, ?[*]const VkBufferImageCopy) callconv(.C) void;
 pub const PFN_vkCmdCopyImageToBuffer = ?fn (VkCommandBuffer, VkImage, VkImageLayout, VkBuffer, u32, ?[*]const VkBufferImageCopy) callconv(.C) void;
-pub const PFN_vkCmdUpdateBuffer = ?fn (VkCommandBuffer, VkBuffer, VkDeviceSize, VkDeviceSize, ?*const c_void) callconv(.C) void;
+pub const PFN_vkCmdUpdateBuffer = ?fn (VkCommandBuffer, VkBuffer, VkDeviceSize, VkDeviceSize, ?*const anyopaque) callconv(.C) void;
 pub const PFN_vkCmdFillBuffer = ?fn (VkCommandBuffer, VkBuffer, VkDeviceSize, VkDeviceSize, u32) callconv(.C) void;
 pub const PFN_vkCmdClearColorImage = ?fn (VkCommandBuffer, VkImage, VkImageLayout, ?[*]const VkClearColorValue, u32, ?[*]const VkImageSubresourceRange) callconv(.C) void;
 pub const PFN_vkCmdClearDepthStencilImage = ?fn (VkCommandBuffer, VkImage, VkImageLayout, ?[*]const VkClearDepthStencilValue, u32, ?[*]const VkImageSubresourceRange) callconv(.C) void;
@@ -3924,7 +3945,7 @@ pub const PFN_vkCmdEndQuery = ?fn (VkCommandBuffer, VkQueryPool, u32) callconv(.
 pub const PFN_vkCmdResetQueryPool = ?fn (VkCommandBuffer, VkQueryPool, u32, u32) callconv(.C) void;
 pub const PFN_vkCmdWriteTimestamp = ?fn (VkCommandBuffer, VkPipelineStageFlagBits, VkQueryPool, u32) callconv(.C) void;
 pub const PFN_vkCmdCopyQueryPoolResults = ?fn (VkCommandBuffer, VkQueryPool, u32, u32, VkBuffer, VkDeviceSize, VkDeviceSize, VkQueryResultFlags) callconv(.C) void;
-pub const PFN_vkCmdPushConstants = ?fn (VkCommandBuffer, VkPipelineLayout, VkShaderStageFlags, u32, u32, ?*const c_void) callconv(.C) void;
+pub const PFN_vkCmdPushConstants = ?fn (VkCommandBuffer, VkPipelineLayout, VkShaderStageFlags, u32, u32, ?*const anyopaque) callconv(.C) void;
 pub const PFN_vkCmdBeginRenderPass = ?fn (VkCommandBuffer, ?[*]const VkRenderPassBeginInfo, VkSubpassContents) callconv(.C) void;
 pub const PFN_vkCmdNextSubpass = ?fn (VkCommandBuffer, VkSubpassContents) callconv(.C) void;
 pub const PFN_vkCmdEndRenderPass = ?fn (VkCommandBuffer) callconv(.C) void;
@@ -3961,7 +3982,7 @@ pub extern fn vkQueueWaitIdle(queue: VkQueue) VkResult;
 pub extern fn vkDeviceWaitIdle(device: VkDevice) VkResult;
 pub extern fn vkAllocateMemory(device: VkDevice, pAllocateInfo: ?[*]const VkMemoryAllocateInfo, pAllocator: ?[*]const VkAllocationCallbacks, pMemory: ?[*]VkDeviceMemory) VkResult;
 pub extern fn vkFreeMemory(device: VkDevice, memory: VkDeviceMemory, pAllocator: ?[*]const VkAllocationCallbacks) void;
-pub extern fn vkMapMemory(device: VkDevice, memory: VkDeviceMemory, offset: VkDeviceSize, size: VkDeviceSize, flags: VkMemoryMapFlags, ppData: ?[*](?*c_void)) VkResult;
+pub extern fn vkMapMemory(device: VkDevice, memory: VkDeviceMemory, offset: VkDeviceSize, size: VkDeviceSize, flags: VkMemoryMapFlags, ppData: ?[*](?*anyopaque)) VkResult;
 pub extern fn vkUnmapMemory(device: VkDevice, memory: VkDeviceMemory) void;
 pub extern fn vkFlushMappedMemoryRanges(device: VkDevice, memoryRangeCount: u32, pMemoryRanges: ?[*]const VkMappedMemoryRange) VkResult;
 pub extern fn vkInvalidateMappedMemoryRanges(device: VkDevice, memoryRangeCount: u32, pMemoryRanges: ?[*]const VkMappedMemoryRange) VkResult;
@@ -3987,7 +4008,7 @@ pub extern fn vkSetEvent(device: VkDevice, event: VkEvent) VkResult;
 pub extern fn vkResetEvent(device: VkDevice, event: VkEvent) VkResult;
 pub extern fn vkCreateQueryPool(device: VkDevice, pCreateInfo: ?[*]const VkQueryPoolCreateInfo, pAllocator: ?[*]const VkAllocationCallbacks, pQueryPool: ?[*]VkQueryPool) VkResult;
 pub extern fn vkDestroyQueryPool(device: VkDevice, queryPool: VkQueryPool, pAllocator: ?[*]const VkAllocationCallbacks) void;
-pub extern fn vkGetQueryPoolResults(device: VkDevice, queryPool: VkQueryPool, firstQuery: u32, queryCount: u32, dataSize: usize, pData: ?*c_void, stride: VkDeviceSize, flags: VkQueryResultFlags) VkResult;
+pub extern fn vkGetQueryPoolResults(device: VkDevice, queryPool: VkQueryPool, firstQuery: u32, queryCount: u32, dataSize: usize, pData: ?*anyopaque, stride: VkDeviceSize, flags: VkQueryResultFlags) VkResult;
 pub extern fn vkCreateBuffer(device: VkDevice, pCreateInfo: ?[*]const VkBufferCreateInfo, pAllocator: ?[*]const VkAllocationCallbacks, pBuffer: ?[*]VkBuffer) VkResult;
 pub extern fn vkDestroyBuffer(device: VkDevice, buffer: VkBuffer, pAllocator: ?[*]const VkAllocationCallbacks) void;
 pub extern fn vkCreateBufferView(device: VkDevice, pCreateInfo: ?[*]const VkBufferViewCreateInfo, pAllocator: ?[*]const VkAllocationCallbacks, pView: ?[*]VkBufferView) VkResult;
@@ -4001,7 +4022,7 @@ pub extern fn vkCreateShaderModule(device: VkDevice, pCreateInfo: *const VkShade
 pub extern fn vkDestroyShaderModule(device: VkDevice, shaderModule: VkShaderModule, pAllocator: ?[*]const VkAllocationCallbacks) void;
 pub extern fn vkCreatePipelineCache(device: VkDevice, pCreateInfo: ?[*]const VkPipelineCacheCreateInfo, pAllocator: ?[*]const VkAllocationCallbacks, pPipelineCache: ?[*]VkPipelineCache) VkResult;
 pub extern fn vkDestroyPipelineCache(device: VkDevice, pipelineCache: VkPipelineCache, pAllocator: ?[*]const VkAllocationCallbacks) void;
-pub extern fn vkGetPipelineCacheData(device: VkDevice, pipelineCache: VkPipelineCache, pDataSize: ?[*]usize, pData: ?*c_void) VkResult;
+pub extern fn vkGetPipelineCacheData(device: VkDevice, pipelineCache: VkPipelineCache, pDataSize: ?[*]usize, pData: ?*anyopaque) VkResult;
 pub extern fn vkMergePipelineCaches(device: VkDevice, dstCache: VkPipelineCache, srcCacheCount: u32, pSrcCaches: ?[*]const VkPipelineCache) VkResult;
 pub extern fn vkCreateGraphicsPipelines(device: VkDevice, pipelineCache: VkPipelineCache, createInfoCount: u32, pCreateInfos: ?[*]const VkGraphicsPipelineCreateInfo, pAllocator: ?[*]const VkAllocationCallbacks, pPipelines: [*]VkPipeline) VkResult;
 pub extern fn vkCreateComputePipelines(device: VkDevice, pipelineCache: VkPipelineCache, createInfoCount: u32, pCreateInfos: ?[*]const VkComputePipelineCreateInfo, pAllocator: ?[*]const VkAllocationCallbacks, pPipelines: ?[*]VkPipeline) VkResult;
@@ -4055,7 +4076,7 @@ pub extern fn vkCmdCopyImage(commandBuffer: VkCommandBuffer, srcImage: VkImage, 
 pub extern fn vkCmdBlitImage(commandBuffer: VkCommandBuffer, srcImage: VkImage, srcImageLayout: VkImageLayout, dstImage: VkImage, dstImageLayout: VkImageLayout, regionCount: u32, pRegions: ?[*]const VkImageBlit, filter: VkFilter) void;
 pub extern fn vkCmdCopyBufferToImage(commandBuffer: VkCommandBuffer, srcBuffer: VkBuffer, dstImage: VkImage, dstImageLayout: VkImageLayout, regionCount: u32, pRegions: ?[*]const VkBufferImageCopy) void;
 pub extern fn vkCmdCopyImageToBuffer(commandBuffer: VkCommandBuffer, srcImage: VkImage, srcImageLayout: VkImageLayout, dstBuffer: VkBuffer, regionCount: u32, pRegions: ?[*]const VkBufferImageCopy) void;
-pub extern fn vkCmdUpdateBuffer(commandBuffer: VkCommandBuffer, dstBuffer: VkBuffer, dstOffset: VkDeviceSize, dataSize: VkDeviceSize, pData: ?*const c_void) void;
+pub extern fn vkCmdUpdateBuffer(commandBuffer: VkCommandBuffer, dstBuffer: VkBuffer, dstOffset: VkDeviceSize, dataSize: VkDeviceSize, pData: ?*const anyopaque) void;
 pub extern fn vkCmdFillBuffer(commandBuffer: VkCommandBuffer, dstBuffer: VkBuffer, dstOffset: VkDeviceSize, size: VkDeviceSize, data: u32) void;
 pub extern fn vkCmdClearColorImage(commandBuffer: VkCommandBuffer, image: VkImage, imageLayout: VkImageLayout, pColor: ?[*]const VkClearColorValue, rangeCount: u32, pRanges: ?[*]const VkImageSubresourceRange) void;
 pub extern fn vkCmdClearDepthStencilImage(commandBuffer: VkCommandBuffer, image: VkImage, imageLayout: VkImageLayout, pDepthStencil: ?[*]const VkClearDepthStencilValue, rangeCount: u32, pRanges: ?[*]const VkImageSubresourceRange) void;
@@ -4070,7 +4091,7 @@ pub extern fn vkCmdEndQuery(commandBuffer: VkCommandBuffer, queryPool: VkQueryPo
 pub extern fn vkCmdResetQueryPool(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, firstQuery: u32, queryCount: u32) void;
 pub extern fn vkCmdWriteTimestamp(commandBuffer: VkCommandBuffer, pipelineStage: VkPipelineStageFlagBits, queryPool: VkQueryPool, query: u32) void;
 pub extern fn vkCmdCopyQueryPoolResults(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, firstQuery: u32, queryCount: u32, dstBuffer: VkBuffer, dstOffset: VkDeviceSize, stride: VkDeviceSize, flags: VkQueryResultFlags) void;
-pub extern fn vkCmdPushConstants(commandBuffer: VkCommandBuffer, layout: VkPipelineLayout, stageFlags: VkShaderStageFlags, offset: u32, size: u32, pValues: ?*const c_void) void;
+pub extern fn vkCmdPushConstants(commandBuffer: VkCommandBuffer, layout: VkPipelineLayout, stageFlags: VkShaderStageFlags, offset: u32, size: u32, pValues: ?*const anyopaque) void;
 pub extern fn vkCmdBeginRenderPass(commandBuffer: VkCommandBuffer, pRenderPassBegin: *const VkRenderPassBeginInfo, contents: VkSubpassContents) void;
 pub extern fn vkCmdNextSubpass(commandBuffer: VkCommandBuffer, contents: VkSubpassContents) void;
 pub extern fn vkCmdEndRenderPass(commandBuffer: VkCommandBuffer) void;
@@ -4087,7 +4108,7 @@ pub const VK_POINT_CLIPPING_BEHAVIOR_BEGIN_RANGE = enum_VkPointClippingBehavior.
 pub const VK_POINT_CLIPPING_BEHAVIOR_END_RANGE = enum_VkPointClippingBehavior.VK_POINT_CLIPPING_BEHAVIOR_END_RANGE;
 pub const VK_POINT_CLIPPING_BEHAVIOR_RANGE_SIZE = enum_VkPointClippingBehavior.VK_POINT_CLIPPING_BEHAVIOR_RANGE_SIZE;
 pub const VK_POINT_CLIPPING_BEHAVIOR_MAX_ENUM = enum_VkPointClippingBehavior.VK_POINT_CLIPPING_BEHAVIOR_MAX_ENUM;
-pub const enum_VkPointClippingBehavior = extern enum {
+pub const enum_VkPointClippingBehavior = enum(c_int) {
     VK_POINT_CLIPPING_BEHAVIOR_ALL_CLIP_PLANES = 0,
     VK_POINT_CLIPPING_BEHAVIOR_USER_CLIP_PLANES_ONLY = 1,
     VK_POINT_CLIPPING_BEHAVIOR_ALL_CLIP_PLANES_KHR = 0,
@@ -4106,7 +4127,7 @@ pub const VK_TESSELLATION_DOMAIN_ORIGIN_BEGIN_RANGE = enum_VkTessellationDomainO
 pub const VK_TESSELLATION_DOMAIN_ORIGIN_END_RANGE = enum_VkTessellationDomainOrigin.VK_TESSELLATION_DOMAIN_ORIGIN_END_RANGE;
 pub const VK_TESSELLATION_DOMAIN_ORIGIN_RANGE_SIZE = enum_VkTessellationDomainOrigin.VK_TESSELLATION_DOMAIN_ORIGIN_RANGE_SIZE;
 pub const VK_TESSELLATION_DOMAIN_ORIGIN_MAX_ENUM = enum_VkTessellationDomainOrigin.VK_TESSELLATION_DOMAIN_ORIGIN_MAX_ENUM;
-pub const enum_VkTessellationDomainOrigin = extern enum {
+pub const enum_VkTessellationDomainOrigin = enum(c_int) {
     VK_TESSELLATION_DOMAIN_ORIGIN_UPPER_LEFT = 0,
     VK_TESSELLATION_DOMAIN_ORIGIN_LOWER_LEFT = 1,
     VK_TESSELLATION_DOMAIN_ORIGIN_UPPER_LEFT_KHR = 0,
@@ -4131,7 +4152,7 @@ pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_BEGIN_RANGE = enum_VkSamplerYcbcrMod
 pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_END_RANGE = enum_VkSamplerYcbcrModelConversion.VK_SAMPLER_YCBCR_MODEL_CONVERSION_END_RANGE;
 pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_RANGE_SIZE = enum_VkSamplerYcbcrModelConversion.VK_SAMPLER_YCBCR_MODEL_CONVERSION_RANGE_SIZE;
 pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_MAX_ENUM = enum_VkSamplerYcbcrModelConversion.VK_SAMPLER_YCBCR_MODEL_CONVERSION_MAX_ENUM;
-pub const enum_VkSamplerYcbcrModelConversion = extern enum {
+pub const enum_VkSamplerYcbcrModelConversion = enum(c_int) {
     VK_SAMPLER_YCBCR_MODEL_CONVERSION_RGB_IDENTITY = 0,
     VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_IDENTITY = 1,
     VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_709 = 2,
@@ -4156,7 +4177,7 @@ pub const VK_SAMPLER_YCBCR_RANGE_BEGIN_RANGE = enum_VkSamplerYcbcrRange.VK_SAMPL
 pub const VK_SAMPLER_YCBCR_RANGE_END_RANGE = enum_VkSamplerYcbcrRange.VK_SAMPLER_YCBCR_RANGE_END_RANGE;
 pub const VK_SAMPLER_YCBCR_RANGE_RANGE_SIZE = enum_VkSamplerYcbcrRange.VK_SAMPLER_YCBCR_RANGE_RANGE_SIZE;
 pub const VK_SAMPLER_YCBCR_RANGE_MAX_ENUM = enum_VkSamplerYcbcrRange.VK_SAMPLER_YCBCR_RANGE_MAX_ENUM;
-pub const enum_VkSamplerYcbcrRange = extern enum {
+pub const enum_VkSamplerYcbcrRange = enum(c_int) {
     VK_SAMPLER_YCBCR_RANGE_ITU_FULL = 0,
     VK_SAMPLER_YCBCR_RANGE_ITU_NARROW = 1,
     VK_SAMPLER_YCBCR_RANGE_ITU_FULL_KHR = 0,
@@ -4175,7 +4196,7 @@ pub const VK_CHROMA_LOCATION_BEGIN_RANGE = enum_VkChromaLocation.VK_CHROMA_LOCAT
 pub const VK_CHROMA_LOCATION_END_RANGE = enum_VkChromaLocation.VK_CHROMA_LOCATION_END_RANGE;
 pub const VK_CHROMA_LOCATION_RANGE_SIZE = enum_VkChromaLocation.VK_CHROMA_LOCATION_RANGE_SIZE;
 pub const VK_CHROMA_LOCATION_MAX_ENUM = enum_VkChromaLocation.VK_CHROMA_LOCATION_MAX_ENUM;
-pub const enum_VkChromaLocation = extern enum {
+pub const enum_VkChromaLocation = enum(c_int) {
     VK_CHROMA_LOCATION_COSITED_EVEN = 0,
     VK_CHROMA_LOCATION_MIDPOINT = 1,
     VK_CHROMA_LOCATION_COSITED_EVEN_KHR = 0,
@@ -4193,7 +4214,7 @@ pub const VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_BEGIN_RANGE = enum_VkDescriptorUpda
 pub const VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_END_RANGE = enum_VkDescriptorUpdateTemplateType.VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_END_RANGE;
 pub const VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_RANGE_SIZE = enum_VkDescriptorUpdateTemplateType.VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_RANGE_SIZE;
 pub const VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_MAX_ENUM = enum_VkDescriptorUpdateTemplateType.VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_MAX_ENUM;
-pub const enum_VkDescriptorUpdateTemplateType = extern enum {
+pub const enum_VkDescriptorUpdateTemplateType = enum(c_int) {
     VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_DESCRIPTOR_SET = 0,
     VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_PUSH_DESCRIPTORS_KHR = 1,
     VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_DESCRIPTOR_SET_KHR = 0,
@@ -4213,7 +4234,7 @@ pub const VK_SUBGROUP_FEATURE_CLUSTERED_BIT = enum_VkSubgroupFeatureFlagBits.VK_
 pub const VK_SUBGROUP_FEATURE_QUAD_BIT = enum_VkSubgroupFeatureFlagBits.VK_SUBGROUP_FEATURE_QUAD_BIT;
 pub const VK_SUBGROUP_FEATURE_PARTITIONED_BIT_NV = enum_VkSubgroupFeatureFlagBits.VK_SUBGROUP_FEATURE_PARTITIONED_BIT_NV;
 pub const VK_SUBGROUP_FEATURE_FLAG_BITS_MAX_ENUM = enum_VkSubgroupFeatureFlagBits.VK_SUBGROUP_FEATURE_FLAG_BITS_MAX_ENUM;
-pub const enum_VkSubgroupFeatureFlagBits = extern enum {
+pub const enum_VkSubgroupFeatureFlagBits = enum(c_int) {
     VK_SUBGROUP_FEATURE_BASIC_BIT = 1,
     VK_SUBGROUP_FEATURE_VOTE_BIT = 2,
     VK_SUBGROUP_FEATURE_ARITHMETIC_BIT = 4,
@@ -4236,7 +4257,7 @@ pub const VK_PEER_MEMORY_FEATURE_COPY_DST_BIT_KHR = enum_VkPeerMemoryFeatureFlag
 pub const VK_PEER_MEMORY_FEATURE_GENERIC_SRC_BIT_KHR = enum_VkPeerMemoryFeatureFlagBits.VK_PEER_MEMORY_FEATURE_GENERIC_SRC_BIT_KHR;
 pub const VK_PEER_MEMORY_FEATURE_GENERIC_DST_BIT_KHR = enum_VkPeerMemoryFeatureFlagBits.VK_PEER_MEMORY_FEATURE_GENERIC_DST_BIT_KHR;
 pub const VK_PEER_MEMORY_FEATURE_FLAG_BITS_MAX_ENUM = enum_VkPeerMemoryFeatureFlagBits.VK_PEER_MEMORY_FEATURE_FLAG_BITS_MAX_ENUM;
-pub const enum_VkPeerMemoryFeatureFlagBits = extern enum {
+pub const enum_VkPeerMemoryFeatureFlagBits = enum(c_int) {
     VK_PEER_MEMORY_FEATURE_COPY_SRC_BIT = 1,
     VK_PEER_MEMORY_FEATURE_COPY_DST_BIT = 2,
     VK_PEER_MEMORY_FEATURE_GENERIC_SRC_BIT = 4,
@@ -4252,7 +4273,7 @@ pub const VkPeerMemoryFeatureFlags = VkFlags;
 pub const VK_MEMORY_ALLOCATE_DEVICE_MASK_BIT = enum_VkMemoryAllocateFlagBits.VK_MEMORY_ALLOCATE_DEVICE_MASK_BIT;
 pub const VK_MEMORY_ALLOCATE_DEVICE_MASK_BIT_KHR = enum_VkMemoryAllocateFlagBits.VK_MEMORY_ALLOCATE_DEVICE_MASK_BIT_KHR;
 pub const VK_MEMORY_ALLOCATE_FLAG_BITS_MAX_ENUM = enum_VkMemoryAllocateFlagBits.VK_MEMORY_ALLOCATE_FLAG_BITS_MAX_ENUM;
-pub const enum_VkMemoryAllocateFlagBits = extern enum {
+pub const enum_VkMemoryAllocateFlagBits = enum(c_int) {
     VK_MEMORY_ALLOCATE_DEVICE_MASK_BIT = 1,
     VK_MEMORY_ALLOCATE_DEVICE_MASK_BIT_KHR = 1,
     VK_MEMORY_ALLOCATE_FLAG_BITS_MAX_ENUM = 2147483647,
@@ -4280,7 +4301,7 @@ pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_KMT_BIT_KHR = enum_VkExte
 pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT_KHR = enum_VkExternalMemoryHandleTypeFlagBits.VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT_KHR;
 pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT_KHR = enum_VkExternalMemoryHandleTypeFlagBits.VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT_KHR;
 pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_FLAG_BITS_MAX_ENUM = enum_VkExternalMemoryHandleTypeFlagBits.VK_EXTERNAL_MEMORY_HANDLE_TYPE_FLAG_BITS_MAX_ENUM;
-pub const enum_VkExternalMemoryHandleTypeFlagBits = extern enum {
+pub const enum_VkExternalMemoryHandleTypeFlagBits = enum(c_int) {
     VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT = 1,
     VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT = 2,
     VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT = 4,
@@ -4310,7 +4331,7 @@ pub const VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT_KHR = enum_VkExternalMem
 pub const VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT_KHR = enum_VkExternalMemoryFeatureFlagBits.VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT_KHR;
 pub const VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT_KHR = enum_VkExternalMemoryFeatureFlagBits.VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT_KHR;
 pub const VK_EXTERNAL_MEMORY_FEATURE_FLAG_BITS_MAX_ENUM = enum_VkExternalMemoryFeatureFlagBits.VK_EXTERNAL_MEMORY_FEATURE_FLAG_BITS_MAX_ENUM;
-pub const enum_VkExternalMemoryFeatureFlagBits = extern enum {
+pub const enum_VkExternalMemoryFeatureFlagBits = enum(c_int) {
     VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT = 1,
     VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT = 2,
     VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT = 4,
@@ -4330,7 +4351,7 @@ pub const VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_BIT_KHR = enum_VkExternalFe
 pub const VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT_KHR = enum_VkExternalFenceHandleTypeFlagBits.VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT_KHR;
 pub const VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT_KHR = enum_VkExternalFenceHandleTypeFlagBits.VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT_KHR;
 pub const VK_EXTERNAL_FENCE_HANDLE_TYPE_FLAG_BITS_MAX_ENUM = enum_VkExternalFenceHandleTypeFlagBits.VK_EXTERNAL_FENCE_HANDLE_TYPE_FLAG_BITS_MAX_ENUM;
-pub const enum_VkExternalFenceHandleTypeFlagBits = extern enum {
+pub const enum_VkExternalFenceHandleTypeFlagBits = enum(c_int) {
     VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT = 1,
     VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_BIT = 2,
     VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT = 4,
@@ -4348,7 +4369,7 @@ pub const VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT = enum_VkExternalFenceFeature
 pub const VK_EXTERNAL_FENCE_FEATURE_EXPORTABLE_BIT_KHR = enum_VkExternalFenceFeatureFlagBits.VK_EXTERNAL_FENCE_FEATURE_EXPORTABLE_BIT_KHR;
 pub const VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT_KHR = enum_VkExternalFenceFeatureFlagBits.VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT_KHR;
 pub const VK_EXTERNAL_FENCE_FEATURE_FLAG_BITS_MAX_ENUM = enum_VkExternalFenceFeatureFlagBits.VK_EXTERNAL_FENCE_FEATURE_FLAG_BITS_MAX_ENUM;
-pub const enum_VkExternalFenceFeatureFlagBits = extern enum {
+pub const enum_VkExternalFenceFeatureFlagBits = enum(c_int) {
     VK_EXTERNAL_FENCE_FEATURE_EXPORTABLE_BIT = 1,
     VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT = 2,
     VK_EXTERNAL_FENCE_FEATURE_EXPORTABLE_BIT_KHR = 1,
@@ -4360,7 +4381,7 @@ pub const VkExternalFenceFeatureFlags = VkFlags;
 pub const VK_FENCE_IMPORT_TEMPORARY_BIT = enum_VkFenceImportFlagBits.VK_FENCE_IMPORT_TEMPORARY_BIT;
 pub const VK_FENCE_IMPORT_TEMPORARY_BIT_KHR = enum_VkFenceImportFlagBits.VK_FENCE_IMPORT_TEMPORARY_BIT_KHR;
 pub const VK_FENCE_IMPORT_FLAG_BITS_MAX_ENUM = enum_VkFenceImportFlagBits.VK_FENCE_IMPORT_FLAG_BITS_MAX_ENUM;
-pub const enum_VkFenceImportFlagBits = extern enum {
+pub const enum_VkFenceImportFlagBits = enum(c_int) {
     VK_FENCE_IMPORT_TEMPORARY_BIT = 1,
     VK_FENCE_IMPORT_TEMPORARY_BIT_KHR = 1,
     VK_FENCE_IMPORT_FLAG_BITS_MAX_ENUM = 2147483647,
@@ -4370,7 +4391,7 @@ pub const VkFenceImportFlags = VkFlags;
 pub const VK_SEMAPHORE_IMPORT_TEMPORARY_BIT = enum_VkSemaphoreImportFlagBits.VK_SEMAPHORE_IMPORT_TEMPORARY_BIT;
 pub const VK_SEMAPHORE_IMPORT_TEMPORARY_BIT_KHR = enum_VkSemaphoreImportFlagBits.VK_SEMAPHORE_IMPORT_TEMPORARY_BIT_KHR;
 pub const VK_SEMAPHORE_IMPORT_FLAG_BITS_MAX_ENUM = enum_VkSemaphoreImportFlagBits.VK_SEMAPHORE_IMPORT_FLAG_BITS_MAX_ENUM;
-pub const enum_VkSemaphoreImportFlagBits = extern enum {
+pub const enum_VkSemaphoreImportFlagBits = enum(c_int) {
     VK_SEMAPHORE_IMPORT_TEMPORARY_BIT = 1,
     VK_SEMAPHORE_IMPORT_TEMPORARY_BIT_KHR = 1,
     VK_SEMAPHORE_IMPORT_FLAG_BITS_MAX_ENUM = 2147483647,
@@ -4388,7 +4409,7 @@ pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT_KHR = enum_VkEx
 pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT_KHR = enum_VkExternalSemaphoreHandleTypeFlagBits.VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT_KHR;
 pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT_KHR = enum_VkExternalSemaphoreHandleTypeFlagBits.VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT_KHR;
 pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_FLAG_BITS_MAX_ENUM = enum_VkExternalSemaphoreHandleTypeFlagBits.VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_FLAG_BITS_MAX_ENUM;
-pub const enum_VkExternalSemaphoreHandleTypeFlagBits = extern enum {
+pub const enum_VkExternalSemaphoreHandleTypeFlagBits = enum(c_int) {
     VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT = 1,
     VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT = 2,
     VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT = 4,
@@ -4408,7 +4429,7 @@ pub const VK_EXTERNAL_SEMAPHORE_FEATURE_IMPORTABLE_BIT = enum_VkExternalSemaphor
 pub const VK_EXTERNAL_SEMAPHORE_FEATURE_EXPORTABLE_BIT_KHR = enum_VkExternalSemaphoreFeatureFlagBits.VK_EXTERNAL_SEMAPHORE_FEATURE_EXPORTABLE_BIT_KHR;
 pub const VK_EXTERNAL_SEMAPHORE_FEATURE_IMPORTABLE_BIT_KHR = enum_VkExternalSemaphoreFeatureFlagBits.VK_EXTERNAL_SEMAPHORE_FEATURE_IMPORTABLE_BIT_KHR;
 pub const VK_EXTERNAL_SEMAPHORE_FEATURE_FLAG_BITS_MAX_ENUM = enum_VkExternalSemaphoreFeatureFlagBits.VK_EXTERNAL_SEMAPHORE_FEATURE_FLAG_BITS_MAX_ENUM;
-pub const enum_VkExternalSemaphoreFeatureFlagBits = extern enum {
+pub const enum_VkExternalSemaphoreFeatureFlagBits = enum(c_int) {
     VK_EXTERNAL_SEMAPHORE_FEATURE_EXPORTABLE_BIT = 1,
     VK_EXTERNAL_SEMAPHORE_FEATURE_IMPORTABLE_BIT = 2,
     VK_EXTERNAL_SEMAPHORE_FEATURE_EXPORTABLE_BIT_KHR = 1,
@@ -4419,7 +4440,7 @@ pub const VkExternalSemaphoreFeatureFlagBits = enum_VkExternalSemaphoreFeatureFl
 pub const VkExternalSemaphoreFeatureFlags = VkFlags;
 pub const struct_VkPhysicalDeviceSubgroupProperties = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     subgroupSize: u32,
     supportedStages: VkShaderStageFlags,
     supportedOperations: VkSubgroupFeatureFlags,
@@ -4428,7 +4449,7 @@ pub const struct_VkPhysicalDeviceSubgroupProperties = extern struct {
 pub const VkPhysicalDeviceSubgroupProperties = struct_VkPhysicalDeviceSubgroupProperties;
 pub const struct_VkBindBufferMemoryInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     buffer: VkBuffer,
     memory: VkDeviceMemory,
     memoryOffset: VkDeviceSize,
@@ -4436,7 +4457,7 @@ pub const struct_VkBindBufferMemoryInfo = extern struct {
 pub const VkBindBufferMemoryInfo = struct_VkBindBufferMemoryInfo;
 pub const struct_VkBindImageMemoryInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     image: VkImage,
     memory: VkDeviceMemory,
     memoryOffset: VkDeviceSize,
@@ -4444,7 +4465,7 @@ pub const struct_VkBindImageMemoryInfo = extern struct {
 pub const VkBindImageMemoryInfo = struct_VkBindImageMemoryInfo;
 pub const struct_VkPhysicalDevice16BitStorageFeatures = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     storageBuffer16BitAccess: VkBool32,
     uniformAndStorageBuffer16BitAccess: VkBool32,
     storagePushConstant16: VkBool32,
@@ -4453,28 +4474,28 @@ pub const struct_VkPhysicalDevice16BitStorageFeatures = extern struct {
 pub const VkPhysicalDevice16BitStorageFeatures = struct_VkPhysicalDevice16BitStorageFeatures;
 pub const struct_VkMemoryDedicatedRequirements = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     prefersDedicatedAllocation: VkBool32,
     requiresDedicatedAllocation: VkBool32,
 };
 pub const VkMemoryDedicatedRequirements = struct_VkMemoryDedicatedRequirements;
 pub const struct_VkMemoryDedicatedAllocateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     image: VkImage,
     buffer: VkBuffer,
 };
 pub const VkMemoryDedicatedAllocateInfo = struct_VkMemoryDedicatedAllocateInfo;
 pub const struct_VkMemoryAllocateFlagsInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkMemoryAllocateFlags,
     deviceMask: u32,
 };
 pub const VkMemoryAllocateFlagsInfo = struct_VkMemoryAllocateFlagsInfo;
 pub const struct_VkDeviceGroupRenderPassBeginInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     deviceMask: u32,
     deviceRenderAreaCount: u32,
     pDeviceRenderAreas: ?[*]const VkRect2D,
@@ -4482,13 +4503,13 @@ pub const struct_VkDeviceGroupRenderPassBeginInfo = extern struct {
 pub const VkDeviceGroupRenderPassBeginInfo = struct_VkDeviceGroupRenderPassBeginInfo;
 pub const struct_VkDeviceGroupCommandBufferBeginInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     deviceMask: u32,
 };
 pub const VkDeviceGroupCommandBufferBeginInfo = struct_VkDeviceGroupCommandBufferBeginInfo;
 pub const struct_VkDeviceGroupSubmitInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     waitSemaphoreCount: u32,
     pWaitSemaphoreDeviceIndices: ?[*]const u32,
     commandBufferCount: u32,
@@ -4499,21 +4520,21 @@ pub const struct_VkDeviceGroupSubmitInfo = extern struct {
 pub const VkDeviceGroupSubmitInfo = struct_VkDeviceGroupSubmitInfo;
 pub const struct_VkDeviceGroupBindSparseInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     resourceDeviceIndex: u32,
     memoryDeviceIndex: u32,
 };
 pub const VkDeviceGroupBindSparseInfo = struct_VkDeviceGroupBindSparseInfo;
 pub const struct_VkBindBufferMemoryDeviceGroupInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     deviceIndexCount: u32,
     pDeviceIndices: ?[*]const u32,
 };
 pub const VkBindBufferMemoryDeviceGroupInfo = struct_VkBindBufferMemoryDeviceGroupInfo;
 pub const struct_VkBindImageMemoryDeviceGroupInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     deviceIndexCount: u32,
     pDeviceIndices: ?[*]const u32,
     splitInstanceBindRegionCount: u32,
@@ -4522,7 +4543,7 @@ pub const struct_VkBindImageMemoryDeviceGroupInfo = extern struct {
 pub const VkBindImageMemoryDeviceGroupInfo = struct_VkBindImageMemoryDeviceGroupInfo;
 pub const struct_VkPhysicalDeviceGroupProperties = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     physicalDeviceCount: u32,
     physicalDevices: [32]VkPhysicalDevice,
     subsetAllocation: VkBool32,
@@ -4530,68 +4551,68 @@ pub const struct_VkPhysicalDeviceGroupProperties = extern struct {
 pub const VkPhysicalDeviceGroupProperties = struct_VkPhysicalDeviceGroupProperties;
 pub const struct_VkDeviceGroupDeviceCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     physicalDeviceCount: u32,
     pPhysicalDevices: ?[*]const VkPhysicalDevice,
 };
 pub const VkDeviceGroupDeviceCreateInfo = struct_VkDeviceGroupDeviceCreateInfo;
 pub const struct_VkBufferMemoryRequirementsInfo2 = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     buffer: VkBuffer,
 };
 pub const VkBufferMemoryRequirementsInfo2 = struct_VkBufferMemoryRequirementsInfo2;
 pub const struct_VkImageMemoryRequirementsInfo2 = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     image: VkImage,
 };
 pub const VkImageMemoryRequirementsInfo2 = struct_VkImageMemoryRequirementsInfo2;
 pub const struct_VkImageSparseMemoryRequirementsInfo2 = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     image: VkImage,
 };
 pub const VkImageSparseMemoryRequirementsInfo2 = struct_VkImageSparseMemoryRequirementsInfo2;
 pub const struct_VkMemoryRequirements2 = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     memoryRequirements: VkMemoryRequirements,
 };
 pub const VkMemoryRequirements2 = struct_VkMemoryRequirements2;
 pub const struct_VkSparseImageMemoryRequirements2 = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     memoryRequirements: VkSparseImageMemoryRequirements,
 };
 pub const VkSparseImageMemoryRequirements2 = struct_VkSparseImageMemoryRequirements2;
 pub const struct_VkPhysicalDeviceFeatures2 = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     features: VkPhysicalDeviceFeatures,
 };
 pub const VkPhysicalDeviceFeatures2 = struct_VkPhysicalDeviceFeatures2;
 pub const struct_VkPhysicalDeviceProperties2 = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     properties: VkPhysicalDeviceProperties,
 };
 pub const VkPhysicalDeviceProperties2 = struct_VkPhysicalDeviceProperties2;
 pub const struct_VkFormatProperties2 = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     formatProperties: VkFormatProperties,
 };
 pub const VkFormatProperties2 = struct_VkFormatProperties2;
 pub const struct_VkImageFormatProperties2 = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     imageFormatProperties: VkImageFormatProperties,
 };
 pub const VkImageFormatProperties2 = struct_VkImageFormatProperties2;
 pub const struct_VkPhysicalDeviceImageFormatInfo2 = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     format: VkFormat,
     type: VkImageType,
     tiling: VkImageTiling,
@@ -4601,25 +4622,25 @@ pub const struct_VkPhysicalDeviceImageFormatInfo2 = extern struct {
 pub const VkPhysicalDeviceImageFormatInfo2 = struct_VkPhysicalDeviceImageFormatInfo2;
 pub const struct_VkQueueFamilyProperties2 = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     queueFamilyProperties: VkQueueFamilyProperties,
 };
 pub const VkQueueFamilyProperties2 = struct_VkQueueFamilyProperties2;
 pub const struct_VkPhysicalDeviceMemoryProperties2 = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     memoryProperties: VkPhysicalDeviceMemoryProperties,
 };
 pub const VkPhysicalDeviceMemoryProperties2 = struct_VkPhysicalDeviceMemoryProperties2;
 pub const struct_VkSparseImageFormatProperties2 = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     properties: VkSparseImageFormatProperties,
 };
 pub const VkSparseImageFormatProperties2 = struct_VkSparseImageFormatProperties2;
 pub const struct_VkPhysicalDeviceSparseImageFormatInfo2 = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     format: VkFormat,
     type: VkImageType,
     samples: VkSampleCountFlagBits,
@@ -4629,7 +4650,7 @@ pub const struct_VkPhysicalDeviceSparseImageFormatInfo2 = extern struct {
 pub const VkPhysicalDeviceSparseImageFormatInfo2 = struct_VkPhysicalDeviceSparseImageFormatInfo2;
 pub const struct_VkPhysicalDevicePointClippingProperties = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     pointClippingBehavior: VkPointClippingBehavior,
 };
 pub const VkPhysicalDevicePointClippingProperties = struct_VkPhysicalDevicePointClippingProperties;
@@ -4641,26 +4662,26 @@ pub const struct_VkInputAttachmentAspectReference = extern struct {
 pub const VkInputAttachmentAspectReference = struct_VkInputAttachmentAspectReference;
 pub const struct_VkRenderPassInputAttachmentAspectCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     aspectReferenceCount: u32,
     pAspectReferences: ?[*]const VkInputAttachmentAspectReference,
 };
 pub const VkRenderPassInputAttachmentAspectCreateInfo = struct_VkRenderPassInputAttachmentAspectCreateInfo;
 pub const struct_VkImageViewUsageCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     usage: VkImageUsageFlags,
 };
 pub const VkImageViewUsageCreateInfo = struct_VkImageViewUsageCreateInfo;
 pub const struct_VkPipelineTessellationDomainOriginStateCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     domainOrigin: VkTessellationDomainOrigin,
 };
 pub const VkPipelineTessellationDomainOriginStateCreateInfo = struct_VkPipelineTessellationDomainOriginStateCreateInfo;
 pub const struct_VkRenderPassMultiviewCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     subpassCount: u32,
     pViewMasks: ?[*]const u32,
     dependencyCount: u32,
@@ -4671,7 +4692,7 @@ pub const struct_VkRenderPassMultiviewCreateInfo = extern struct {
 pub const VkRenderPassMultiviewCreateInfo = struct_VkRenderPassMultiviewCreateInfo;
 pub const struct_VkPhysicalDeviceMultiviewFeatures = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     multiview: VkBool32,
     multiviewGeometryShader: VkBool32,
     multiviewTessellationShader: VkBool32,
@@ -4679,33 +4700,33 @@ pub const struct_VkPhysicalDeviceMultiviewFeatures = extern struct {
 pub const VkPhysicalDeviceMultiviewFeatures = struct_VkPhysicalDeviceMultiviewFeatures;
 pub const struct_VkPhysicalDeviceMultiviewProperties = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     maxMultiviewViewCount: u32,
     maxMultiviewInstanceIndex: u32,
 };
 pub const VkPhysicalDeviceMultiviewProperties = struct_VkPhysicalDeviceMultiviewProperties;
 pub const struct_VkPhysicalDeviceVariablePointerFeatures = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     variablePointersStorageBuffer: VkBool32,
     variablePointers: VkBool32,
 };
 pub const VkPhysicalDeviceVariablePointerFeatures = struct_VkPhysicalDeviceVariablePointerFeatures;
 pub const struct_VkPhysicalDeviceProtectedMemoryFeatures = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     protectedMemory: VkBool32,
 };
 pub const VkPhysicalDeviceProtectedMemoryFeatures = struct_VkPhysicalDeviceProtectedMemoryFeatures;
 pub const struct_VkPhysicalDeviceProtectedMemoryProperties = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     protectedNoFault: VkBool32,
 };
 pub const VkPhysicalDeviceProtectedMemoryProperties = struct_VkPhysicalDeviceProtectedMemoryProperties;
 pub const struct_VkDeviceQueueInfo2 = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkDeviceQueueCreateFlags,
     queueFamilyIndex: u32,
     queueIndex: u32,
@@ -4713,13 +4734,13 @@ pub const struct_VkDeviceQueueInfo2 = extern struct {
 pub const VkDeviceQueueInfo2 = struct_VkDeviceQueueInfo2;
 pub const struct_VkProtectedSubmitInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     protectedSubmit: VkBool32,
 };
 pub const VkProtectedSubmitInfo = struct_VkProtectedSubmitInfo;
 pub const struct_VkSamplerYcbcrConversionCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     format: VkFormat,
     ycbcrModel: VkSamplerYcbcrModelConversion,
     ycbcrRange: VkSamplerYcbcrRange,
@@ -4732,31 +4753,31 @@ pub const struct_VkSamplerYcbcrConversionCreateInfo = extern struct {
 pub const VkSamplerYcbcrConversionCreateInfo = struct_VkSamplerYcbcrConversionCreateInfo;
 pub const struct_VkSamplerYcbcrConversionInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     conversion: VkSamplerYcbcrConversion,
 };
 pub const VkSamplerYcbcrConversionInfo = struct_VkSamplerYcbcrConversionInfo;
 pub const struct_VkBindImagePlaneMemoryInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     planeAspect: VkImageAspectFlagBits,
 };
 pub const VkBindImagePlaneMemoryInfo = struct_VkBindImagePlaneMemoryInfo;
 pub const struct_VkImagePlaneMemoryRequirementsInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     planeAspect: VkImageAspectFlagBits,
 };
 pub const VkImagePlaneMemoryRequirementsInfo = struct_VkImagePlaneMemoryRequirementsInfo;
 pub const struct_VkPhysicalDeviceSamplerYcbcrConversionFeatures = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     samplerYcbcrConversion: VkBool32,
 };
 pub const VkPhysicalDeviceSamplerYcbcrConversionFeatures = struct_VkPhysicalDeviceSamplerYcbcrConversionFeatures;
 pub const struct_VkSamplerYcbcrConversionImageFormatProperties = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     combinedImageSamplerDescriptorCount: u32,
 };
 pub const VkSamplerYcbcrConversionImageFormatProperties = struct_VkSamplerYcbcrConversionImageFormatProperties;
@@ -4771,7 +4792,7 @@ pub const struct_VkDescriptorUpdateTemplateEntry = extern struct {
 pub const VkDescriptorUpdateTemplateEntry = struct_VkDescriptorUpdateTemplateEntry;
 pub const struct_VkDescriptorUpdateTemplateCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     flags: VkDescriptorUpdateTemplateCreateFlags,
     descriptorUpdateEntryCount: u32,
     pDescriptorUpdateEntries: ?[*]const VkDescriptorUpdateTemplateEntry,
@@ -4790,19 +4811,19 @@ pub const struct_VkExternalMemoryProperties = extern struct {
 pub const VkExternalMemoryProperties = struct_VkExternalMemoryProperties;
 pub const struct_VkPhysicalDeviceExternalImageFormatInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     handleType: VkExternalMemoryHandleTypeFlagBits,
 };
 pub const VkPhysicalDeviceExternalImageFormatInfo = struct_VkPhysicalDeviceExternalImageFormatInfo;
 pub const struct_VkExternalImageFormatProperties = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     externalMemoryProperties: VkExternalMemoryProperties,
 };
 pub const VkExternalImageFormatProperties = struct_VkExternalImageFormatProperties;
 pub const struct_VkPhysicalDeviceExternalBufferInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkBufferCreateFlags,
     usage: VkBufferUsageFlags,
     handleType: VkExternalMemoryHandleTypeFlagBits,
@@ -4810,13 +4831,13 @@ pub const struct_VkPhysicalDeviceExternalBufferInfo = extern struct {
 pub const VkPhysicalDeviceExternalBufferInfo = struct_VkPhysicalDeviceExternalBufferInfo;
 pub const struct_VkExternalBufferProperties = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     externalMemoryProperties: VkExternalMemoryProperties,
 };
 pub const VkExternalBufferProperties = struct_VkExternalBufferProperties;
 pub const struct_VkPhysicalDeviceIDProperties = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     deviceUUID: [16]u8,
     driverUUID: [16]u8,
     deviceLUID: [8]u8,
@@ -4826,31 +4847,31 @@ pub const struct_VkPhysicalDeviceIDProperties = extern struct {
 pub const VkPhysicalDeviceIDProperties = struct_VkPhysicalDeviceIDProperties;
 pub const struct_VkExternalMemoryImageCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     handleTypes: VkExternalMemoryHandleTypeFlags,
 };
 pub const VkExternalMemoryImageCreateInfo = struct_VkExternalMemoryImageCreateInfo;
 pub const struct_VkExternalMemoryBufferCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     handleTypes: VkExternalMemoryHandleTypeFlags,
 };
 pub const VkExternalMemoryBufferCreateInfo = struct_VkExternalMemoryBufferCreateInfo;
 pub const struct_VkExportMemoryAllocateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     handleTypes: VkExternalMemoryHandleTypeFlags,
 };
 pub const VkExportMemoryAllocateInfo = struct_VkExportMemoryAllocateInfo;
 pub const struct_VkPhysicalDeviceExternalFenceInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     handleType: VkExternalFenceHandleTypeFlagBits,
 };
 pub const VkPhysicalDeviceExternalFenceInfo = struct_VkPhysicalDeviceExternalFenceInfo;
 pub const struct_VkExternalFenceProperties = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     exportFromImportedHandleTypes: VkExternalFenceHandleTypeFlags,
     compatibleHandleTypes: VkExternalFenceHandleTypeFlags,
     externalFenceFeatures: VkExternalFenceFeatureFlags,
@@ -4858,25 +4879,25 @@ pub const struct_VkExternalFenceProperties = extern struct {
 pub const VkExternalFenceProperties = struct_VkExternalFenceProperties;
 pub const struct_VkExportFenceCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     handleTypes: VkExternalFenceHandleTypeFlags,
 };
 pub const VkExportFenceCreateInfo = struct_VkExportFenceCreateInfo;
 pub const struct_VkExportSemaphoreCreateInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     handleTypes: VkExternalSemaphoreHandleTypeFlags,
 };
 pub const VkExportSemaphoreCreateInfo = struct_VkExportSemaphoreCreateInfo;
 pub const struct_VkPhysicalDeviceExternalSemaphoreInfo = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     handleType: VkExternalSemaphoreHandleTypeFlagBits,
 };
 pub const VkPhysicalDeviceExternalSemaphoreInfo = struct_VkPhysicalDeviceExternalSemaphoreInfo;
 pub const struct_VkExternalSemaphoreProperties = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     exportFromImportedHandleTypes: VkExternalSemaphoreHandleTypeFlags,
     compatibleHandleTypes: VkExternalSemaphoreHandleTypeFlags,
     externalSemaphoreFeatures: VkExternalSemaphoreFeatureFlags,
@@ -4884,20 +4905,20 @@ pub const struct_VkExternalSemaphoreProperties = extern struct {
 pub const VkExternalSemaphoreProperties = struct_VkExternalSemaphoreProperties;
 pub const struct_VkPhysicalDeviceMaintenance3Properties = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     maxPerSetDescriptors: u32,
     maxMemoryAllocationSize: VkDeviceSize,
 };
 pub const VkPhysicalDeviceMaintenance3Properties = struct_VkPhysicalDeviceMaintenance3Properties;
 pub const struct_VkDescriptorSetLayoutSupport = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     supported: VkBool32,
 };
 pub const VkDescriptorSetLayoutSupport = struct_VkDescriptorSetLayoutSupport;
 pub const struct_VkPhysicalDeviceShaderDrawParameterFeatures = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     shaderDrawParameters: VkBool32,
 };
 pub const VkPhysicalDeviceShaderDrawParameterFeatures = struct_VkPhysicalDeviceShaderDrawParameterFeatures;
@@ -4924,7 +4945,7 @@ pub const PFN_vkCreateSamplerYcbcrConversion = ?fn (VkDevice, ?[*]const VkSample
 pub const PFN_vkDestroySamplerYcbcrConversion = ?fn (VkDevice, VkSamplerYcbcrConversion, ?[*]const VkAllocationCallbacks) callconv(.C) void;
 pub const PFN_vkCreateDescriptorUpdateTemplate = ?fn (VkDevice, ?[*]const VkDescriptorUpdateTemplateCreateInfo, ?[*]const VkAllocationCallbacks, ?[*]VkDescriptorUpdateTemplate) callconv(.C) VkResult;
 pub const PFN_vkDestroyDescriptorUpdateTemplate = ?fn (VkDevice, VkDescriptorUpdateTemplate, ?[*]const VkAllocationCallbacks) callconv(.C) void;
-pub const PFN_vkUpdateDescriptorSetWithTemplate = ?fn (VkDevice, VkDescriptorSet, VkDescriptorUpdateTemplate, ?*const c_void) callconv(.C) void;
+pub const PFN_vkUpdateDescriptorSetWithTemplate = ?fn (VkDevice, VkDescriptorSet, VkDescriptorUpdateTemplate, ?*const anyopaque) callconv(.C) void;
 pub const PFN_vkGetPhysicalDeviceExternalBufferProperties = ?fn (VkPhysicalDevice, ?[*]const VkPhysicalDeviceExternalBufferInfo, ?[*]VkExternalBufferProperties) callconv(.C) void;
 pub const PFN_vkGetPhysicalDeviceExternalFenceProperties = ?fn (VkPhysicalDevice, ?[*]const VkPhysicalDeviceExternalFenceInfo, ?[*]VkExternalFenceProperties) callconv(.C) void;
 pub const PFN_vkGetPhysicalDeviceExternalSemaphoreProperties = ?fn (VkPhysicalDevice, ?[*]const VkPhysicalDeviceExternalSemaphoreInfo, ?[*]VkExternalSemaphoreProperties) callconv(.C) void;
@@ -4952,7 +4973,7 @@ pub extern fn vkCreateSamplerYcbcrConversion(device: VkDevice, pCreateInfo: ?[*]
 pub extern fn vkDestroySamplerYcbcrConversion(device: VkDevice, ycbcrConversion: VkSamplerYcbcrConversion, pAllocator: ?[*]const VkAllocationCallbacks) void;
 pub extern fn vkCreateDescriptorUpdateTemplate(device: VkDevice, pCreateInfo: ?[*]const VkDescriptorUpdateTemplateCreateInfo, pAllocator: ?[*]const VkAllocationCallbacks, pDescriptorUpdateTemplate: ?[*]VkDescriptorUpdateTemplate) VkResult;
 pub extern fn vkDestroyDescriptorUpdateTemplate(device: VkDevice, descriptorUpdateTemplate: VkDescriptorUpdateTemplate, pAllocator: ?[*]const VkAllocationCallbacks) void;
-pub extern fn vkUpdateDescriptorSetWithTemplate(device: VkDevice, descriptorSet: VkDescriptorSet, descriptorUpdateTemplate: VkDescriptorUpdateTemplate, pData: ?*const c_void) void;
+pub extern fn vkUpdateDescriptorSetWithTemplate(device: VkDevice, descriptorSet: VkDescriptorSet, descriptorUpdateTemplate: VkDescriptorUpdateTemplate, pData: ?*const anyopaque) void;
 pub extern fn vkGetPhysicalDeviceExternalBufferProperties(physicalDevice: VkPhysicalDevice, pExternalBufferInfo: ?[*]const VkPhysicalDeviceExternalBufferInfo, pExternalBufferProperties: ?[*]VkExternalBufferProperties) void;
 pub extern fn vkGetPhysicalDeviceExternalFenceProperties(physicalDevice: VkPhysicalDevice, pExternalFenceInfo: ?[*]const VkPhysicalDeviceExternalFenceInfo, pExternalFenceProperties: ?[*]VkExternalFenceProperties) void;
 pub extern fn vkGetPhysicalDeviceExternalSemaphoreProperties(physicalDevice: VkPhysicalDevice, pExternalSemaphoreInfo: ?[*]const VkPhysicalDeviceExternalSemaphoreInfo, pExternalSemaphoreProperties: ?[*]VkExternalSemaphoreProperties) void;
@@ -4978,7 +4999,7 @@ pub const VK_COLOR_SPACE_BEGIN_RANGE_KHR = enum_VkColorSpaceKHR.VK_COLOR_SPACE_B
 pub const VK_COLOR_SPACE_END_RANGE_KHR = enum_VkColorSpaceKHR.VK_COLOR_SPACE_END_RANGE_KHR;
 pub const VK_COLOR_SPACE_RANGE_SIZE_KHR = enum_VkColorSpaceKHR.VK_COLOR_SPACE_RANGE_SIZE_KHR;
 pub const VK_COLOR_SPACE_MAX_ENUM_KHR = enum_VkColorSpaceKHR.VK_COLOR_SPACE_MAX_ENUM_KHR;
-pub const enum_VkColorSpaceKHR = extern enum {
+pub const enum_VkColorSpaceKHR = enum(c_int) {
     VK_COLOR_SPACE_SRGB_NONLINEAR_KHR = 0,
     VK_COLOR_SPACE_DISPLAY_P3_NONLINEAR_EXT = 1000104001,
     VK_COLOR_SPACE_EXTENDED_SRGB_LINEAR_EXT = 1000104002,
@@ -5008,7 +5029,7 @@ pub const VK_PRESENT_MODE_BEGIN_RANGE_KHR = enum_VkPresentModeKHR.VK_PRESENT_MOD
 pub const VK_PRESENT_MODE_END_RANGE_KHR = enum_VkPresentModeKHR.VK_PRESENT_MODE_END_RANGE_KHR;
 pub const VK_PRESENT_MODE_RANGE_SIZE_KHR = enum_VkPresentModeKHR.VK_PRESENT_MODE_RANGE_SIZE_KHR;
 pub const VK_PRESENT_MODE_MAX_ENUM_KHR = enum_VkPresentModeKHR.VK_PRESENT_MODE_MAX_ENUM_KHR;
-pub const enum_VkPresentModeKHR = extern enum {
+pub const enum_VkPresentModeKHR = enum(c_int) {
     VK_PRESENT_MODE_IMMEDIATE_KHR = 0,
     VK_PRESENT_MODE_MAILBOX_KHR = 1,
     VK_PRESENT_MODE_FIFO_KHR = 2,
@@ -5029,7 +5050,7 @@ pub const VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR = enum_VkSur
 pub const VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR = enum_VkSurfaceTransformFlagBitsKHR.VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR;
 pub const VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR = enum_VkSurfaceTransformFlagBitsKHR.VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR;
 pub const VK_SURFACE_TRANSFORM_FLAG_BITS_MAX_ENUM_KHR = enum_VkSurfaceTransformFlagBitsKHR.VK_SURFACE_TRANSFORM_FLAG_BITS_MAX_ENUM_KHR;
-pub const enum_VkSurfaceTransformFlagBitsKHR = extern enum {
+pub const enum_VkSurfaceTransformFlagBitsKHR = enum(c_int) {
     VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR = 1,
     VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR = 2,
     VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR = 4,
@@ -5048,7 +5069,7 @@ pub const VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR = enum_VkCompositeAlphaFlagB
 pub const VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR = enum_VkCompositeAlphaFlagBitsKHR.VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR;
 pub const VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR = enum_VkCompositeAlphaFlagBitsKHR.VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR;
 pub const VK_COMPOSITE_ALPHA_FLAG_BITS_MAX_ENUM_KHR = enum_VkCompositeAlphaFlagBitsKHR.VK_COMPOSITE_ALPHA_FLAG_BITS_MAX_ENUM_KHR;
-pub const enum_VkCompositeAlphaFlagBitsKHR = extern enum {
+pub const enum_VkCompositeAlphaFlagBitsKHR = enum(c_int) {
     VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR = 1,
     VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR = 2,
     VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR = 4,
@@ -5090,7 +5111,7 @@ pub const VkSwapchainKHR = ?*struct_VkSwapchainKHR_T;
 pub const VK_SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR = enum_VkSwapchainCreateFlagBitsKHR.VK_SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR;
 pub const VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR = enum_VkSwapchainCreateFlagBitsKHR.VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR;
 pub const VK_SWAPCHAIN_CREATE_FLAG_BITS_MAX_ENUM_KHR = enum_VkSwapchainCreateFlagBitsKHR.VK_SWAPCHAIN_CREATE_FLAG_BITS_MAX_ENUM_KHR;
-pub const enum_VkSwapchainCreateFlagBitsKHR = extern enum {
+pub const enum_VkSwapchainCreateFlagBitsKHR = enum(c_int) {
     VK_SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR = 1,
     VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR = 2,
     VK_SWAPCHAIN_CREATE_FLAG_BITS_MAX_ENUM_KHR = 2147483647,
@@ -5102,7 +5123,7 @@ pub const VK_DEVICE_GROUP_PRESENT_MODE_REMOTE_BIT_KHR = enum_VkDeviceGroupPresen
 pub const VK_DEVICE_GROUP_PRESENT_MODE_SUM_BIT_KHR = enum_VkDeviceGroupPresentModeFlagBitsKHR.VK_DEVICE_GROUP_PRESENT_MODE_SUM_BIT_KHR;
 pub const VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_MULTI_DEVICE_BIT_KHR = enum_VkDeviceGroupPresentModeFlagBitsKHR.VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_MULTI_DEVICE_BIT_KHR;
 pub const VK_DEVICE_GROUP_PRESENT_MODE_FLAG_BITS_MAX_ENUM_KHR = enum_VkDeviceGroupPresentModeFlagBitsKHR.VK_DEVICE_GROUP_PRESENT_MODE_FLAG_BITS_MAX_ENUM_KHR;
-pub const enum_VkDeviceGroupPresentModeFlagBitsKHR = extern enum {
+pub const enum_VkDeviceGroupPresentModeFlagBitsKHR = enum(c_int) {
     VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_BIT_KHR = 1,
     VK_DEVICE_GROUP_PRESENT_MODE_REMOTE_BIT_KHR = 2,
     VK_DEVICE_GROUP_PRESENT_MODE_SUM_BIT_KHR = 4,
@@ -5113,7 +5134,7 @@ pub const VkDeviceGroupPresentModeFlagBitsKHR = enum_VkDeviceGroupPresentModeFla
 pub const VkDeviceGroupPresentModeFlagsKHR = VkFlags;
 pub const struct_VkSwapchainCreateInfoKHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkSwapchainCreateFlagsKHR,
     surface: VkSurfaceKHR,
     minImageCount: u32,
@@ -5134,7 +5155,7 @@ pub const struct_VkSwapchainCreateInfoKHR = extern struct {
 pub const VkSwapchainCreateInfoKHR = struct_VkSwapchainCreateInfoKHR;
 pub const struct_VkPresentInfoKHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     waitSemaphoreCount: u32,
     pWaitSemaphores: ?[*]const VkSemaphore,
     swapchainCount: u32,
@@ -5145,20 +5166,20 @@ pub const struct_VkPresentInfoKHR = extern struct {
 pub const VkPresentInfoKHR = struct_VkPresentInfoKHR;
 pub const struct_VkImageSwapchainCreateInfoKHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     swapchain: VkSwapchainKHR,
 };
 pub const VkImageSwapchainCreateInfoKHR = struct_VkImageSwapchainCreateInfoKHR;
 pub const struct_VkBindImageMemorySwapchainInfoKHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     swapchain: VkSwapchainKHR,
     imageIndex: u32,
 };
 pub const VkBindImageMemorySwapchainInfoKHR = struct_VkBindImageMemorySwapchainInfoKHR;
 pub const struct_VkAcquireNextImageInfoKHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     swapchain: VkSwapchainKHR,
     timeout: u64,
     semaphore: VkSemaphore,
@@ -5168,14 +5189,14 @@ pub const struct_VkAcquireNextImageInfoKHR = extern struct {
 pub const VkAcquireNextImageInfoKHR = struct_VkAcquireNextImageInfoKHR;
 pub const struct_VkDeviceGroupPresentCapabilitiesKHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     presentMask: [32]u32,
     modes: VkDeviceGroupPresentModeFlagsKHR,
 };
 pub const VkDeviceGroupPresentCapabilitiesKHR = struct_VkDeviceGroupPresentCapabilitiesKHR;
 pub const struct_VkDeviceGroupPresentInfoKHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     swapchainCount: u32,
     pDeviceMasks: ?[*]const u32,
     mode: VkDeviceGroupPresentModeFlagBitsKHR,
@@ -5183,7 +5204,7 @@ pub const struct_VkDeviceGroupPresentInfoKHR = extern struct {
 pub const VkDeviceGroupPresentInfoKHR = struct_VkDeviceGroupPresentInfoKHR;
 pub const struct_VkDeviceGroupSwapchainCreateInfoKHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     modes: VkDeviceGroupPresentModeFlagsKHR,
 };
 pub const VkDeviceGroupSwapchainCreateInfoKHR = struct_VkDeviceGroupSwapchainCreateInfoKHR;
@@ -5214,7 +5235,7 @@ pub const VK_DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR = enum_VkDisplayPlaneAlphaFlagBi
 pub const VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_BIT_KHR = enum_VkDisplayPlaneAlphaFlagBitsKHR.VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_BIT_KHR;
 pub const VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_PREMULTIPLIED_BIT_KHR = enum_VkDisplayPlaneAlphaFlagBitsKHR.VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_PREMULTIPLIED_BIT_KHR;
 pub const VK_DISPLAY_PLANE_ALPHA_FLAG_BITS_MAX_ENUM_KHR = enum_VkDisplayPlaneAlphaFlagBitsKHR.VK_DISPLAY_PLANE_ALPHA_FLAG_BITS_MAX_ENUM_KHR;
-pub const enum_VkDisplayPlaneAlphaFlagBitsKHR = extern enum {
+pub const enum_VkDisplayPlaneAlphaFlagBitsKHR = enum(c_int) {
     VK_DISPLAY_PLANE_ALPHA_OPAQUE_BIT_KHR = 1,
     VK_DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR = 2,
     VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_BIT_KHR = 4,
@@ -5247,7 +5268,7 @@ pub const struct_VkDisplayModePropertiesKHR = extern struct {
 pub const VkDisplayModePropertiesKHR = struct_VkDisplayModePropertiesKHR;
 pub const struct_VkDisplayModeCreateInfoKHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkDisplayModeCreateFlagsKHR,
     parameters: VkDisplayModeParametersKHR,
 };
@@ -5271,7 +5292,7 @@ pub const struct_VkDisplayPlanePropertiesKHR = extern struct {
 pub const VkDisplayPlanePropertiesKHR = struct_VkDisplayPlanePropertiesKHR;
 pub const struct_VkDisplaySurfaceCreateInfoKHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkDisplaySurfaceCreateFlagsKHR,
     displayMode: VkDisplayModeKHR,
     planeIndex: u32,
@@ -5298,7 +5319,7 @@ pub extern fn vkGetDisplayPlaneCapabilitiesKHR(physicalDevice: VkPhysicalDevice,
 pub extern fn vkCreateDisplayPlaneSurfaceKHR(instance: VkInstance, pCreateInfo: ?[*]const VkDisplaySurfaceCreateInfoKHR, pAllocator: ?[*]const VkAllocationCallbacks, pSurface: ?[*]VkSurfaceKHR) VkResult;
 pub const struct_VkDisplayPresentInfoKHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     srcRect: VkRect2D,
     dstRect: VkRect2D,
     persistent: VkBool32,
@@ -5373,20 +5394,20 @@ pub const VkExternalMemoryBufferCreateInfoKHR = VkExternalMemoryBufferCreateInfo
 pub const VkExportMemoryAllocateInfoKHR = VkExportMemoryAllocateInfo;
 pub const struct_VkImportMemoryFdInfoKHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     handleType: VkExternalMemoryHandleTypeFlagBits,
     fd: c_int,
 };
 pub const VkImportMemoryFdInfoKHR = struct_VkImportMemoryFdInfoKHR;
 pub const struct_VkMemoryFdPropertiesKHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     memoryTypeBits: u32,
 };
 pub const VkMemoryFdPropertiesKHR = struct_VkMemoryFdPropertiesKHR;
 pub const struct_VkMemoryGetFdInfoKHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     memory: VkDeviceMemory,
     handleType: VkExternalMemoryHandleTypeFlagBits,
 };
@@ -5408,7 +5429,7 @@ pub const VkSemaphoreImportFlagBitsKHR = VkSemaphoreImportFlagBits;
 pub const VkExportSemaphoreCreateInfoKHR = VkExportSemaphoreCreateInfo;
 pub const struct_VkImportSemaphoreFdInfoKHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     semaphore: VkSemaphore,
     flags: VkSemaphoreImportFlags,
     handleType: VkExternalSemaphoreHandleTypeFlagBits,
@@ -5417,7 +5438,7 @@ pub const struct_VkImportSemaphoreFdInfoKHR = extern struct {
 pub const VkImportSemaphoreFdInfoKHR = struct_VkImportSemaphoreFdInfoKHR;
 pub const struct_VkSemaphoreGetFdInfoKHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     semaphore: VkSemaphore,
     handleType: VkExternalSemaphoreHandleTypeFlagBits,
 };
@@ -5428,14 +5449,14 @@ pub extern fn vkImportSemaphoreFdKHR(device: VkDevice, pImportSemaphoreFdInfo: ?
 pub extern fn vkGetSemaphoreFdKHR(device: VkDevice, pGetFdInfo: ?[*]const VkSemaphoreGetFdInfoKHR, pFd: ?[*]c_int) VkResult;
 pub const struct_VkPhysicalDevicePushDescriptorPropertiesKHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     maxPushDescriptors: u32,
 };
 pub const VkPhysicalDevicePushDescriptorPropertiesKHR = struct_VkPhysicalDevicePushDescriptorPropertiesKHR;
 pub const PFN_vkCmdPushDescriptorSetKHR = ?fn (VkCommandBuffer, VkPipelineBindPoint, VkPipelineLayout, u32, u32, ?[*]const VkWriteDescriptorSet) callconv(.C) void;
-pub const PFN_vkCmdPushDescriptorSetWithTemplateKHR = ?fn (VkCommandBuffer, VkDescriptorUpdateTemplate, VkPipelineLayout, u32, ?*const c_void) callconv(.C) void;
+pub const PFN_vkCmdPushDescriptorSetWithTemplateKHR = ?fn (VkCommandBuffer, VkDescriptorUpdateTemplate, VkPipelineLayout, u32, ?*const anyopaque) callconv(.C) void;
 pub extern fn vkCmdPushDescriptorSetKHR(commandBuffer: VkCommandBuffer, pipelineBindPoint: VkPipelineBindPoint, layout: VkPipelineLayout, set: u32, descriptorWriteCount: u32, pDescriptorWrites: ?[*]const VkWriteDescriptorSet) void;
-pub extern fn vkCmdPushDescriptorSetWithTemplateKHR(commandBuffer: VkCommandBuffer, descriptorUpdateTemplate: VkDescriptorUpdateTemplate, layout: VkPipelineLayout, set: u32, pData: ?*const c_void) void;
+pub extern fn vkCmdPushDescriptorSetWithTemplateKHR(commandBuffer: VkCommandBuffer, descriptorUpdateTemplate: VkDescriptorUpdateTemplate, layout: VkPipelineLayout, set: u32, pData: ?*const anyopaque) void;
 pub const VkPhysicalDevice16BitStorageFeaturesKHR = VkPhysicalDevice16BitStorageFeatures;
 pub const struct_VkRectLayerKHR = extern struct {
     offset: VkOffset2D,
@@ -5450,7 +5471,7 @@ pub const struct_VkPresentRegionKHR = extern struct {
 pub const VkPresentRegionKHR = struct_VkPresentRegionKHR;
 pub const struct_VkPresentRegionsKHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     swapchainCount: u32,
     pRegions: ?[*]const VkPresentRegionKHR,
 };
@@ -5462,13 +5483,13 @@ pub const VkDescriptorUpdateTemplateEntryKHR = VkDescriptorUpdateTemplateEntry;
 pub const VkDescriptorUpdateTemplateCreateInfoKHR = VkDescriptorUpdateTemplateCreateInfo;
 pub const PFN_vkCreateDescriptorUpdateTemplateKHR = ?fn (VkDevice, ?[*]const VkDescriptorUpdateTemplateCreateInfo, ?[*]const VkAllocationCallbacks, ?[*]VkDescriptorUpdateTemplate) callconv(.C) VkResult;
 pub const PFN_vkDestroyDescriptorUpdateTemplateKHR = ?fn (VkDevice, VkDescriptorUpdateTemplate, ?[*]const VkAllocationCallbacks) callconv(.C) void;
-pub const PFN_vkUpdateDescriptorSetWithTemplateKHR = ?fn (VkDevice, VkDescriptorSet, VkDescriptorUpdateTemplate, ?*const c_void) callconv(.C) void;
+pub const PFN_vkUpdateDescriptorSetWithTemplateKHR = ?fn (VkDevice, VkDescriptorSet, VkDescriptorUpdateTemplate, ?*const anyopaque) callconv(.C) void;
 pub extern fn vkCreateDescriptorUpdateTemplateKHR(device: VkDevice, pCreateInfo: ?[*]const VkDescriptorUpdateTemplateCreateInfo, pAllocator: ?[*]const VkAllocationCallbacks, pDescriptorUpdateTemplate: ?[*]VkDescriptorUpdateTemplate) VkResult;
 pub extern fn vkDestroyDescriptorUpdateTemplateKHR(device: VkDevice, descriptorUpdateTemplate: VkDescriptorUpdateTemplate, pAllocator: ?[*]const VkAllocationCallbacks) void;
-pub extern fn vkUpdateDescriptorSetWithTemplateKHR(device: VkDevice, descriptorSet: VkDescriptorSet, descriptorUpdateTemplate: VkDescriptorUpdateTemplate, pData: ?*const c_void) void;
+pub extern fn vkUpdateDescriptorSetWithTemplateKHR(device: VkDevice, descriptorSet: VkDescriptorSet, descriptorUpdateTemplate: VkDescriptorUpdateTemplate, pData: ?*const anyopaque) void;
 pub const struct_VkSharedPresentSurfaceCapabilitiesKHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     sharedPresentSupportedUsageFlags: VkImageUsageFlags,
 };
 pub const VkSharedPresentSurfaceCapabilitiesKHR = struct_VkSharedPresentSurfaceCapabilitiesKHR;
@@ -5487,7 +5508,7 @@ pub const VkFenceImportFlagBitsKHR = VkFenceImportFlagBits;
 pub const VkExportFenceCreateInfoKHR = VkExportFenceCreateInfo;
 pub const struct_VkImportFenceFdInfoKHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     fence: VkFence,
     flags: VkFenceImportFlags,
     handleType: VkExternalFenceHandleTypeFlagBits,
@@ -5496,7 +5517,7 @@ pub const struct_VkImportFenceFdInfoKHR = extern struct {
 pub const VkImportFenceFdInfoKHR = struct_VkImportFenceFdInfoKHR;
 pub const struct_VkFenceGetFdInfoKHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     fence: VkFence,
     handleType: VkExternalFenceHandleTypeFlagBits,
 };
@@ -5514,19 +5535,19 @@ pub const VkImageViewUsageCreateInfoKHR = VkImageViewUsageCreateInfo;
 pub const VkPipelineTessellationDomainOriginStateCreateInfoKHR = VkPipelineTessellationDomainOriginStateCreateInfo;
 pub const struct_VkPhysicalDeviceSurfaceInfo2KHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     surface: VkSurfaceKHR,
 };
 pub const VkPhysicalDeviceSurfaceInfo2KHR = struct_VkPhysicalDeviceSurfaceInfo2KHR;
 pub const struct_VkSurfaceCapabilities2KHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     surfaceCapabilities: VkSurfaceCapabilitiesKHR,
 };
 pub const VkSurfaceCapabilities2KHR = struct_VkSurfaceCapabilities2KHR;
 pub const struct_VkSurfaceFormat2KHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     surfaceFormat: VkSurfaceFormatKHR,
 };
 pub const VkSurfaceFormat2KHR = struct_VkSurfaceFormat2KHR;
@@ -5537,32 +5558,32 @@ pub extern fn vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice: VkPhysicalDe
 pub const VkPhysicalDeviceVariablePointerFeaturesKHR = VkPhysicalDeviceVariablePointerFeatures;
 pub const struct_VkDisplayProperties2KHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     displayProperties: VkDisplayPropertiesKHR,
 };
 pub const VkDisplayProperties2KHR = struct_VkDisplayProperties2KHR;
 pub const struct_VkDisplayPlaneProperties2KHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     displayPlaneProperties: VkDisplayPlanePropertiesKHR,
 };
 pub const VkDisplayPlaneProperties2KHR = struct_VkDisplayPlaneProperties2KHR;
 pub const struct_VkDisplayModeProperties2KHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     displayModeProperties: VkDisplayModePropertiesKHR,
 };
 pub const VkDisplayModeProperties2KHR = struct_VkDisplayModeProperties2KHR;
 pub const struct_VkDisplayPlaneInfo2KHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     mode: VkDisplayModeKHR,
     planeIndex: u32,
 };
 pub const VkDisplayPlaneInfo2KHR = struct_VkDisplayPlaneInfo2KHR;
 pub const struct_VkDisplayPlaneCapabilities2KHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     capabilities: VkDisplayPlaneCapabilitiesKHR,
 };
 pub const VkDisplayPlaneCapabilities2KHR = struct_VkDisplayPlaneCapabilities2KHR;
@@ -5589,7 +5610,7 @@ pub extern fn vkGetBufferMemoryRequirements2KHR(device: VkDevice, pInfo: ?[*]con
 pub extern fn vkGetImageSparseMemoryRequirements2KHR(device: VkDevice, pInfo: ?[*]const VkImageSparseMemoryRequirementsInfo2, pSparseMemoryRequirementCount: ?[*]u32, pSparseMemoryRequirements: ?[*]VkSparseImageMemoryRequirements2) void;
 pub const struct_VkImageFormatListCreateInfoKHR = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     viewFormatCount: u32,
     pViewFormats: ?[*]const VkFormat,
 };
@@ -5666,7 +5687,7 @@ pub const VK_DEBUG_REPORT_OBJECT_TYPE_BEGIN_RANGE_EXT = enum_VkDebugReportObject
 pub const VK_DEBUG_REPORT_OBJECT_TYPE_END_RANGE_EXT = enum_VkDebugReportObjectTypeEXT.VK_DEBUG_REPORT_OBJECT_TYPE_END_RANGE_EXT;
 pub const VK_DEBUG_REPORT_OBJECT_TYPE_RANGE_SIZE_EXT = enum_VkDebugReportObjectTypeEXT.VK_DEBUG_REPORT_OBJECT_TYPE_RANGE_SIZE_EXT;
 pub const VK_DEBUG_REPORT_OBJECT_TYPE_MAX_ENUM_EXT = enum_VkDebugReportObjectTypeEXT.VK_DEBUG_REPORT_OBJECT_TYPE_MAX_ENUM_EXT;
-pub const enum_VkDebugReportObjectTypeEXT = extern enum {
+pub const enum_VkDebugReportObjectTypeEXT = enum(c_int) {
     VK_DEBUG_REPORT_OBJECT_TYPE_UNKNOWN_EXT = 0,
     VK_DEBUG_REPORT_OBJECT_TYPE_INSTANCE_EXT = 1,
     VK_DEBUG_REPORT_OBJECT_TYPE_PHYSICAL_DEVICE_EXT = 2,
@@ -5723,14 +5744,14 @@ pub const PFN_vkDebugReportCallbackEXT = fn (
     i32,
     [*:0]const u8,
     [*:0]const u8,
-    ?*c_void,
+    ?*anyopaque,
 ) callconv(.C) VkBool32;
 pub const struct_VkDebugReportCallbackCreateInfoEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkDebugReportFlagsEXT,
     pfnCallback: PFN_vkDebugReportCallbackEXT,
-    pUserData: ?*c_void,
+    pUserData: ?*anyopaque,
 };
 pub const VkDebugReportCallbackCreateInfoEXT = struct_VkDebugReportCallbackCreateInfoEXT;
 pub const PFN_vkCreateDebugReportCallbackEXT = ?fn (VkInstance, ?*const VkDebugReportCallbackCreateInfoEXT, ?*const VkAllocationCallbacks, ?*VkDebugReportCallbackEXT) callconv(.C) VkResult;
@@ -5745,7 +5766,7 @@ pub const VK_RASTERIZATION_ORDER_BEGIN_RANGE_AMD = enum_VkRasterizationOrderAMD.
 pub const VK_RASTERIZATION_ORDER_END_RANGE_AMD = enum_VkRasterizationOrderAMD.VK_RASTERIZATION_ORDER_END_RANGE_AMD;
 pub const VK_RASTERIZATION_ORDER_RANGE_SIZE_AMD = enum_VkRasterizationOrderAMD.VK_RASTERIZATION_ORDER_RANGE_SIZE_AMD;
 pub const VK_RASTERIZATION_ORDER_MAX_ENUM_AMD = enum_VkRasterizationOrderAMD.VK_RASTERIZATION_ORDER_MAX_ENUM_AMD;
-pub const enum_VkRasterizationOrderAMD = extern enum {
+pub const enum_VkRasterizationOrderAMD = enum(c_int) {
     VK_RASTERIZATION_ORDER_STRICT_AMD = 0,
     VK_RASTERIZATION_ORDER_RELAXED_AMD = 1,
     VK_RASTERIZATION_ORDER_BEGIN_RANGE_AMD = 0,
@@ -5756,13 +5777,13 @@ pub const enum_VkRasterizationOrderAMD = extern enum {
 pub const VkRasterizationOrderAMD = enum_VkRasterizationOrderAMD;
 pub const struct_VkPipelineRasterizationStateRasterizationOrderAMD = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     rasterizationOrder: VkRasterizationOrderAMD,
 };
 pub const VkPipelineRasterizationStateRasterizationOrderAMD = struct_VkPipelineRasterizationStateRasterizationOrderAMD;
 pub const struct_VkDebugMarkerObjectNameInfoEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     objectType: VkDebugReportObjectTypeEXT,
     object: u64,
     pObjectName: ?[*]const u8,
@@ -5770,17 +5791,17 @@ pub const struct_VkDebugMarkerObjectNameInfoEXT = extern struct {
 pub const VkDebugMarkerObjectNameInfoEXT = struct_VkDebugMarkerObjectNameInfoEXT;
 pub const struct_VkDebugMarkerObjectTagInfoEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     objectType: VkDebugReportObjectTypeEXT,
     object: u64,
     tagName: u64,
     tagSize: usize,
-    pTag: ?*const c_void,
+    pTag: ?*const anyopaque,
 };
 pub const VkDebugMarkerObjectTagInfoEXT = struct_VkDebugMarkerObjectTagInfoEXT;
 pub const struct_VkDebugMarkerMarkerInfoEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     pMarkerName: ?[*]const u8,
     color: [4]f32,
 };
@@ -5797,19 +5818,19 @@ pub extern fn vkCmdDebugMarkerEndEXT(commandBuffer: VkCommandBuffer) void;
 pub extern fn vkCmdDebugMarkerInsertEXT(commandBuffer: VkCommandBuffer, pMarkerInfo: ?[*]const VkDebugMarkerMarkerInfoEXT) void;
 pub const struct_VkDedicatedAllocationImageCreateInfoNV = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     dedicatedAllocation: VkBool32,
 };
 pub const VkDedicatedAllocationImageCreateInfoNV = struct_VkDedicatedAllocationImageCreateInfoNV;
 pub const struct_VkDedicatedAllocationBufferCreateInfoNV = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     dedicatedAllocation: VkBool32,
 };
 pub const VkDedicatedAllocationBufferCreateInfoNV = struct_VkDedicatedAllocationBufferCreateInfoNV;
 pub const struct_VkDedicatedAllocationMemoryAllocateInfoNV = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     image: VkImage,
     buffer: VkBuffer,
 };
@@ -5820,7 +5841,7 @@ pub extern fn vkCmdDrawIndirectCountAMD(commandBuffer: VkCommandBuffer, buffer: 
 pub extern fn vkCmdDrawIndexedIndirectCountAMD(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, countBuffer: VkBuffer, countBufferOffset: VkDeviceSize, maxDrawCount: u32, stride: u32) void;
 pub const struct_VkTextureLODGatherFormatPropertiesAMD = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     supportsTextureGatherLODBiasAMD: VkBool32,
 };
 pub const VkTextureLODGatherFormatPropertiesAMD = struct_VkTextureLODGatherFormatPropertiesAMD;
@@ -5831,7 +5852,7 @@ pub const VK_SHADER_INFO_TYPE_BEGIN_RANGE_AMD = enum_VkShaderInfoTypeAMD.VK_SHAD
 pub const VK_SHADER_INFO_TYPE_END_RANGE_AMD = enum_VkShaderInfoTypeAMD.VK_SHADER_INFO_TYPE_END_RANGE_AMD;
 pub const VK_SHADER_INFO_TYPE_RANGE_SIZE_AMD = enum_VkShaderInfoTypeAMD.VK_SHADER_INFO_TYPE_RANGE_SIZE_AMD;
 pub const VK_SHADER_INFO_TYPE_MAX_ENUM_AMD = enum_VkShaderInfoTypeAMD.VK_SHADER_INFO_TYPE_MAX_ENUM_AMD;
-pub const enum_VkShaderInfoTypeAMD = extern enum {
+pub const enum_VkShaderInfoTypeAMD = enum(c_int) {
     VK_SHADER_INFO_TYPE_STATISTICS_AMD = 0,
     VK_SHADER_INFO_TYPE_BINARY_AMD = 1,
     VK_SHADER_INFO_TYPE_DISASSEMBLY_AMD = 2,
@@ -5859,14 +5880,14 @@ pub const struct_VkShaderStatisticsInfoAMD = extern struct {
     computeWorkGroupSize: [3]u32,
 };
 pub const VkShaderStatisticsInfoAMD = struct_VkShaderStatisticsInfoAMD;
-pub const PFN_vkGetShaderInfoAMD = ?fn (VkDevice, VkPipeline, VkShaderStageFlagBits, VkShaderInfoTypeAMD, ?[*]usize, ?*c_void) callconv(.C) VkResult;
-pub extern fn vkGetShaderInfoAMD(device: VkDevice, pipeline: VkPipeline, shaderStage: VkShaderStageFlagBits, infoType: VkShaderInfoTypeAMD, pInfoSize: ?[*]usize, pInfo: ?*c_void) VkResult;
+pub const PFN_vkGetShaderInfoAMD = ?fn (VkDevice, VkPipeline, VkShaderStageFlagBits, VkShaderInfoTypeAMD, ?[*]usize, ?*anyopaque) callconv(.C) VkResult;
+pub extern fn vkGetShaderInfoAMD(device: VkDevice, pipeline: VkPipeline, shaderStage: VkShaderStageFlagBits, infoType: VkShaderInfoTypeAMD, pInfoSize: ?[*]usize, pInfo: ?*anyopaque) VkResult;
 pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT_NV = enum_VkExternalMemoryHandleTypeFlagBitsNV.VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT_NV;
 pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT_NV = enum_VkExternalMemoryHandleTypeFlagBitsNV.VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT_NV;
 pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_IMAGE_BIT_NV = enum_VkExternalMemoryHandleTypeFlagBitsNV.VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_IMAGE_BIT_NV;
 pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_IMAGE_KMT_BIT_NV = enum_VkExternalMemoryHandleTypeFlagBitsNV.VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_IMAGE_KMT_BIT_NV;
 pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_FLAG_BITS_MAX_ENUM_NV = enum_VkExternalMemoryHandleTypeFlagBitsNV.VK_EXTERNAL_MEMORY_HANDLE_TYPE_FLAG_BITS_MAX_ENUM_NV;
-pub const enum_VkExternalMemoryHandleTypeFlagBitsNV = extern enum {
+pub const enum_VkExternalMemoryHandleTypeFlagBitsNV = enum(c_int) {
     VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT_NV = 1,
     VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT_NV = 2,
     VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_IMAGE_BIT_NV = 4,
@@ -5879,7 +5900,7 @@ pub const VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT_NV = enum_VkExternalMemo
 pub const VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT_NV = enum_VkExternalMemoryFeatureFlagBitsNV.VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT_NV;
 pub const VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT_NV = enum_VkExternalMemoryFeatureFlagBitsNV.VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT_NV;
 pub const VK_EXTERNAL_MEMORY_FEATURE_FLAG_BITS_MAX_ENUM_NV = enum_VkExternalMemoryFeatureFlagBitsNV.VK_EXTERNAL_MEMORY_FEATURE_FLAG_BITS_MAX_ENUM_NV;
-pub const enum_VkExternalMemoryFeatureFlagBitsNV = extern enum {
+pub const enum_VkExternalMemoryFeatureFlagBitsNV = enum(c_int) {
     VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT_NV = 1,
     VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT_NV = 2,
     VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT_NV = 4,
@@ -5898,13 +5919,13 @@ pub const PFN_vkGetPhysicalDeviceExternalImageFormatPropertiesNV = ?fn (VkPhysic
 pub extern fn vkGetPhysicalDeviceExternalImageFormatPropertiesNV(physicalDevice: VkPhysicalDevice, format: VkFormat, type_0: VkImageType, tiling: VkImageTiling, usage: VkImageUsageFlags, flags: VkImageCreateFlags, externalHandleType: VkExternalMemoryHandleTypeFlagsNV, pExternalImageFormatProperties: ?[*]VkExternalImageFormatPropertiesNV) VkResult;
 pub const struct_VkExternalMemoryImageCreateInfoNV = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     handleTypes: VkExternalMemoryHandleTypeFlagsNV,
 };
 pub const VkExternalMemoryImageCreateInfoNV = struct_VkExternalMemoryImageCreateInfoNV;
 pub const struct_VkExportMemoryAllocateInfoNV = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     handleTypes: VkExternalMemoryHandleTypeFlagsNV,
 };
 pub const VkExportMemoryAllocateInfoNV = struct_VkExportMemoryAllocateInfoNV;
@@ -5914,7 +5935,7 @@ pub const VK_VALIDATION_CHECK_BEGIN_RANGE_EXT = enum_VkValidationCheckEXT.VK_VAL
 pub const VK_VALIDATION_CHECK_END_RANGE_EXT = enum_VkValidationCheckEXT.VK_VALIDATION_CHECK_END_RANGE_EXT;
 pub const VK_VALIDATION_CHECK_RANGE_SIZE_EXT = enum_VkValidationCheckEXT.VK_VALIDATION_CHECK_RANGE_SIZE_EXT;
 pub const VK_VALIDATION_CHECK_MAX_ENUM_EXT = enum_VkValidationCheckEXT.VK_VALIDATION_CHECK_MAX_ENUM_EXT;
-pub const enum_VkValidationCheckEXT = extern enum {
+pub const enum_VkValidationCheckEXT = enum(c_int) {
     VK_VALIDATION_CHECK_ALL_EXT = 0,
     VK_VALIDATION_CHECK_SHADERS_EXT = 1,
     VK_VALIDATION_CHECK_BEGIN_RANGE_EXT = 0,
@@ -5925,7 +5946,7 @@ pub const enum_VkValidationCheckEXT = extern enum {
 pub const VkValidationCheckEXT = enum_VkValidationCheckEXT;
 pub const struct_VkValidationFlagsEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     disabledValidationCheckCount: u32,
     pDisabledValidationChecks: ?[*]VkValidationCheckEXT,
 };
@@ -5946,7 +5967,7 @@ pub const VK_INDIRECT_COMMANDS_TOKEN_TYPE_BEGIN_RANGE_NVX = enum_VkIndirectComma
 pub const VK_INDIRECT_COMMANDS_TOKEN_TYPE_END_RANGE_NVX = enum_VkIndirectCommandsTokenTypeNVX.VK_INDIRECT_COMMANDS_TOKEN_TYPE_END_RANGE_NVX;
 pub const VK_INDIRECT_COMMANDS_TOKEN_TYPE_RANGE_SIZE_NVX = enum_VkIndirectCommandsTokenTypeNVX.VK_INDIRECT_COMMANDS_TOKEN_TYPE_RANGE_SIZE_NVX;
 pub const VK_INDIRECT_COMMANDS_TOKEN_TYPE_MAX_ENUM_NVX = enum_VkIndirectCommandsTokenTypeNVX.VK_INDIRECT_COMMANDS_TOKEN_TYPE_MAX_ENUM_NVX;
-pub const enum_VkIndirectCommandsTokenTypeNVX = extern enum {
+pub const enum_VkIndirectCommandsTokenTypeNVX = enum(c_int) {
     VK_INDIRECT_COMMANDS_TOKEN_TYPE_PIPELINE_NVX = 0,
     VK_INDIRECT_COMMANDS_TOKEN_TYPE_DESCRIPTOR_SET_NVX = 1,
     VK_INDIRECT_COMMANDS_TOKEN_TYPE_INDEX_BUFFER_NVX = 2,
@@ -5970,7 +5991,7 @@ pub const VK_OBJECT_ENTRY_TYPE_BEGIN_RANGE_NVX = enum_VkObjectEntryTypeNVX.VK_OB
 pub const VK_OBJECT_ENTRY_TYPE_END_RANGE_NVX = enum_VkObjectEntryTypeNVX.VK_OBJECT_ENTRY_TYPE_END_RANGE_NVX;
 pub const VK_OBJECT_ENTRY_TYPE_RANGE_SIZE_NVX = enum_VkObjectEntryTypeNVX.VK_OBJECT_ENTRY_TYPE_RANGE_SIZE_NVX;
 pub const VK_OBJECT_ENTRY_TYPE_MAX_ENUM_NVX = enum_VkObjectEntryTypeNVX.VK_OBJECT_ENTRY_TYPE_MAX_ENUM_NVX;
-pub const enum_VkObjectEntryTypeNVX = extern enum {
+pub const enum_VkObjectEntryTypeNVX = enum(c_int) {
     VK_OBJECT_ENTRY_TYPE_DESCRIPTOR_SET_NVX = 0,
     VK_OBJECT_ENTRY_TYPE_PIPELINE_NVX = 1,
     VK_OBJECT_ENTRY_TYPE_INDEX_BUFFER_NVX = 2,
@@ -5987,7 +6008,7 @@ pub const VK_INDIRECT_COMMANDS_LAYOUT_USAGE_SPARSE_SEQUENCES_BIT_NVX = enum_VkIn
 pub const VK_INDIRECT_COMMANDS_LAYOUT_USAGE_EMPTY_EXECUTIONS_BIT_NVX = enum_VkIndirectCommandsLayoutUsageFlagBitsNVX.VK_INDIRECT_COMMANDS_LAYOUT_USAGE_EMPTY_EXECUTIONS_BIT_NVX;
 pub const VK_INDIRECT_COMMANDS_LAYOUT_USAGE_INDEXED_SEQUENCES_BIT_NVX = enum_VkIndirectCommandsLayoutUsageFlagBitsNVX.VK_INDIRECT_COMMANDS_LAYOUT_USAGE_INDEXED_SEQUENCES_BIT_NVX;
 pub const VK_INDIRECT_COMMANDS_LAYOUT_USAGE_FLAG_BITS_MAX_ENUM_NVX = enum_VkIndirectCommandsLayoutUsageFlagBitsNVX.VK_INDIRECT_COMMANDS_LAYOUT_USAGE_FLAG_BITS_MAX_ENUM_NVX;
-pub const enum_VkIndirectCommandsLayoutUsageFlagBitsNVX = extern enum {
+pub const enum_VkIndirectCommandsLayoutUsageFlagBitsNVX = enum(c_int) {
     VK_INDIRECT_COMMANDS_LAYOUT_USAGE_UNORDERED_SEQUENCES_BIT_NVX = 1,
     VK_INDIRECT_COMMANDS_LAYOUT_USAGE_SPARSE_SEQUENCES_BIT_NVX = 2,
     VK_INDIRECT_COMMANDS_LAYOUT_USAGE_EMPTY_EXECUTIONS_BIT_NVX = 4,
@@ -5999,7 +6020,7 @@ pub const VkIndirectCommandsLayoutUsageFlagsNVX = VkFlags;
 pub const VK_OBJECT_ENTRY_USAGE_GRAPHICS_BIT_NVX = enum_VkObjectEntryUsageFlagBitsNVX.VK_OBJECT_ENTRY_USAGE_GRAPHICS_BIT_NVX;
 pub const VK_OBJECT_ENTRY_USAGE_COMPUTE_BIT_NVX = enum_VkObjectEntryUsageFlagBitsNVX.VK_OBJECT_ENTRY_USAGE_COMPUTE_BIT_NVX;
 pub const VK_OBJECT_ENTRY_USAGE_FLAG_BITS_MAX_ENUM_NVX = enum_VkObjectEntryUsageFlagBitsNVX.VK_OBJECT_ENTRY_USAGE_FLAG_BITS_MAX_ENUM_NVX;
-pub const enum_VkObjectEntryUsageFlagBitsNVX = extern enum {
+pub const enum_VkObjectEntryUsageFlagBitsNVX = enum(c_int) {
     VK_OBJECT_ENTRY_USAGE_GRAPHICS_BIT_NVX = 1,
     VK_OBJECT_ENTRY_USAGE_COMPUTE_BIT_NVX = 2,
     VK_OBJECT_ENTRY_USAGE_FLAG_BITS_MAX_ENUM_NVX = 2147483647,
@@ -6008,13 +6029,13 @@ pub const VkObjectEntryUsageFlagBitsNVX = enum_VkObjectEntryUsageFlagBitsNVX;
 pub const VkObjectEntryUsageFlagsNVX = VkFlags;
 pub const struct_VkDeviceGeneratedCommandsFeaturesNVX = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     computeBindingPointSupport: VkBool32,
 };
 pub const VkDeviceGeneratedCommandsFeaturesNVX = struct_VkDeviceGeneratedCommandsFeaturesNVX;
 pub const struct_VkDeviceGeneratedCommandsLimitsNVX = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     maxIndirectCommandsLayoutTokenCount: u32,
     maxObjectEntryCounts: u32,
     minSequenceCountBufferOffsetAlignment: u32,
@@ -6037,7 +6058,7 @@ pub const struct_VkIndirectCommandsLayoutTokenNVX = extern struct {
 pub const VkIndirectCommandsLayoutTokenNVX = struct_VkIndirectCommandsLayoutTokenNVX;
 pub const struct_VkIndirectCommandsLayoutCreateInfoNVX = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     pipelineBindPoint: VkPipelineBindPoint,
     flags: VkIndirectCommandsLayoutUsageFlagsNVX,
     tokenCount: u32,
@@ -6046,7 +6067,7 @@ pub const struct_VkIndirectCommandsLayoutCreateInfoNVX = extern struct {
 pub const VkIndirectCommandsLayoutCreateInfoNVX = struct_VkIndirectCommandsLayoutCreateInfoNVX;
 pub const struct_VkCmdProcessCommandsInfoNVX = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     objectTable: VkObjectTableNVX,
     indirectCommandsLayout: VkIndirectCommandsLayoutNVX,
     indirectCommandsTokenCount: u32,
@@ -6061,7 +6082,7 @@ pub const struct_VkCmdProcessCommandsInfoNVX = extern struct {
 pub const VkCmdProcessCommandsInfoNVX = struct_VkCmdProcessCommandsInfoNVX;
 pub const struct_VkCmdReserveSpaceForCommandsInfoNVX = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     objectTable: VkObjectTableNVX,
     indirectCommandsLayout: VkIndirectCommandsLayoutNVX,
     maxSequencesCount: u32,
@@ -6069,7 +6090,7 @@ pub const struct_VkCmdReserveSpaceForCommandsInfoNVX = extern struct {
 pub const VkCmdReserveSpaceForCommandsInfoNVX = struct_VkCmdReserveSpaceForCommandsInfoNVX;
 pub const struct_VkObjectTableCreateInfoNVX = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     objectCount: u32,
     pObjectEntryTypes: ?[*]const VkObjectEntryTypeNVX,
     pObjectEntryCounts: ?[*]const u32,
@@ -6144,7 +6165,7 @@ pub const struct_VkViewportWScalingNV = extern struct {
 pub const VkViewportWScalingNV = struct_VkViewportWScalingNV;
 pub const struct_VkPipelineViewportWScalingStateCreateInfoNV = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     viewportWScalingEnable: VkBool32,
     viewportCount: u32,
     pViewportWScalings: ?[*]const VkViewportWScalingNV,
@@ -6156,7 +6177,7 @@ pub const PFN_vkReleaseDisplayEXT = ?fn (VkPhysicalDevice, VkDisplayKHR) callcon
 pub extern fn vkReleaseDisplayEXT(physicalDevice: VkPhysicalDevice, display: VkDisplayKHR) VkResult;
 pub const VK_SURFACE_COUNTER_VBLANK_EXT = enum_VkSurfaceCounterFlagBitsEXT.VK_SURFACE_COUNTER_VBLANK_EXT;
 pub const VK_SURFACE_COUNTER_FLAG_BITS_MAX_ENUM_EXT = enum_VkSurfaceCounterFlagBitsEXT.VK_SURFACE_COUNTER_FLAG_BITS_MAX_ENUM_EXT;
-pub const enum_VkSurfaceCounterFlagBitsEXT = extern enum {
+pub const enum_VkSurfaceCounterFlagBitsEXT = enum(c_int) {
     VK_SURFACE_COUNTER_VBLANK_EXT = 1,
     VK_SURFACE_COUNTER_FLAG_BITS_MAX_ENUM_EXT = 2147483647,
 };
@@ -6164,7 +6185,7 @@ pub const VkSurfaceCounterFlagBitsEXT = enum_VkSurfaceCounterFlagBitsEXT;
 pub const VkSurfaceCounterFlagsEXT = VkFlags;
 pub const struct_VkSurfaceCapabilities2EXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     minImageCount: u32,
     maxImageCount: u32,
     currentExtent: VkExtent2D,
@@ -6187,7 +6208,7 @@ pub const VK_DISPLAY_POWER_STATE_BEGIN_RANGE_EXT = enum_VkDisplayPowerStateEXT.V
 pub const VK_DISPLAY_POWER_STATE_END_RANGE_EXT = enum_VkDisplayPowerStateEXT.VK_DISPLAY_POWER_STATE_END_RANGE_EXT;
 pub const VK_DISPLAY_POWER_STATE_RANGE_SIZE_EXT = enum_VkDisplayPowerStateEXT.VK_DISPLAY_POWER_STATE_RANGE_SIZE_EXT;
 pub const VK_DISPLAY_POWER_STATE_MAX_ENUM_EXT = enum_VkDisplayPowerStateEXT.VK_DISPLAY_POWER_STATE_MAX_ENUM_EXT;
-pub const enum_VkDisplayPowerStateEXT = extern enum {
+pub const enum_VkDisplayPowerStateEXT = enum(c_int) {
     VK_DISPLAY_POWER_STATE_OFF_EXT = 0,
     VK_DISPLAY_POWER_STATE_SUSPEND_EXT = 1,
     VK_DISPLAY_POWER_STATE_ON_EXT = 2,
@@ -6202,7 +6223,7 @@ pub const VK_DEVICE_EVENT_TYPE_BEGIN_RANGE_EXT = enum_VkDeviceEventTypeEXT.VK_DE
 pub const VK_DEVICE_EVENT_TYPE_END_RANGE_EXT = enum_VkDeviceEventTypeEXT.VK_DEVICE_EVENT_TYPE_END_RANGE_EXT;
 pub const VK_DEVICE_EVENT_TYPE_RANGE_SIZE_EXT = enum_VkDeviceEventTypeEXT.VK_DEVICE_EVENT_TYPE_RANGE_SIZE_EXT;
 pub const VK_DEVICE_EVENT_TYPE_MAX_ENUM_EXT = enum_VkDeviceEventTypeEXT.VK_DEVICE_EVENT_TYPE_MAX_ENUM_EXT;
-pub const enum_VkDeviceEventTypeEXT = extern enum {
+pub const enum_VkDeviceEventTypeEXT = enum(c_int) {
     VK_DEVICE_EVENT_TYPE_DISPLAY_HOTPLUG_EXT = 0,
     VK_DEVICE_EVENT_TYPE_BEGIN_RANGE_EXT = 0,
     VK_DEVICE_EVENT_TYPE_END_RANGE_EXT = 0,
@@ -6215,7 +6236,7 @@ pub const VK_DISPLAY_EVENT_TYPE_BEGIN_RANGE_EXT = enum_VkDisplayEventTypeEXT.VK_
 pub const VK_DISPLAY_EVENT_TYPE_END_RANGE_EXT = enum_VkDisplayEventTypeEXT.VK_DISPLAY_EVENT_TYPE_END_RANGE_EXT;
 pub const VK_DISPLAY_EVENT_TYPE_RANGE_SIZE_EXT = enum_VkDisplayEventTypeEXT.VK_DISPLAY_EVENT_TYPE_RANGE_SIZE_EXT;
 pub const VK_DISPLAY_EVENT_TYPE_MAX_ENUM_EXT = enum_VkDisplayEventTypeEXT.VK_DISPLAY_EVENT_TYPE_MAX_ENUM_EXT;
-pub const enum_VkDisplayEventTypeEXT = extern enum {
+pub const enum_VkDisplayEventTypeEXT = enum(c_int) {
     VK_DISPLAY_EVENT_TYPE_FIRST_PIXEL_OUT_EXT = 0,
     VK_DISPLAY_EVENT_TYPE_BEGIN_RANGE_EXT = 0,
     VK_DISPLAY_EVENT_TYPE_END_RANGE_EXT = 0,
@@ -6225,25 +6246,25 @@ pub const enum_VkDisplayEventTypeEXT = extern enum {
 pub const VkDisplayEventTypeEXT = enum_VkDisplayEventTypeEXT;
 pub const struct_VkDisplayPowerInfoEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     powerState: VkDisplayPowerStateEXT,
 };
 pub const VkDisplayPowerInfoEXT = struct_VkDisplayPowerInfoEXT;
 pub const struct_VkDeviceEventInfoEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     deviceEvent: VkDeviceEventTypeEXT,
 };
 pub const VkDeviceEventInfoEXT = struct_VkDeviceEventInfoEXT;
 pub const struct_VkDisplayEventInfoEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     displayEvent: VkDisplayEventTypeEXT,
 };
 pub const VkDisplayEventInfoEXT = struct_VkDisplayEventInfoEXT;
 pub const struct_VkSwapchainCounterCreateInfoEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     surfaceCounters: VkSurfaceCounterFlagsEXT,
 };
 pub const VkSwapchainCounterCreateInfoEXT = struct_VkSwapchainCounterCreateInfoEXT;
@@ -6274,7 +6295,7 @@ pub const struct_VkPresentTimeGOOGLE = extern struct {
 pub const VkPresentTimeGOOGLE = struct_VkPresentTimeGOOGLE;
 pub const struct_VkPresentTimesInfoGOOGLE = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     swapchainCount: u32,
     pTimes: ?[*]const VkPresentTimeGOOGLE,
 };
@@ -6285,7 +6306,7 @@ pub extern fn vkGetRefreshCycleDurationGOOGLE(device: VkDevice, swapchain: VkSwa
 pub extern fn vkGetPastPresentationTimingGOOGLE(device: VkDevice, swapchain: VkSwapchainKHR, pPresentationTimingCount: ?[*]u32, pPresentationTimings: ?[*]VkPastPresentationTimingGOOGLE) VkResult;
 pub const struct_VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     perViewPositionAllComponents: VkBool32,
 };
 pub const VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX = struct_VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX;
@@ -6301,7 +6322,7 @@ pub const VK_VIEWPORT_COORDINATE_SWIZZLE_BEGIN_RANGE_NV = enum_VkViewportCoordin
 pub const VK_VIEWPORT_COORDINATE_SWIZZLE_END_RANGE_NV = enum_VkViewportCoordinateSwizzleNV.VK_VIEWPORT_COORDINATE_SWIZZLE_END_RANGE_NV;
 pub const VK_VIEWPORT_COORDINATE_SWIZZLE_RANGE_SIZE_NV = enum_VkViewportCoordinateSwizzleNV.VK_VIEWPORT_COORDINATE_SWIZZLE_RANGE_SIZE_NV;
 pub const VK_VIEWPORT_COORDINATE_SWIZZLE_MAX_ENUM_NV = enum_VkViewportCoordinateSwizzleNV.VK_VIEWPORT_COORDINATE_SWIZZLE_MAX_ENUM_NV;
-pub const enum_VkViewportCoordinateSwizzleNV = extern enum {
+pub const enum_VkViewportCoordinateSwizzleNV = enum(c_int) {
     VK_VIEWPORT_COORDINATE_SWIZZLE_POSITIVE_X_NV = 0,
     VK_VIEWPORT_COORDINATE_SWIZZLE_NEGATIVE_X_NV = 1,
     VK_VIEWPORT_COORDINATE_SWIZZLE_POSITIVE_Y_NV = 2,
@@ -6326,7 +6347,7 @@ pub const struct_VkViewportSwizzleNV = extern struct {
 pub const VkViewportSwizzleNV = struct_VkViewportSwizzleNV;
 pub const struct_VkPipelineViewportSwizzleStateCreateInfoNV = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkPipelineViewportSwizzleStateCreateFlagsNV,
     viewportCount: u32,
     pViewportSwizzles: ?[*]const VkViewportSwizzleNV,
@@ -6338,7 +6359,7 @@ pub const VK_DISCARD_RECTANGLE_MODE_BEGIN_RANGE_EXT = enum_VkDiscardRectangleMod
 pub const VK_DISCARD_RECTANGLE_MODE_END_RANGE_EXT = enum_VkDiscardRectangleModeEXT.VK_DISCARD_RECTANGLE_MODE_END_RANGE_EXT;
 pub const VK_DISCARD_RECTANGLE_MODE_RANGE_SIZE_EXT = enum_VkDiscardRectangleModeEXT.VK_DISCARD_RECTANGLE_MODE_RANGE_SIZE_EXT;
 pub const VK_DISCARD_RECTANGLE_MODE_MAX_ENUM_EXT = enum_VkDiscardRectangleModeEXT.VK_DISCARD_RECTANGLE_MODE_MAX_ENUM_EXT;
-pub const enum_VkDiscardRectangleModeEXT = extern enum {
+pub const enum_VkDiscardRectangleModeEXT = enum(c_int) {
     VK_DISCARD_RECTANGLE_MODE_INCLUSIVE_EXT = 0,
     VK_DISCARD_RECTANGLE_MODE_EXCLUSIVE_EXT = 1,
     VK_DISCARD_RECTANGLE_MODE_BEGIN_RANGE_EXT = 0,
@@ -6350,13 +6371,13 @@ pub const VkDiscardRectangleModeEXT = enum_VkDiscardRectangleModeEXT;
 pub const VkPipelineDiscardRectangleStateCreateFlagsEXT = VkFlags;
 pub const struct_VkPhysicalDeviceDiscardRectanglePropertiesEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     maxDiscardRectangles: u32,
 };
 pub const VkPhysicalDeviceDiscardRectanglePropertiesEXT = struct_VkPhysicalDeviceDiscardRectanglePropertiesEXT;
 pub const struct_VkPipelineDiscardRectangleStateCreateInfoEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkPipelineDiscardRectangleStateCreateFlagsEXT,
     discardRectangleMode: VkDiscardRectangleModeEXT,
     discardRectangleCount: u32,
@@ -6372,7 +6393,7 @@ pub const VK_CONSERVATIVE_RASTERIZATION_MODE_BEGIN_RANGE_EXT = enum_VkConservati
 pub const VK_CONSERVATIVE_RASTERIZATION_MODE_END_RANGE_EXT = enum_VkConservativeRasterizationModeEXT.VK_CONSERVATIVE_RASTERIZATION_MODE_END_RANGE_EXT;
 pub const VK_CONSERVATIVE_RASTERIZATION_MODE_RANGE_SIZE_EXT = enum_VkConservativeRasterizationModeEXT.VK_CONSERVATIVE_RASTERIZATION_MODE_RANGE_SIZE_EXT;
 pub const VK_CONSERVATIVE_RASTERIZATION_MODE_MAX_ENUM_EXT = enum_VkConservativeRasterizationModeEXT.VK_CONSERVATIVE_RASTERIZATION_MODE_MAX_ENUM_EXT;
-pub const enum_VkConservativeRasterizationModeEXT = extern enum {
+pub const enum_VkConservativeRasterizationModeEXT = enum(c_int) {
     VK_CONSERVATIVE_RASTERIZATION_MODE_DISABLED_EXT = 0,
     VK_CONSERVATIVE_RASTERIZATION_MODE_OVERESTIMATE_EXT = 1,
     VK_CONSERVATIVE_RASTERIZATION_MODE_UNDERESTIMATE_EXT = 2,
@@ -6385,7 +6406,7 @@ pub const VkConservativeRasterizationModeEXT = enum_VkConservativeRasterizationM
 pub const VkPipelineRasterizationConservativeStateCreateFlagsEXT = VkFlags;
 pub const struct_VkPhysicalDeviceConservativeRasterizationPropertiesEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     primitiveOverestimationSize: f32,
     maxExtraPrimitiveOverestimationSize: f32,
     extraPrimitiveOverestimationSizeGranularity: f32,
@@ -6399,7 +6420,7 @@ pub const struct_VkPhysicalDeviceConservativeRasterizationPropertiesEXT = extern
 pub const VkPhysicalDeviceConservativeRasterizationPropertiesEXT = struct_VkPhysicalDeviceConservativeRasterizationPropertiesEXT;
 pub const struct_VkPipelineRasterizationConservativeStateCreateInfoEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkPipelineRasterizationConservativeStateCreateFlagsEXT,
     conservativeRasterizationMode: VkConservativeRasterizationModeEXT,
     extraPrimitiveOverestimationSize: f32,
@@ -6412,7 +6433,7 @@ pub const struct_VkXYColorEXT = extern struct {
 pub const VkXYColorEXT = struct_VkXYColorEXT;
 pub const struct_VkHdrMetadataEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     displayPrimaryRed: VkXYColorEXT,
     displayPrimaryGreen: VkXYColorEXT,
     displayPrimaryBlue: VkXYColorEXT,
@@ -6434,7 +6455,7 @@ pub const VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT = enum_VkDebugUtilsMessag
 pub const VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT = enum_VkDebugUtilsMessageSeverityFlagBitsEXT.VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT;
 pub const VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT = enum_VkDebugUtilsMessageSeverityFlagBitsEXT.VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
 pub const VK_DEBUG_UTILS_MESSAGE_SEVERITY_FLAG_BITS_MAX_ENUM_EXT = enum_VkDebugUtilsMessageSeverityFlagBitsEXT.VK_DEBUG_UTILS_MESSAGE_SEVERITY_FLAG_BITS_MAX_ENUM_EXT;
-pub const enum_VkDebugUtilsMessageSeverityFlagBitsEXT = extern enum {
+pub const enum_VkDebugUtilsMessageSeverityFlagBitsEXT = enum(c_int) {
     VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT = 1,
     VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT = 16,
     VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT = 256,
@@ -6447,7 +6468,7 @@ pub const VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT = enum_VkDebugUtilsMessage
 pub const VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT = enum_VkDebugUtilsMessageTypeFlagBitsEXT.VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT;
 pub const VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT = enum_VkDebugUtilsMessageTypeFlagBitsEXT.VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
 pub const VK_DEBUG_UTILS_MESSAGE_TYPE_FLAG_BITS_MAX_ENUM_EXT = enum_VkDebugUtilsMessageTypeFlagBitsEXT.VK_DEBUG_UTILS_MESSAGE_TYPE_FLAG_BITS_MAX_ENUM_EXT;
-pub const enum_VkDebugUtilsMessageTypeFlagBitsEXT = extern enum {
+pub const enum_VkDebugUtilsMessageTypeFlagBitsEXT = enum(c_int) {
     VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT = 1,
     VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT = 2,
     VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT = 4,
@@ -6457,7 +6478,7 @@ pub const VkDebugUtilsMessageTypeFlagBitsEXT = enum_VkDebugUtilsMessageTypeFlagB
 pub const VkDebugUtilsMessageTypeFlagsEXT = VkFlags;
 pub const struct_VkDebugUtilsObjectNameInfoEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     objectType: VkObjectType,
     objectHandle: u64,
     pObjectName: ?[*]const u8,
@@ -6465,24 +6486,24 @@ pub const struct_VkDebugUtilsObjectNameInfoEXT = extern struct {
 pub const VkDebugUtilsObjectNameInfoEXT = struct_VkDebugUtilsObjectNameInfoEXT;
 pub const struct_VkDebugUtilsObjectTagInfoEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     objectType: VkObjectType,
     objectHandle: u64,
     tagName: u64,
     tagSize: usize,
-    pTag: ?*const c_void,
+    pTag: ?*const anyopaque,
 };
 pub const VkDebugUtilsObjectTagInfoEXT = struct_VkDebugUtilsObjectTagInfoEXT;
 pub const struct_VkDebugUtilsLabelEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     pLabelName: ?[*]const u8,
     color: [4]f32,
 };
 pub const VkDebugUtilsLabelEXT = struct_VkDebugUtilsLabelEXT;
 pub const struct_VkDebugUtilsMessengerCallbackDataEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkDebugUtilsMessengerCallbackDataFlagsEXT,
     pMessageIdName: ?[*]const u8,
     messageIdNumber: i32,
@@ -6495,15 +6516,15 @@ pub const struct_VkDebugUtilsMessengerCallbackDataEXT = extern struct {
     pObjects: ?[*]VkDebugUtilsObjectNameInfoEXT,
 };
 pub const VkDebugUtilsMessengerCallbackDataEXT = struct_VkDebugUtilsMessengerCallbackDataEXT;
-pub const PFN_vkDebugUtilsMessengerCallbackEXT = ?fn (VkDebugUtilsMessageSeverityFlagBitsEXT, VkDebugUtilsMessageTypeFlagsEXT, ?[*]const VkDebugUtilsMessengerCallbackDataEXT, ?*c_void) callconv(.C) VkBool32;
+pub const PFN_vkDebugUtilsMessengerCallbackEXT = ?fn (VkDebugUtilsMessageSeverityFlagBitsEXT, VkDebugUtilsMessageTypeFlagsEXT, ?[*]const VkDebugUtilsMessengerCallbackDataEXT, ?*anyopaque) callconv(.C) VkBool32;
 pub const struct_VkDebugUtilsMessengerCreateInfoEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkDebugUtilsMessengerCreateFlagsEXT,
     messageSeverity: VkDebugUtilsMessageSeverityFlagsEXT,
     messageType: VkDebugUtilsMessageTypeFlagsEXT,
     pfnUserCallback: PFN_vkDebugUtilsMessengerCallbackEXT,
-    pUserData: ?*c_void,
+    pUserData: ?*anyopaque,
 };
 pub const VkDebugUtilsMessengerCreateInfoEXT = struct_VkDebugUtilsMessengerCreateInfoEXT;
 pub const PFN_vkSetDebugUtilsObjectNameEXT = ?fn (VkDevice, ?[*]const VkDebugUtilsObjectNameInfoEXT) callconv(.C) VkResult;
@@ -6535,7 +6556,7 @@ pub const VK_SAMPLER_REDUCTION_MODE_BEGIN_RANGE_EXT = enum_VkSamplerReductionMod
 pub const VK_SAMPLER_REDUCTION_MODE_END_RANGE_EXT = enum_VkSamplerReductionModeEXT.VK_SAMPLER_REDUCTION_MODE_END_RANGE_EXT;
 pub const VK_SAMPLER_REDUCTION_MODE_RANGE_SIZE_EXT = enum_VkSamplerReductionModeEXT.VK_SAMPLER_REDUCTION_MODE_RANGE_SIZE_EXT;
 pub const VK_SAMPLER_REDUCTION_MODE_MAX_ENUM_EXT = enum_VkSamplerReductionModeEXT.VK_SAMPLER_REDUCTION_MODE_MAX_ENUM_EXT;
-pub const enum_VkSamplerReductionModeEXT = extern enum {
+pub const enum_VkSamplerReductionModeEXT = enum(c_int) {
     VK_SAMPLER_REDUCTION_MODE_WEIGHTED_AVERAGE_EXT = 0,
     VK_SAMPLER_REDUCTION_MODE_MIN_EXT = 1,
     VK_SAMPLER_REDUCTION_MODE_MAX_EXT = 2,
@@ -6547,13 +6568,13 @@ pub const enum_VkSamplerReductionModeEXT = extern enum {
 pub const VkSamplerReductionModeEXT = enum_VkSamplerReductionModeEXT;
 pub const struct_VkSamplerReductionModeCreateInfoEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     reductionMode: VkSamplerReductionModeEXT,
 };
 pub const VkSamplerReductionModeCreateInfoEXT = struct_VkSamplerReductionModeCreateInfoEXT;
 pub const struct_VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     filterMinmaxSingleComponentFormats: VkBool32,
     filterMinmaxImageComponentMapping: VkBool32,
 };
@@ -6565,7 +6586,7 @@ pub const struct_VkSampleLocationEXT = extern struct {
 pub const VkSampleLocationEXT = struct_VkSampleLocationEXT;
 pub const struct_VkSampleLocationsInfoEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     sampleLocationsPerPixel: VkSampleCountFlagBits,
     sampleLocationGridSize: VkExtent2D,
     sampleLocationsCount: u32,
@@ -6584,7 +6605,7 @@ pub const struct_VkSubpassSampleLocationsEXT = extern struct {
 pub const VkSubpassSampleLocationsEXT = struct_VkSubpassSampleLocationsEXT;
 pub const struct_VkRenderPassSampleLocationsBeginInfoEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     attachmentInitialSampleLocationsCount: u32,
     pAttachmentInitialSampleLocations: ?[*]const VkAttachmentSampleLocationsEXT,
     postSubpassSampleLocationsCount: u32,
@@ -6593,14 +6614,14 @@ pub const struct_VkRenderPassSampleLocationsBeginInfoEXT = extern struct {
 pub const VkRenderPassSampleLocationsBeginInfoEXT = struct_VkRenderPassSampleLocationsBeginInfoEXT;
 pub const struct_VkPipelineSampleLocationsStateCreateInfoEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     sampleLocationsEnable: VkBool32,
     sampleLocationsInfo: VkSampleLocationsInfoEXT,
 };
 pub const VkPipelineSampleLocationsStateCreateInfoEXT = struct_VkPipelineSampleLocationsStateCreateInfoEXT;
 pub const struct_VkPhysicalDeviceSampleLocationsPropertiesEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     sampleLocationSampleCounts: VkSampleCountFlags,
     maxSampleLocationGridSize: VkExtent2D,
     sampleLocationCoordinateRange: [2]f32,
@@ -6610,7 +6631,7 @@ pub const struct_VkPhysicalDeviceSampleLocationsPropertiesEXT = extern struct {
 pub const VkPhysicalDeviceSampleLocationsPropertiesEXT = struct_VkPhysicalDeviceSampleLocationsPropertiesEXT;
 pub const struct_VkMultisamplePropertiesEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     maxSampleLocationGridSize: VkExtent2D,
 };
 pub const VkMultisamplePropertiesEXT = struct_VkMultisamplePropertiesEXT;
@@ -6625,7 +6646,7 @@ pub const VK_BLEND_OVERLAP_BEGIN_RANGE_EXT = enum_VkBlendOverlapEXT.VK_BLEND_OVE
 pub const VK_BLEND_OVERLAP_END_RANGE_EXT = enum_VkBlendOverlapEXT.VK_BLEND_OVERLAP_END_RANGE_EXT;
 pub const VK_BLEND_OVERLAP_RANGE_SIZE_EXT = enum_VkBlendOverlapEXT.VK_BLEND_OVERLAP_RANGE_SIZE_EXT;
 pub const VK_BLEND_OVERLAP_MAX_ENUM_EXT = enum_VkBlendOverlapEXT.VK_BLEND_OVERLAP_MAX_ENUM_EXT;
-pub const enum_VkBlendOverlapEXT = extern enum {
+pub const enum_VkBlendOverlapEXT = enum(c_int) {
     VK_BLEND_OVERLAP_UNCORRELATED_EXT = 0,
     VK_BLEND_OVERLAP_DISJOINT_EXT = 1,
     VK_BLEND_OVERLAP_CONJOINT_EXT = 2,
@@ -6637,13 +6658,13 @@ pub const enum_VkBlendOverlapEXT = extern enum {
 pub const VkBlendOverlapEXT = enum_VkBlendOverlapEXT;
 pub const struct_VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     advancedBlendCoherentOperations: VkBool32,
 };
 pub const VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT = struct_VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT;
 pub const struct_VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     advancedBlendMaxColorAttachments: u32,
     advancedBlendIndependentBlend: VkBool32,
     advancedBlendNonPremultipliedSrcColor: VkBool32,
@@ -6654,7 +6675,7 @@ pub const struct_VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT = extern st
 pub const VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT = struct_VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT;
 pub const struct_VkPipelineColorBlendAdvancedStateCreateInfoEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     srcPremultiplied: VkBool32,
     dstPremultiplied: VkBool32,
     blendOverlap: VkBlendOverlapEXT,
@@ -6663,7 +6684,7 @@ pub const VkPipelineColorBlendAdvancedStateCreateInfoEXT = struct_VkPipelineColo
 pub const VkPipelineCoverageToColorStateCreateFlagsNV = VkFlags;
 pub const struct_VkPipelineCoverageToColorStateCreateInfoNV = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkPipelineCoverageToColorStateCreateFlagsNV,
     coverageToColorEnable: VkBool32,
     coverageToColorLocation: u32,
@@ -6677,7 +6698,7 @@ pub const VK_COVERAGE_MODULATION_MODE_BEGIN_RANGE_NV = enum_VkCoverageModulation
 pub const VK_COVERAGE_MODULATION_MODE_END_RANGE_NV = enum_VkCoverageModulationModeNV.VK_COVERAGE_MODULATION_MODE_END_RANGE_NV;
 pub const VK_COVERAGE_MODULATION_MODE_RANGE_SIZE_NV = enum_VkCoverageModulationModeNV.VK_COVERAGE_MODULATION_MODE_RANGE_SIZE_NV;
 pub const VK_COVERAGE_MODULATION_MODE_MAX_ENUM_NV = enum_VkCoverageModulationModeNV.VK_COVERAGE_MODULATION_MODE_MAX_ENUM_NV;
-pub const enum_VkCoverageModulationModeNV = extern enum {
+pub const enum_VkCoverageModulationModeNV = enum(c_int) {
     VK_COVERAGE_MODULATION_MODE_NONE_NV = 0,
     VK_COVERAGE_MODULATION_MODE_RGB_NV = 1,
     VK_COVERAGE_MODULATION_MODE_ALPHA_NV = 2,
@@ -6691,7 +6712,7 @@ pub const VkCoverageModulationModeNV = enum_VkCoverageModulationModeNV;
 pub const VkPipelineCoverageModulationStateCreateFlagsNV = VkFlags;
 pub const struct_VkPipelineCoverageModulationStateCreateInfoNV = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkPipelineCoverageModulationStateCreateFlagsNV,
     coverageModulationMode: VkCoverageModulationModeNV,
     coverageModulationTableEnable: VkBool32,
@@ -6706,7 +6727,7 @@ pub const VK_VALIDATION_CACHE_HEADER_VERSION_BEGIN_RANGE_EXT = enum_VkValidation
 pub const VK_VALIDATION_CACHE_HEADER_VERSION_END_RANGE_EXT = enum_VkValidationCacheHeaderVersionEXT.VK_VALIDATION_CACHE_HEADER_VERSION_END_RANGE_EXT;
 pub const VK_VALIDATION_CACHE_HEADER_VERSION_RANGE_SIZE_EXT = enum_VkValidationCacheHeaderVersionEXT.VK_VALIDATION_CACHE_HEADER_VERSION_RANGE_SIZE_EXT;
 pub const VK_VALIDATION_CACHE_HEADER_VERSION_MAX_ENUM_EXT = enum_VkValidationCacheHeaderVersionEXT.VK_VALIDATION_CACHE_HEADER_VERSION_MAX_ENUM_EXT;
-pub const enum_VkValidationCacheHeaderVersionEXT = extern enum {
+pub const enum_VkValidationCacheHeaderVersionEXT = enum(c_int) {
     VK_VALIDATION_CACHE_HEADER_VERSION_ONE_EXT = 1,
     VK_VALIDATION_CACHE_HEADER_VERSION_BEGIN_RANGE_EXT = 1,
     VK_VALIDATION_CACHE_HEADER_VERSION_END_RANGE_EXT = 1,
@@ -6717,32 +6738,32 @@ pub const VkValidationCacheHeaderVersionEXT = enum_VkValidationCacheHeaderVersio
 pub const VkValidationCacheCreateFlagsEXT = VkFlags;
 pub const struct_VkValidationCacheCreateInfoEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     flags: VkValidationCacheCreateFlagsEXT,
     initialDataSize: usize,
-    pInitialData: ?*const c_void,
+    pInitialData: ?*const anyopaque,
 };
 pub const VkValidationCacheCreateInfoEXT = struct_VkValidationCacheCreateInfoEXT;
 pub const struct_VkShaderModuleValidationCacheCreateInfoEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     validationCache: VkValidationCacheEXT,
 };
 pub const VkShaderModuleValidationCacheCreateInfoEXT = struct_VkShaderModuleValidationCacheCreateInfoEXT;
 pub const PFN_vkCreateValidationCacheEXT = ?fn (VkDevice, ?[*]const VkValidationCacheCreateInfoEXT, ?[*]const VkAllocationCallbacks, ?[*]VkValidationCacheEXT) callconv(.C) VkResult;
 pub const PFN_vkDestroyValidationCacheEXT = ?fn (VkDevice, VkValidationCacheEXT, ?[*]const VkAllocationCallbacks) callconv(.C) void;
 pub const PFN_vkMergeValidationCachesEXT = ?fn (VkDevice, VkValidationCacheEXT, u32, ?[*]const VkValidationCacheEXT) callconv(.C) VkResult;
-pub const PFN_vkGetValidationCacheDataEXT = ?fn (VkDevice, VkValidationCacheEXT, ?[*]usize, ?*c_void) callconv(.C) VkResult;
+pub const PFN_vkGetValidationCacheDataEXT = ?fn (VkDevice, VkValidationCacheEXT, ?[*]usize, ?*anyopaque) callconv(.C) VkResult;
 pub extern fn vkCreateValidationCacheEXT(device: VkDevice, pCreateInfo: ?[*]const VkValidationCacheCreateInfoEXT, pAllocator: ?[*]const VkAllocationCallbacks, pValidationCache: ?[*]VkValidationCacheEXT) VkResult;
 pub extern fn vkDestroyValidationCacheEXT(device: VkDevice, validationCache: VkValidationCacheEXT, pAllocator: ?[*]const VkAllocationCallbacks) void;
 pub extern fn vkMergeValidationCachesEXT(device: VkDevice, dstCache: VkValidationCacheEXT, srcCacheCount: u32, pSrcCaches: ?[*]const VkValidationCacheEXT) VkResult;
-pub extern fn vkGetValidationCacheDataEXT(device: VkDevice, validationCache: VkValidationCacheEXT, pDataSize: ?[*]usize, pData: ?*c_void) VkResult;
+pub extern fn vkGetValidationCacheDataEXT(device: VkDevice, validationCache: VkValidationCacheEXT, pDataSize: ?[*]usize, pData: ?*anyopaque) VkResult;
 pub const VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT = enum_VkDescriptorBindingFlagBitsEXT.VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT;
 pub const VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT_EXT = enum_VkDescriptorBindingFlagBitsEXT.VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT_EXT;
 pub const VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT_EXT = enum_VkDescriptorBindingFlagBitsEXT.VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT_EXT;
 pub const VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT_EXT = enum_VkDescriptorBindingFlagBitsEXT.VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT_EXT;
 pub const VK_DESCRIPTOR_BINDING_FLAG_BITS_MAX_ENUM_EXT = enum_VkDescriptorBindingFlagBitsEXT.VK_DESCRIPTOR_BINDING_FLAG_BITS_MAX_ENUM_EXT;
-pub const enum_VkDescriptorBindingFlagBitsEXT = extern enum {
+pub const enum_VkDescriptorBindingFlagBitsEXT = enum(c_int) {
     VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT = 1,
     VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT_EXT = 2,
     VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT_EXT = 4,
@@ -6753,14 +6774,14 @@ pub const VkDescriptorBindingFlagBitsEXT = enum_VkDescriptorBindingFlagBitsEXT;
 pub const VkDescriptorBindingFlagsEXT = VkFlags;
 pub const struct_VkDescriptorSetLayoutBindingFlagsCreateInfoEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     bindingCount: u32,
     pBindingFlags: ?[*]const VkDescriptorBindingFlagsEXT,
 };
 pub const VkDescriptorSetLayoutBindingFlagsCreateInfoEXT = struct_VkDescriptorSetLayoutBindingFlagsCreateInfoEXT;
 pub const struct_VkPhysicalDeviceDescriptorIndexingFeaturesEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     shaderInputAttachmentArrayDynamicIndexing: VkBool32,
     shaderUniformTexelBufferArrayDynamicIndexing: VkBool32,
     shaderStorageTexelBufferArrayDynamicIndexing: VkBool32,
@@ -6785,7 +6806,7 @@ pub const struct_VkPhysicalDeviceDescriptorIndexingFeaturesEXT = extern struct {
 pub const VkPhysicalDeviceDescriptorIndexingFeaturesEXT = struct_VkPhysicalDeviceDescriptorIndexingFeaturesEXT;
 pub const struct_VkPhysicalDeviceDescriptorIndexingPropertiesEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     maxUpdateAfterBindDescriptorsInAllPools: u32,
     shaderUniformBufferArrayNonUniformIndexingNative: VkBool32,
     shaderSampledImageArrayNonUniformIndexingNative: VkBool32,
@@ -6813,14 +6834,14 @@ pub const struct_VkPhysicalDeviceDescriptorIndexingPropertiesEXT = extern struct
 pub const VkPhysicalDeviceDescriptorIndexingPropertiesEXT = struct_VkPhysicalDeviceDescriptorIndexingPropertiesEXT;
 pub const struct_VkDescriptorSetVariableDescriptorCountAllocateInfoEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     descriptorSetCount: u32,
     pDescriptorCounts: ?[*]const u32,
 };
 pub const VkDescriptorSetVariableDescriptorCountAllocateInfoEXT = struct_VkDescriptorSetVariableDescriptorCountAllocateInfoEXT;
 pub const struct_VkDescriptorSetVariableDescriptorCountLayoutSupportEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     maxVariableDescriptorCount: u32,
 };
 pub const VkDescriptorSetVariableDescriptorCountLayoutSupportEXT = struct_VkDescriptorSetVariableDescriptorCountLayoutSupportEXT;
@@ -6832,7 +6853,7 @@ pub const VK_QUEUE_GLOBAL_PRIORITY_BEGIN_RANGE_EXT = enum_VkQueueGlobalPriorityE
 pub const VK_QUEUE_GLOBAL_PRIORITY_END_RANGE_EXT = enum_VkQueueGlobalPriorityEXT.VK_QUEUE_GLOBAL_PRIORITY_END_RANGE_EXT;
 pub const VK_QUEUE_GLOBAL_PRIORITY_RANGE_SIZE_EXT = enum_VkQueueGlobalPriorityEXT.VK_QUEUE_GLOBAL_PRIORITY_RANGE_SIZE_EXT;
 pub const VK_QUEUE_GLOBAL_PRIORITY_MAX_ENUM_EXT = enum_VkQueueGlobalPriorityEXT.VK_QUEUE_GLOBAL_PRIORITY_MAX_ENUM_EXT;
-pub const enum_VkQueueGlobalPriorityEXT = extern enum {
+pub const enum_VkQueueGlobalPriorityEXT = enum(c_int) {
     VK_QUEUE_GLOBAL_PRIORITY_LOW_EXT = 128,
     VK_QUEUE_GLOBAL_PRIORITY_MEDIUM_EXT = 256,
     VK_QUEUE_GLOBAL_PRIORITY_HIGH_EXT = 512,
@@ -6845,36 +6866,36 @@ pub const enum_VkQueueGlobalPriorityEXT = extern enum {
 pub const VkQueueGlobalPriorityEXT = enum_VkQueueGlobalPriorityEXT;
 pub const struct_VkDeviceQueueGlobalPriorityCreateInfoEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     globalPriority: VkQueueGlobalPriorityEXT,
 };
 pub const VkDeviceQueueGlobalPriorityCreateInfoEXT = struct_VkDeviceQueueGlobalPriorityCreateInfoEXT;
 pub const struct_VkImportMemoryHostPointerInfoEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     handleType: VkExternalMemoryHandleTypeFlagBits,
-    pHostPointer: ?*c_void,
+    pHostPointer: ?*anyopaque,
 };
 pub const VkImportMemoryHostPointerInfoEXT = struct_VkImportMemoryHostPointerInfoEXT;
 pub const struct_VkMemoryHostPointerPropertiesEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     memoryTypeBits: u32,
 };
 pub const VkMemoryHostPointerPropertiesEXT = struct_VkMemoryHostPointerPropertiesEXT;
 pub const struct_VkPhysicalDeviceExternalMemoryHostPropertiesEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     minImportedHostPointerAlignment: VkDeviceSize,
 };
 pub const VkPhysicalDeviceExternalMemoryHostPropertiesEXT = struct_VkPhysicalDeviceExternalMemoryHostPropertiesEXT;
-pub const PFN_vkGetMemoryHostPointerPropertiesEXT = ?fn (VkDevice, VkExternalMemoryHandleTypeFlagBits, ?*const c_void, ?[*]VkMemoryHostPointerPropertiesEXT) callconv(.C) VkResult;
-pub extern fn vkGetMemoryHostPointerPropertiesEXT(device: VkDevice, handleType: VkExternalMemoryHandleTypeFlagBits, pHostPointer: ?*const c_void, pMemoryHostPointerProperties: ?[*]VkMemoryHostPointerPropertiesEXT) VkResult;
+pub const PFN_vkGetMemoryHostPointerPropertiesEXT = ?fn (VkDevice, VkExternalMemoryHandleTypeFlagBits, ?*const anyopaque, ?[*]VkMemoryHostPointerPropertiesEXT) callconv(.C) VkResult;
+pub extern fn vkGetMemoryHostPointerPropertiesEXT(device: VkDevice, handleType: VkExternalMemoryHandleTypeFlagBits, pHostPointer: ?*const anyopaque, pMemoryHostPointerProperties: ?[*]VkMemoryHostPointerPropertiesEXT) VkResult;
 pub const PFN_vkCmdWriteBufferMarkerAMD = ?fn (VkCommandBuffer, VkPipelineStageFlagBits, VkBuffer, VkDeviceSize, u32) callconv(.C) void;
 pub extern fn vkCmdWriteBufferMarkerAMD(commandBuffer: VkCommandBuffer, pipelineStage: VkPipelineStageFlagBits, dstBuffer: VkBuffer, dstOffset: VkDeviceSize, marker: u32) void;
 pub const struct_VkPhysicalDeviceShaderCorePropertiesAMD = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     shaderEngineCount: u32,
     shaderArraysPerEngineCount: u32,
     computeUnitsPerShaderArray: u32,
@@ -6893,7 +6914,7 @@ pub const struct_VkPhysicalDeviceShaderCorePropertiesAMD = extern struct {
 pub const VkPhysicalDeviceShaderCorePropertiesAMD = struct_VkPhysicalDeviceShaderCorePropertiesAMD;
 pub const struct_VkPhysicalDeviceVertexAttributeDivisorPropertiesEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*c_void,
+    pNext: ?*anyopaque,
     maxVertexAttribDivisor: u32,
 };
 pub const VkPhysicalDeviceVertexAttributeDivisorPropertiesEXT = struct_VkPhysicalDeviceVertexAttributeDivisorPropertiesEXT;
@@ -6904,7 +6925,7 @@ pub const struct_VkVertexInputBindingDivisorDescriptionEXT = extern struct {
 pub const VkVertexInputBindingDivisorDescriptionEXT = struct_VkVertexInputBindingDivisorDescriptionEXT;
 pub const struct_VkPipelineVertexInputDivisorStateCreateInfoEXT = extern struct {
     sType: VkStructureType,
-    pNext: ?*const c_void,
+    pNext: ?*const anyopaque,
     vertexBindingDivisorCount: u32,
     pVertexBindingDivisors: ?[*]const VkVertexInputBindingDivisorDescriptionEXT,
 };
@@ -6935,11 +6956,11 @@ pub const __INTMAX_FMTd__ = "ld";
 pub const VK_EXT_validation_cache = 1;
 pub const __CLANG_ATOMIC_CHAR_LOCK_FREE = 2;
 pub const __INT_LEAST16_FMTi__ = "hi";
-pub const UINTMAX_MAX = if (@typeId(@typeOf(18446744073709551615)) == @import("builtin").TypeId.Pointer) @ptrCast(__UINT64_C, 18446744073709551615) else if (@typeId(@typeOf(18446744073709551615)) == @import("builtin").TypeId.Int) @intToPtr(__UINT64_C, 18446744073709551615) else __UINT64_C(18446744073709551615);
+pub const UINTMAX_MAX = if (@typeInfo(@TypeOf(18446744073709551615)) == @import("builtin").TypeId.Pointer) @ptrCast(u64, 18446744073709551615) else if (@typeInfo(@TypeOf(18446744073709551615)) == @import("builtin").TypeId.Int) @intToPtr(u64, 18446744073709551615) else u64(18446744073709551615);
 pub const VK_EXT_external_memory_dma_buf = 1;
-pub const INT_LEAST64_MAX = if (@typeId(@typeOf(9223372036854775807)) == @import("builtin").TypeId.Pointer) @ptrCast(__INT64_C, 9223372036854775807) else if (@typeId(@typeOf(9223372036854775807)) == @import("builtin").TypeId.Int) @intToPtr(__INT64_C, 9223372036854775807) else __INT64_C(9223372036854775807);
+pub const INT_LEAST64_MAX = if (@typeInfo(@TypeOf(9223372036854775807)) == @import("builtin").TypeId.Pointer) @ptrCast(i64, 9223372036854775807) else if (@typeInfo(@TypeOf(9223372036854775807)) == @import("builtin").TypeId.Int) @intToPtr(i64, 9223372036854775807) else i64(9223372036854775807);
 pub const VK_KHR_SWAPCHAIN_EXTENSION_NAME = "VK_KHR_swapchain";
-pub const WINT_MIN = if (@typeId(@typeOf(u)) == @import("builtin").TypeId.Pointer) @ptrCast(0, u) else if (@typeId(@typeOf(u)) == @import("builtin").TypeId.Int) @intToPtr(0, u) else 0(u);
+pub const WINT_MIN = if (@typeInfo(@TypeOf(u)) == @import("builtin").TypeId.Pointer) @ptrCast(0, u) else if (@typeInfo(@TypeOf(u)) == @import("builtin").TypeId.Int) @intToPtr(0, u) else 0(u);
 pub const __MMX__ = 1;
 pub const VK_AMD_GPU_SHADER_HALF_FLOAT_SPEC_VERSION = 1;
 pub const VK_KHR_get_memory_requirements2 = 1;
@@ -6979,14 +7000,14 @@ pub const __RLIM_T_TYPE = __SYSCALL_ULONG_TYPE;
 pub const __LDBL_MAX_EXP__ = 16384;
 pub const __USE_POSIX199309 = 1;
 pub const __NO_MATH_INLINES = 1;
-pub const __WCHAR_TYPE__ = int;
+pub const __WCHAR_TYPE__ = c_int;
 pub const __LONG_MAX__ = c_long(9223372036854775807);
-pub const __WCHAR_MIN = if (@typeId(@typeOf(-1)) == @import("builtin").TypeId.Pointer) @ptrCast(-__WCHAR_MAX, -1) else if (@typeId(@typeOf(-1)) == @import("builtin").TypeId.Int) @intToPtr(-__WCHAR_MAX, -1) else (-__WCHAR_MAX)(-1);
+pub const __WCHAR_MIN = if (@typeInfo(@TypeOf(-1)) == @import("builtin").TypeId.Pointer) @ptrCast(-__WCHAR_MAX, -1) else if (@typeInfo(@TypeOf(-1)) == @import("builtin").TypeId.Int) @intToPtr(-__WCHAR_MAX, -1) else (-__WCHAR_MAX)(-1);
 pub const __PTRDIFF_WIDTH__ = 64;
 pub const __INT_FAST16_FMTi__ = "hi";
 pub const __LDBL_DENORM_MIN__ = 0.000000;
 pub const VK_EXT_shader_subgroup_ballot = 1;
-pub const __INT64_C_SUFFIX__ = L;
+pub const i64_SUFFIX__ = L;
 pub const __FSFILCNT_T_TYPE = __SYSCALL_ULONG_TYPE;
 pub const VK_NV_FRAMEBUFFER_MIXED_SAMPLES_SPEC_VERSION = 1;
 pub const __SSIZE_T_TYPE = __SWORD_TYPE;
@@ -7010,7 +7031,7 @@ pub const VK_NV_FILL_RECTANGLE_EXTENSION_NAME = "VK_NV_fill_rectangle";
 pub const VK_EXT_DIRECT_MODE_DISPLAY_SPEC_VERSION = 1;
 pub const VK_EXT_validation_flags = 1;
 pub const __UINT8_FMTo__ = "hho";
-pub const UINT_LEAST64_MAX = if (@typeId(@typeOf(18446744073709551615)) == @import("builtin").TypeId.Pointer) @ptrCast(__UINT64_C, 18446744073709551615) else if (@typeId(@typeOf(18446744073709551615)) == @import("builtin").TypeId.Int) @intToPtr(__UINT64_C, 18446744073709551615) else __UINT64_C(18446744073709551615);
+pub const UINT_LEAST64_MAX = if (@typeInfo(@TypeOf(18446744073709551615)) == @import("builtin").TypeId.Pointer) @ptrCast(u64, 18446744073709551615) else if (@typeInfo(@TypeOf(18446744073709551615)) == @import("builtin").TypeId.Int) @intToPtr(u64, 18446744073709551615) else u64(18446744073709551615);
 pub const __UINT_LEAST16_FMTx__ = "hx";
 pub const __UINT_FAST16_FMTX__ = "hX";
 pub const __VERSION__ = "4.2.1 Compatible Clang 6.0.0 (tags/RELEASE_600/final)";
@@ -7040,7 +7061,7 @@ pub const __WINT_UNSIGNED__ = 1;
 pub const SIG_ATOMIC_MAX = 2147483647;
 pub const VK_KHR_SHADER_DRAW_PARAMETERS_SPEC_VERSION = 1;
 pub const VK_KHR_SURFACE_EXTENSION_NAME = "VK_KHR_surface";
-pub const PTRDIFF_MIN = if (@typeId(@typeOf(-1)) == @import("builtin").TypeId.Pointer) @ptrCast(-c_long(9223372036854775807), -1) else if (@typeId(@typeOf(-1)) == @import("builtin").TypeId.Int) @intToPtr(-c_long(9223372036854775807), -1) else (-c_long(9223372036854775807))(-1);
+pub const PTRDIFF_MIN = if (@typeInfo(@TypeOf(-1)) == @import("builtin").TypeId.Pointer) @ptrCast(-c_long(9223372036854775807), -1) else if (@typeInfo(@TypeOf(-1)) == @import("builtin").TypeId.Int) @intToPtr(-c_long(9223372036854775807), -1) else (-c_long(9223372036854775807))(-1);
 pub const __POINTER_WIDTH__ = 64;
 pub const __PTRDIFF_MAX__ = c_long(9223372036854775807);
 pub const __FLT16_DIG__ = 3;
@@ -7074,10 +7095,10 @@ pub const VK_KHR_EXTERNAL_FENCE_FD_SPEC_VERSION = 1;
 pub const __INT64_FMTi__ = "li";
 pub const VK_GOOGLE_display_timing = 1;
 pub const __UINT_FAST64_FMTu__ = "lu";
-pub const INT_LEAST16_MIN = if (@typeId(@typeOf(-1)) == @import("builtin").TypeId.Pointer) @ptrCast(-32767, -1) else if (@typeId(@typeOf(-1)) == @import("builtin").TypeId.Int) @intToPtr(-32767, -1) else (-32767)(-1);
+pub const INT_LEAST16_MIN = if (@typeInfo(@TypeOf(-1)) == @import("builtin").TypeId.Pointer) @ptrCast(-32767, -1) else if (@typeInfo(@TypeOf(-1)) == @import("builtin").TypeId.Int) @intToPtr(-32767, -1) else (-32767)(-1);
 pub const VK_EXT_global_priority = 1;
 pub const VK_AMD_SHADER_TRINARY_MINMAX_EXTENSION_NAME = "VK_AMD_shader_trinary_minmax";
-pub const __INT_FAST16_TYPE__ = short;
+pub const __INT_FAST16_TYPE__ = c_short;
 pub const VK_SUBPASS_EXTERNAL = ~@as(c_uint, 0);
 pub const __DBL_MAX_10_EXP__ = 308;
 pub const __LDBL_MIN__ = 0.000000;
@@ -7095,22 +7116,22 @@ pub const __UINT_LEAST64_FMTX__ = "lX";
 pub const __clang_minor__ = 0;
 pub const VK_KHR_EXTERNAL_FENCE_SPEC_VERSION = 1;
 pub const VK_KHR_GET_DISPLAY_PROPERTIES_2_SPEC_VERSION = 1;
-pub const INTMAX_MAX = if (@typeId(@typeOf(9223372036854775807)) == @import("builtin").TypeId.Pointer) @ptrCast(__INT64_C, 9223372036854775807) else if (@typeId(@typeOf(9223372036854775807)) == @import("builtin").TypeId.Int) @intToPtr(__INT64_C, 9223372036854775807) else __INT64_C(9223372036854775807);
+pub const INTMAX_MAX = if (@typeInfo(@TypeOf(9223372036854775807)) == @import("builtin").TypeId.Pointer) @ptrCast(i64, 9223372036854775807) else if (@typeInfo(@TypeOf(9223372036854775807)) == @import("builtin").TypeId.Int) @intToPtr(i64, 9223372036854775807) else i64(9223372036854775807);
 pub const __SIZEOF_FLOAT128__ = 16;
 pub const VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES_SPEC_VERSION = 1;
 pub const VK_EXT_debug_report = 1;
 pub const __CLOCKID_T_TYPE = __S32_TYPE;
 pub const __UINT_FAST64_FMTo__ = "lo";
-pub const INT_FAST16_MIN = if (@typeId(@typeOf(-1)) == @import("builtin").TypeId.Pointer) @ptrCast(-c_long(9223372036854775807), -1) else if (@typeId(@typeOf(-1)) == @import("builtin").TypeId.Int) @intToPtr(-c_long(9223372036854775807), -1) else (-c_long(9223372036854775807))(-1);
+pub const INT_FAST16_MIN = if (@typeInfo(@TypeOf(-1)) == @import("builtin").TypeId.Pointer) @ptrCast(-c_long(9223372036854775807), -1) else if (@typeInfo(@TypeOf(-1)) == @import("builtin").TypeId.Int) @intToPtr(-c_long(9223372036854775807), -1) else (-c_long(9223372036854775807))(-1);
 pub const __DBL_MAX__ = 179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878;
 pub const __UINT64_FMTx__ = "lx";
 pub const VK_KHR_shader_draw_parameters = 1;
 pub const VK_EXT_BLEND_OPERATION_ADVANCED_EXTENSION_NAME = "VK_EXT_blend_operation_advanced";
 pub const VK_AMD_SHADER_CORE_PROPERTIES_EXTENSION_NAME = "VK_AMD_shader_core_properties";
-pub const __SLONG32_TYPE = int;
+pub const __SLONG32_TYPE = c_long;
 pub const _DEBUG = 1;
 pub const VK_KHR_SURFACE_SPEC_VERSION = 25;
-pub const INT32_MIN = if (@typeId(@typeOf(-1)) == @import("builtin").TypeId.Pointer) @ptrCast(-2147483647, -1) else if (@typeId(@typeOf(-1)) == @import("builtin").TypeId.Int) @intToPtr(-2147483647, -1) else (-2147483647)(-1);
+pub const INT32_MIN = if (@typeInfo(@TypeOf(-1)) == @import("builtin").TypeId.Pointer) @ptrCast(-2147483647, -1) else if (@typeInfo(@TypeOf(-1)) == @import("builtin").TypeId.Int) @intToPtr(-2147483647, -1) else (-2147483647)(-1);
 pub const __restrict_arr = __restrict;
 pub const __RLIM_T_MATCHES_RLIM64_T = 1;
 pub const __UINT8_FMTX__ = "hhX";
@@ -7160,7 +7181,7 @@ pub const VK_KHR_get_display_properties2 = 1;
 pub const __CLANG_ATOMIC_LONG_LOCK_FREE = 2;
 pub const VK_NVX_MULTIVIEW_PER_VIEW_ATTRIBUTES_SPEC_VERSION = 1;
 pub const __GXX_ABI_VERSION = 1002;
-pub const INTPTR_MIN = if (@typeId(@typeOf(-1)) == @import("builtin").TypeId.Pointer) @ptrCast(-c_long(9223372036854775807), -1) else if (@typeId(@typeOf(-1)) == @import("builtin").TypeId.Int) @intToPtr(-c_long(9223372036854775807), -1) else (-c_long(9223372036854775807))(-1);
+pub const INTPTR_MIN = if (@typeInfo(@TypeOf(-1)) == @import("builtin").TypeId.Pointer) @ptrCast(-c_long(9223372036854775807), -1) else if (@typeInfo(@TypeOf(-1)) == @import("builtin").TypeId.Int) @intToPtr(-c_long(9223372036854775807), -1) else (-c_long(9223372036854775807))(-1);
 pub const __FLT_MANT_DIG__ = 24;
 pub const __UINT_FAST64_FMTx__ = "lx";
 pub const __STDC__ = 1;
@@ -7186,10 +7207,10 @@ pub const UINTPTR_MAX = c_ulong(18446744073709551615);
 pub const VK_AMD_gpu_shader_int16 = 1;
 pub const __FLT_DENORM_MIN__ = 0.000000;
 pub const __UINT_LEAST16_MAX__ = 65535;
-pub const SIG_ATOMIC_MIN = if (@typeId(@typeOf(-1)) == @import("builtin").TypeId.Pointer) @ptrCast(-2147483647, -1) else if (@typeId(@typeOf(-1)) == @import("builtin").TypeId.Int) @intToPtr(-2147483647, -1) else (-2147483647)(-1);
+pub const SIG_ATOMIC_MIN = if (@typeInfo(@TypeOf(-1)) == @import("builtin").TypeId.Pointer) @ptrCast(-2147483647, -1) else if (@typeInfo(@TypeOf(-1)) == @import("builtin").TypeId.Int) @intToPtr(-2147483647, -1) else (-2147483647)(-1);
 pub const __LDBL_HAS_DENORM__ = 1;
 pub const __LDBL_HAS_QUIET_NAN__ = 1;
-pub const VK_QUEUE_FAMILY_IGNORED = if (@typeId(@typeOf(U)) == @import("builtin").TypeId.Pointer) @ptrCast(~0, U) else if (@typeId(@typeOf(U)) == @import("builtin").TypeId.Int) @intToPtr(~0, U) else (~0)(U);
+pub const VK_QUEUE_FAMILY_IGNORED = if (@typeInfo(@TypeOf(U)) == @import("builtin").TypeId.Pointer) @ptrCast(~0, U) else if (@typeInfo(@TypeOf(U)) == @import("builtin").TypeId.Int) @intToPtr(~0, U) else (~0)(U);
 pub const __UINT_FAST8_MAX__ = 255;
 pub const __DBL_MIN_10_EXP__ = -307;
 pub const __GLIBC_USE_LIB_EXT2 = 0;
@@ -7224,14 +7245,14 @@ pub const __tune_k8__ = 1;
 pub const UINT32_MAX = c_uint(4294967295);
 pub const __x86_64__ = 1;
 pub const __WORDSIZE_TIME64_COMPAT32 = 1;
-pub const __UINT64_C_SUFFIX__ = UL;
+pub const u64_SUFFIX__ = UL;
 pub const __UINTMAX_FMTx__ = "lx";
 pub const __INT_LEAST16_MAX__ = 32767;
 pub const VK_EXT_DISPLAY_CONTROL_EXTENSION_NAME = "VK_EXT_display_control";
 pub const __UINT32_FMTo__ = "o";
 pub const VK_KHR_bind_memory2 = 1;
-pub const UINT64_MAX = if (@typeId(@typeOf(18446744073709551615)) == @import("builtin").TypeId.Pointer) @ptrCast(__UINT64_C, 18446744073709551615) else if (@typeId(@typeOf(18446744073709551615)) == @import("builtin").TypeId.Int) @intToPtr(__UINT64_C, 18446744073709551615) else __UINT64_C(18446744073709551615);
-pub const __INT_LEAST16_TYPE__ = short;
+pub const UINT64_MAX = if (@typeInfo(@TypeOf(18446744073709551615)) == @import("builtin").TypeId.Pointer) @ptrCast(u64, 18446744073709551615) else if (@typeInfo(@TypeOf(18446744073709551615)) == @import("builtin").TypeId.Int) @intToPtr(u64, 18446744073709551615) else u64(18446744073709551615);
+pub const __INT_LEAST16_TYPE__ = c_short;
 pub const VK_NV_SAMPLE_MASK_OVERRIDE_COVERAGE_SPEC_VERSION = 1;
 pub const VULKAN_H_ = 1;
 pub const __ORDER_BIG_ENDIAN__ = 4321;
@@ -7252,7 +7273,7 @@ pub const WCHAR_MIN = __WCHAR_MIN;
 pub const __clang__ = 1;
 pub const INT_FAST16_MAX = c_long(9223372036854775807);
 pub const VK_KHR_DRAW_INDIRECT_COUNT_SPEC_VERSION = 1;
-pub const VK_ATTACHMENT_UNUSED = if (@typeId(@typeOf(U)) == @import("builtin").TypeId.Pointer) @ptrCast(~0, U) else if (@typeId(@typeOf(U)) == @import("builtin").TypeId.Int) @intToPtr(~0, U) else (~0)(U);
+pub const VK_ATTACHMENT_UNUSED = if (@typeInfo(@TypeOf(U)) == @import("builtin").TypeId.Pointer) @ptrCast(~0, U) else if (@typeInfo(@TypeOf(U)) == @import("builtin").TypeId.Int) @intToPtr(~0, U) else (~0)(U);
 pub const VK_EXT_SHADER_SUBGROUP_VOTE_EXTENSION_NAME = "VK_EXT_shader_subgroup_vote";
 pub const VK_KHR_SAMPLER_YCBCR_CONVERSION_EXTENSION_NAME = "VK_KHR_sampler_ycbcr_conversion";
 pub const __LDBL_DIG__ = 18;
@@ -7263,13 +7284,13 @@ pub const __ATOMIC_ACQ_REL = 4;
 pub const VK_NV_external_memory_capabilities = 1;
 pub const VK_NV_fill_rectangle = 1;
 pub const VK_KHR_swapchain = 1;
-pub const VK_REMAINING_MIP_LEVELS = if (@typeId(@typeOf(U)) == @import("builtin").TypeId.Pointer) @ptrCast(~0, U) else if (@typeId(@typeOf(U)) == @import("builtin").TypeId.Int) @intToPtr(~0, U) else (~0)(U);
+pub const VK_REMAINING_MIP_LEVELS = if (@typeInfo(@TypeOf(U)) == @import("builtin").TypeId.Pointer) @ptrCast(~0, U) else if (@typeInfo(@TypeOf(U)) == @import("builtin").TypeId.Int) @intToPtr(~0, U) else (~0)(U);
 pub const VK_MAX_DESCRIPTION_SIZE = 256;
 pub const __OPENCL_MEMORY_SCOPE_SUB_GROUP = 4;
 pub const VK_KHR_DEVICE_GROUP_CREATION_EXTENSION_NAME = "VK_KHR_device_group_creation";
 pub const VK_AMD_GPU_SHADER_INT16_SPEC_VERSION = 1;
 pub const __GLIBC__ = 2;
-pub const UINT_FAST64_MAX = if (@typeId(@typeOf(18446744073709551615)) == @import("builtin").TypeId.Pointer) @ptrCast(__UINT64_C, 18446744073709551615) else if (@typeId(@typeOf(18446744073709551615)) == @import("builtin").TypeId.Int) @intToPtr(__UINT64_C, 18446744073709551615) else __UINT64_C(18446744073709551615);
+pub const UINT_FAST64_MAX = if (@typeInfo(@TypeOf(18446744073709551615)) == @import("builtin").TypeId.Pointer) @ptrCast(u64, 18446744073709551615) else if (@typeInfo(@TypeOf(18446744073709551615)) == @import("builtin").TypeId.Int) @intToPtr(u64, 18446744073709551615) else u64(18446744073709551615);
 pub const __WORDSIZE = 64;
 pub const VK_EXT_BLEND_OPERATION_ADVANCED_SPEC_VERSION = 2;
 pub const __INT64_MAX__ = c_long(9223372036854775807);
@@ -7296,7 +7317,7 @@ pub const __FLT16_MAX_EXP__ = 15;
 pub const VK_FALSE = 0;
 pub const VK_AMD_shader_info = 1;
 pub const __SIZEOF_FLOAT__ = 4;
-pub const INT_FAST64_MAX = if (@typeId(@typeOf(9223372036854775807)) == @import("builtin").TypeId.Pointer) @ptrCast(__INT64_C, 9223372036854775807) else if (@typeId(@typeOf(9223372036854775807)) == @import("builtin").TypeId.Int) @intToPtr(__INT64_C, 9223372036854775807) else __INT64_C(9223372036854775807);
+pub const INT_FAST64_MAX = if (@typeInfo(@TypeOf(9223372036854775807)) == @import("builtin").TypeId.Pointer) @ptrCast(i64, 9223372036854775807) else if (@typeInfo(@TypeOf(9223372036854775807)) == @import("builtin").TypeId.Int) @intToPtr(i64, 9223372036854775807) else i64(9223372036854775807);
 pub const VK_EXT_CONSERVATIVE_RASTERIZATION_SPEC_VERSION = 1;
 pub const VK_IMG_FORMAT_PVRTC_SPEC_VERSION = 1;
 pub const __INT_LEAST32_FMTi__ = "i";
@@ -7350,7 +7371,7 @@ pub const __STDC_HOSTED__ = 1;
 pub const VK_KHR_VARIABLE_POINTERS_SPEC_VERSION = 1;
 pub const VK_EXT_shader_subgroup_vote = 1;
 pub const VK_NV_GLSL_SHADER_EXTENSION_NAME = "VK_NV_glsl_shader";
-pub const __INT_LEAST32_TYPE__ = int;
+pub const __INT_LEAST32_TYPE__ = c_int;
 pub const __SCHAR_MAX__ = 127;
 pub const __USE_POSIX2 = 1;
 pub const __FLT16_MIN_EXP__ = -14;
@@ -7365,7 +7386,7 @@ pub const VK_AMD_TEXTURE_GATHER_BIAS_LOD_SPEC_VERSION = 1;
 pub const __LDBL_MANT_DIG__ = 64;
 pub const __USE_XOPEN2K8 = 1;
 pub const __CLANG_ATOMIC_INT_LOCK_FREE = 2;
-pub const INT16_MIN = if (@typeId(@typeOf(-1)) == @import("builtin").TypeId.Pointer) @ptrCast(-32767, -1) else if (@typeId(@typeOf(-1)) == @import("builtin").TypeId.Int) @intToPtr(-32767, -1) else (-32767)(-1);
+pub const INT16_MIN = if (@typeInfo(@TypeOf(-1)) == @import("builtin").TypeId.Pointer) @ptrCast(-32767, -1) else if (@typeInfo(@TypeOf(-1)) == @import("builtin").TypeId.Int) @intToPtr(-32767, -1) else (-32767)(-1);
 pub const __UINT64_FMTX__ = "lX";
 pub const VK_KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE_EXTENSION_NAME = "VK_KHR_sampler_mirror_clamp_to_edge";
 pub const VK_KHR_external_memory_fd = 1;
@@ -7398,7 +7419,7 @@ pub const __SYSCALL_ULONG_TYPE = __ULONGWORD_TYPE;
 pub const __warnattr = msg;
 pub const __STD_TYPE = typedef;
 pub const __SIZEOF_WCHAR_T__ = 4;
-pub const __LDBL_MAX__ = inf;
+pub const __LDBL_MAX__ = 1e37;
 pub const VK_MAX_DEVICE_GROUP_SIZE = 32;
 pub const _LP64 = 1;
 pub const linux = 1;
@@ -7419,16 +7440,16 @@ pub const VK_AMD_shader_trinary_minmax = 1;
 pub const VK_AMD_gpu_shader_half_float = 1;
 pub const __SHRT_MAX__ = 32767;
 pub const __GCC_ATOMIC_BOOL_LOCK_FREE = 2;
-pub const VK_WHOLE_SIZE = if (@typeId(@typeOf(ULL)) == @import("builtin").TypeId.Pointer) @ptrCast(~0, ULL) else if (@typeId(@typeOf(ULL)) == @import("builtin").TypeId.Int) @intToPtr(~0, ULL) else (~0)(ULL);
+pub const VK_WHOLE_SIZE = if (@typeInfo(@TypeOf(ULL)) == @import("builtin").TypeId.Pointer) @ptrCast(~0, ULL) else if (@typeInfo(@TypeOf(ULL)) == @import("builtin").TypeId.Int) @intToPtr(~0, ULL) else (~0)(ULL);
 pub const VK_KHR_GET_DISPLAY_PROPERTIES_2_EXTENSION_NAME = "VK_KHR_get_display_properties2";
 pub const VK_VERSION_1_0 = 1;
 pub const __INT32_FMTd__ = "d";
 pub const __DBL_MIN__ = 0.000000;
-pub const __S32_TYPE = int;
+pub const __S32_TYPE = c_int;
 pub const __INTPTR_WIDTH__ = 64;
 pub const __FLT16_MAX_10_EXP__ = 4;
 pub const VK_MAX_PHYSICAL_DEVICE_NAME_SIZE = 256;
-pub const __INT_FAST32_TYPE__ = int;
+pub const __INT_FAST32_TYPE__ = c_int;
 pub const __UINT_FAST32_FMTX__ = "X";
 pub const _POSIX_SOURCE = 1;
 pub const VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME = "VK_KHR_dedicated_allocation";
@@ -7451,7 +7472,7 @@ pub const __OPENCL_MEMORY_SCOPE_ALL_SVM_DEVICES = 3;
 pub const _BITS_STDINT_INTN_H = 1;
 pub const __INT_FAST8_FMTd__ = "hhd";
 pub const __KEY_T_TYPE = __S32_TYPE;
-pub const __INT32_TYPE__ = int;
+pub const __INT32_TYPE__ = c_int;
 pub const __USE_POSIX199506 = 1;
 pub const VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE_EXTENSION_NAME = "VK_KHR_descriptor_update_template";
 pub const VK_KHR_EXTERNAL_MEMORY_CAPABILITIES_SPEC_VERSION = 1;
@@ -7461,7 +7482,7 @@ pub const __FLT_MIN__ = 0.000000;
 pub const __INT8_FMTd__ = "hhd";
 pub const VK_NV_shader_subgroup_partitioned = 1;
 pub const VK_NV_VIEWPORT_ARRAY2_EXTENSION_NAME = "VK_NV_viewport_array2";
-pub const INT64_MAX = if (@typeId(@typeOf(9223372036854775807)) == @import("builtin").TypeId.Pointer) @ptrCast(__INT64_C, 9223372036854775807) else if (@typeId(@typeOf(9223372036854775807)) == @import("builtin").TypeId.Int) @intToPtr(__INT64_C, 9223372036854775807) else __INT64_C(9223372036854775807);
+pub const INT64_MAX = if (@typeInfo(@TypeOf(9223372036854775807)) == @import("builtin").TypeId.Pointer) @ptrCast(i64, 9223372036854775807) else if (@typeInfo(@TypeOf(9223372036854775807)) == @import("builtin").TypeId.Int) @intToPtr(i64, 9223372036854775807) else i64(9223372036854775807);
 pub const __FLT_MAX_EXP__ = 128;
 pub const VK_AMD_MIXED_ATTACHMENT_SAMPLES_EXTENSION_NAME = "VK_AMD_mixed_attachment_samples";
 pub const VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT = VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT_EXT;
@@ -7484,7 +7505,7 @@ pub const VK_AMD_NEGATIVE_VIEWPORT_HEIGHT_EXTENSION_NAME = "VK_AMD_negative_view
 pub const VK_EXT_DIRECT_MODE_DISPLAY_EXTENSION_NAME = "VK_EXT_direct_mode_display";
 pub const __SIZE_FMTx__ = "lx";
 pub const __DBL_EPSILON__ = 0.000000;
-pub const INT_FAST32_MIN = if (@typeId(@typeOf(-1)) == @import("builtin").TypeId.Pointer) @ptrCast(-c_long(9223372036854775807), -1) else if (@typeId(@typeOf(-1)) == @import("builtin").TypeId.Int) @intToPtr(-c_long(9223372036854775807), -1) else (-c_long(9223372036854775807))(-1);
+pub const INT_FAST32_MIN = if (@typeInfo(@TypeOf(-1)) == @import("builtin").TypeId.Pointer) @ptrCast(-c_long(9223372036854775807), -1) else if (@typeInfo(@TypeOf(-1)) == @import("builtin").TypeId.Int) @intToPtr(-c_long(9223372036854775807), -1) else (-c_long(9223372036854775807))(-1);
 pub const VK_MAX_MEMORY_TYPES = 32;
 pub const INT32_MAX = 2147483647;
 pub const __BLKCNT_T_TYPE = __SYSCALL_SLONG_TYPE;
@@ -7493,7 +7514,7 @@ pub const VK_KHR_MAINTENANCE3_EXTENSION_NAME = "VK_KHR_maintenance3";
 pub const __CHAR_BIT__ = 8;
 pub const __INT16_FMTi__ = "hi";
 pub const VK_KHR_EXTERNAL_SEMAPHORE_FD_EXTENSION_NAME = "VK_KHR_external_semaphore_fd";
-pub const INT_LEAST32_MIN = if (@typeId(@typeOf(-1)) == @import("builtin").TypeId.Pointer) @ptrCast(-2147483647, -1) else if (@typeId(@typeOf(-1)) == @import("builtin").TypeId.Int) @intToPtr(-2147483647, -1) else (-2147483647)(-1);
+pub const INT_LEAST32_MIN = if (@typeInfo(@TypeOf(-1)) == @import("builtin").TypeId.Pointer) @ptrCast(-2147483647, -1) else if (@typeInfo(@TypeOf(-1)) == @import("builtin").TypeId.Int) @intToPtr(-2147483647, -1) else (-2147483647)(-1);
 pub const __GNUC_MINOR__ = 2;
 pub const VK_AMD_gcn_shader = 1;
 pub const VK_KHR_sampler_ycbcr_conversion = 1;
@@ -7509,7 +7530,7 @@ pub const __INT_FAST32_FMTi__ = "i";
 pub const INT16_MAX = 32767;
 pub const __FLT_HAS_INFINITY__ = 1;
 pub const __FSWORD_T_TYPE = __SYSCALL_SLONG_TYPE;
-pub const NULL = if (@typeId(@typeOf(0)) == @import("builtin").TypeId.Pointer) @ptrCast([*]void, 0) else if (@typeId(@typeOf(0)) == @import("builtin").TypeId.Int) @intToPtr([*]void, 0) else ([*]void)(0);
+pub const NULL = if (@typeInfo(@TypeOf(0)) == @import("builtin").TypeId.Pointer) @ptrCast([*]void, 0) else if (@typeInfo(@TypeOf(0)) == @import("builtin").TypeId.Int) @intToPtr([*]void, 0) else ([*]void)(0);
 pub const __OFF_T_TYPE = __SYSCALL_SLONG_TYPE;
 pub const VK_EXT_descriptor_indexing = 1;
 pub const __GCC_ATOMIC_CHAR16_T_LOCK_FREE = 2;
@@ -7542,7 +7563,7 @@ pub const VK_EXT_vertex_attribute_divisor = 1;
 pub const VK_KHR_EXTERNAL_SEMAPHORE_SPEC_VERSION = 1;
 pub const VK_NV_external_memory = 1;
 pub const VK_AMD_shader_ballot = 1;
-pub const __INT16_TYPE__ = short;
+pub const __INT16_TYPE__ = c_short;
 pub const VK_EXT_QUEUE_FAMILY_FOREIGN_SPEC_VERSION = 1;
 pub const VK_NV_viewport_array2 = 1;
 pub const __SSE2_MATH__ = 1;
@@ -7591,7 +7612,7 @@ pub const VK_NV_VIEWPORT_ARRAY2_SPEC_VERSION = 1;
 pub const VK_KHR_display_swapchain = 1;
 pub const __GNUC_STDC_INLINE__ = 1;
 pub const __UINT8_MAX__ = 255;
-pub const VK_REMAINING_ARRAY_LAYERS = if (@typeId(@typeOf(U)) == @import("builtin").TypeId.Pointer) @ptrCast(~0, U) else if (@typeId(@typeOf(U)) == @import("builtin").TypeId.Int) @intToPtr(~0, U) else (~0)(U);
+pub const VK_REMAINING_ARRAY_LAYERS = if (@typeInfo(@TypeOf(U)) == @import("builtin").TypeId.Pointer) @ptrCast(~0, U) else if (@typeInfo(@TypeOf(U)) == @import("builtin").TypeId.Int) @intToPtr(~0, U) else (~0)(U);
 pub const VK_EXT_display_surface_counter = 1;
 pub const VK_AMD_SHADER_CORE_PROPERTIES_SPEC_VERSION = 1;
 pub const __GCC_HAVE_SYNC_COMPARE_AND_SWAP_2 = 1;

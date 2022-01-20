@@ -7,19 +7,19 @@ const net = std.net;
 const assert = std.debug.assert;
 const Allocator = std.mem.Allocator;
 
-usingnamespace @import("xproto.zig");
+const xproto = @import("xproto.zig");
 
 pub const Display = struct {
     name: []u8,
 };
 
 pub const Connection = struct {
-    allocator: *Allocator,
+    allocator: Allocator,
     socket: net.Stream,
     setup: []u8,
     status: Status,
 
-    pub const Status = enum {
+    pub const Status = enum(u32) {
         SetupFailed = 0,
         Ok = 1,
         Authenticate = 2,
@@ -39,7 +39,7 @@ pub const Auth = struct {
     name: []u8,
     data: []u8,
 
-    fn deinit(self: *Auth, allocator: *Allocator) void {
+    fn deinit(self: *Auth, allocator: Allocator) void {
         allocator.free(self.address);
         allocator.free(self.number);
         allocator.free(self.name);
@@ -48,7 +48,7 @@ pub const Auth = struct {
     }
 };
 
-pub fn openDefaultDisplay(allocator: *Allocator) !Connection {
+pub fn openDefaultDisplay(allocator: Allocator) !Connection {
     const default_name = getDefaultDisplayName() orelse return error.UnknownDefaultDisplay;
     return openDisplay(allocator, default_name);
 }
@@ -79,9 +79,10 @@ pub const OpenDisplayError = error{
     ConnectionTimedOut,
     NotOpenForReading,
     NotOpenForWriting,
+    FileBusy,
 };
 
-pub fn openDisplay(allocator: *Allocator, name: []const u8) OpenDisplayError!Connection {
+pub fn openDisplay(allocator: Allocator, name: []const u8) OpenDisplayError!Connection {
     const parsed = parseDisplay(name) catch |err| switch (err) {
         error.Overflow => return error.InvalidDisplayFormat,
         error.MissingColon => return error.InvalidDisplayFormat,
@@ -111,14 +112,14 @@ pub fn parseDisplay(name: []const u8) !ParsedDisplay {
     } else name;
 
     const colon = mem.lastIndexOfScalar(u8, after_prot, ':') orelse return error.MissingColon;
-    var it = mem.split(after_prot[colon + 1 ..], ".");
+    var it = mem.split(u8, after_prot[colon + 1 ..], ".");
     result.display = try std.fmt.parseInt(u32, it.next() orelse return error.MissingDisplayIndex, 10);
     result.screen = if (it.next()) |s| try std.fmt.parseInt(u32, s, 10) else 0;
     result.host = after_prot[0..colon];
     return result;
 }
 
-pub fn open(host: []const u8, protocol: []const u8, display: u32) !net.Stream {
+pub fn open(_: []const u8, protocol: []const u8, display: u32) !net.Stream {
     if (protocol.len != 0 and !mem.eql(u8, protocol, "unix")) {
         return error.UnsupportedProtocol;
     }
@@ -129,7 +130,7 @@ pub fn open(host: []const u8, protocol: []const u8, display: u32) !net.Stream {
     return net.connectUnixSocket(socket_path);
 }
 
-pub fn connectToDisplay(allocator: *Allocator, parsed: ParsedDisplay, optional_auth: ?Auth) !Connection {
+pub fn connectToDisplay(allocator: Allocator, parsed: ParsedDisplay, optional_auth: ?Auth) !Connection {
     const sock = open(parsed.host, parsed.protocol, parsed.display) catch return error.UnableToConnectToServer;
     errdefer sock.close();
 
@@ -165,6 +166,7 @@ pub fn connectToDisplay(allocator: *Allocator, parsed: ParsedDisplay, optional_a
             error.FileLocksNotSupported => return error.AuthFileUnavailable,
             error.ConnectionTimedOut => return error.AuthFileUnavailable,
             error.NotOpenForReading => return error.AuthFileUnavailable,
+            error.FileBusy => return error.FileBusy,
 
             error.Unexpected => return error.Unexpected,
 
@@ -207,7 +209,7 @@ test "xpad" {
 
 /// sock must be `O_RDWR`.
 /// `O_NONBLOCK` may be set if `std.event.Loop.instance != null`.
-pub fn connectToStream(allocator: *Allocator, sock: net.Stream, auth: ?Auth) !Connection {
+pub fn connectToStream(allocator: Allocator, sock: net.Stream, auth: ?Auth) !Connection {
     var conn = Connection{
         .allocator = allocator,
         .socket = sock,
@@ -221,7 +223,7 @@ pub fn connectToStream(allocator: *Allocator, sock: net.Stream, auth: ?Auth) !Co
     return conn;
 }
 
-fn readSetup(allocator: *Allocator, conn: *Connection) !void {
+fn readSetup(allocator: Allocator, conn: *Connection) !void {
     const reader = conn.socket.reader();
 
     const xcb_setup_generic_t = extern struct {
@@ -248,19 +250,19 @@ fn writeSetup(sock: net.Stream, auth: ?Auth) !void {
     const pad = [3]u8{ 0, 0, 0 };
     var parts: [6]os.iovec_const = undefined;
     var parts_index: usize = 0;
-    var setup_req = xcb_setup_request_t{
-        .byte_order = if (builtin.endian == builtin.Endian.Big) 0x42 else 0x6c,
+    var setup_req = xproto.xcb_setup_request_t{
+        .byte_order = if (builtin.target.cpu.arch.endian() == .Big) 0x42 else 0x6c,
         .pad0 = 0,
-        .protocol_major_version = X_PROTOCOL,
-        .protocol_minor_version = X_PROTOCOL_REVISION,
+        .protocol_major_version = xproto.X_PROTOCOL,
+        .protocol_minor_version = xproto.X_PROTOCOL_REVISION,
         .authorization_protocol_name_len = 0,
         .authorization_protocol_data_len = 0,
         .pad1 = [2]u8{ 0, 0 },
     };
-    parts[parts_index].iov_len = @sizeOf(xcb_setup_request_t);
+    parts[parts_index].iov_len = @sizeOf(xproto.xcb_setup_request_t);
     parts[parts_index].iov_base = @ptrCast([*]const u8, &setup_req);
     parts_index += 1;
-    comptime assert(xpad(@sizeOf(xcb_setup_request_t)) == 0);
+    comptime assert(xpad(@sizeOf(xproto.xcb_setup_request_t)) == 0);
 
     if (auth) |a| {
         setup_req.authorization_protocol_name_len = @intCast(u16, a.name.len);
@@ -285,7 +287,7 @@ fn writeSetup(sock: net.Stream, auth: ?Auth) !void {
     return sock.writevAll(parts[0..parts_index]);
 }
 
-pub fn getAuth(allocator: *Allocator, sock: net.Stream, display: u32) !Auth {
+pub fn getAuth(allocator: Allocator, _: net.Stream, _: u32) !Auth {
     const xau_file = if (os.getenv("XAUTHORITY")) |xau_file_name| blk: {
         break :blk try fs.openFileAbsolute(xau_file_name, .{});
     } else blk: {
@@ -333,7 +335,7 @@ pub fn getAuth(allocator: *Allocator, sock: net.Stream, display: u32) !Auth {
     return error.AuthNotFound;
 }
 
-fn readCountedString(allocator: *Allocator, stream: anytype) ![]u8 {
+fn readCountedString(allocator: Allocator, stream: anytype) ![]u8 {
     const len = try stream.readIntBig(u16);
     const buf = try allocator.alloc(u8, len);
     errdefer allocator.free(buf);
